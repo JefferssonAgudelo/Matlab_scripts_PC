@@ -52,9 +52,10 @@ cut_1d=dtKe_in_Gp_2{1,1}' + ve_grad_Ke_Gp{1,1}' + ve_Div_Pet_Gp{1,1}' + ...
     Ke_Div_ve_Gp{1,1}' -qe_ne_ve_E_Gp{1,1}'; dum_pXIe_Gp_1d = cut_1d(xpc_i,:);
 
 cut_1d=dtUe_in_Gp_2{1,1}' + ve_grad_Ue_Gp{1,1}' + dkQiik_05_e_Gp{1,1}' + ...
-    Pet_grad_ve_Gp{1,1}' + Ue_Div_ve_Gp{1,1}' +...
-    (dtKe_in_Gp_2{1,1}' + ve_grad_Ke_Gp{1,1}' + ve_Div_Pet_Gp{1,1}' + ...
-    Ke_Div_ve_Gp{1,1}' -qe_ne_ve_E_Gp{1,1}'); dum_pXI2e_Gp_1d=cut_1d(xpc_i,:);
+    Pet_grad_ve_Gp{1,1}' + Ue_Div_ve_Gp{1,1}' ;%+...
+    %(dtKe_in_Gp_2{1,1}' + ve_grad_Ke_Gp{1,1}' + ve_Div_Pet_Gp{1,1}' + ...
+    %Ke_Div_ve_Gp{1,1}' -qe_ne_ve_E_Gp{1,1}'); 
+dum_pXI2e_Gp_1d=cut_1d(xpc_i,:);
 
 % Density
 cut_1d=ne_Gp{1,1}'; ne_Gp_1d=cut_1d(xpc_i,:);
@@ -103,14 +104,21 @@ cut_1d= Zernitani_i_Gp{1,1}'; Zernitani_i_Gp_1d = cut_1d(xpc_i,:);
 cut_1d= p_theta_i_Gp{1,1}'; p_theta_i_Gp_1d = cut_1d(xpc_i,:);
 cut_1d= PiD_i_Gp{1,1}'; PiD_i_Gp_1d = cut_1d(xpc_i,:);
 
-% collisionale terms
+% Poyntin terms 
+cut_1d= dtE_em_in_Gp_2{1,1}'; dtE_em_in_Gp_2_1d = cut_1d(xpc_i,:);
+cut_1d= Div_Poyn_v_Gp{1,1}'; Div_Poyn_v_Gp_1d = cut_1d(xpc_i,:);
+cut_1d= JdotE_Gp{1,1}'; JdotE_Gp_1d = cut_1d(xpc_i,:);
+
+
+% collisional terms
 cut_1d=dtKi_in_Gp_2{1,1}' + vi_grad_Ki_Gp{1,1}' + vi_Div_Pit_Gp{1,1}' + ...
     Ki_Div_vi_Gp{1,1}' -qi_ni_vi_E_Gp{1,1}'; dum_pXIi_Gp_1d = cut_1d(xpc_i,:);
 
 cut_1d=dtUi_in_Gp_2{1,1}' + vi_grad_Ui_Gp{1,1}' + dkQiik_05_i_Gp{1,1}' + ...
-    Pit_grad_vi_Gp{1,1}' + Ui_Div_vi_Gp{1,1}' +...
-    (dtKi_in_Gp_2{1,1}' + vi_grad_Ki_Gp{1,1}' + vi_Div_Pit_Gp{1,1}' + ...
-    Ki_Div_vi_Gp{1,1}' -qi_ni_vi_E_Gp{1,1}'); dum_pXI2i_Gp_1d=cut_1d(xpc_i,:);
+    Pit_grad_vi_Gp{1,1}' + Ui_Div_vi_Gp{1,1}' ;%+...
+    %(dtKi_in_Gp_2{1,1}' + vi_grad_Ki_Gp{1,1}' + vi_Div_Pit_Gp{1,1}' + ...
+    %Ki_Div_vi_Gp{1,1}' -qi_ni_vi_E_Gp{1,1}'); 
+dum_pXI2i_Gp_1d=cut_1d(xpc_i,:);
 
 % Density
 cut_1d=ni_Gp{1,1}'; ni_Gp_1d=cut_1d(xpc_i,:);
@@ -383,16 +391,16 @@ plot(yll,smoothdata(ve_1_1d)./VA2c,'Color',colorblind(1,:), 'LineWidth', lw)
 hold on
 plot(yll,smoothdata(ve_2_1d)./VA2c,'Color',colorblind(2,:), 'LineWidth', lw)
 plot(yll,smoothdata(ve_3_1d)./VA2c,'Color',colorblind(5,:), 'LineWidth', lw)
-xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
+xline(5,'--k'); xline(9,'--k'); xline(6.6,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$u_{p}/V_{A,i}$','$u_{a}/V_{A,i}$','$u_{r}/V_{A,i}$','Interpreter','latex','FontSize',fs)
-xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
+legend('$u_{p}/v_{A,i}$','$u_{a}/v_{A,i}$','$u_{r}/v_{A,i}$','Interpreter','latex','FontSize',fs)
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
 ylabel('$\mathbf{u}_{e}$ components','Interpreter','latex','FontSize',fs)
 xlim([0,10])
 ylim([-1.9, 1.9])
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 hold off
 %{
 f2145 = figure(2145);
@@ -404,7 +412,7 @@ xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$u_{p}/V_{A,i}$','$u_{a}/V_{A,i}$','$u_{r}/V_{A,i}$','Interpreter','latex','FontSize',fs)
+legend('$u_{p}/v_{A,i}$','$u_{a}/v_{A,i}$','$u_{r}/v_{A,i}$','Interpreter','latex','FontSize',fs)
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 ylabel('$\mathbf{u}_{e}$ components','Interpreter','latex','FontSize',fs)
 xlim([4,8])
@@ -427,7 +435,7 @@ xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$u_{p}/V_{A,i}$','$u_{a}/V_{A,i}$','$u_{r}/V_{A,i}$','Interpreter','latex','FontSize',fs)
+legend('$u_{p}/v_{A,i}$','$u_{a}/v_{A,i}$','$u_{r}/v_{A,i}$','Interpreter','latex','FontSize',fs)
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 ylabel('$\mathbf{u}_{i}$ components','Interpreter','latex','FontSize',fs)
 %xlim([4,8])
@@ -444,7 +452,7 @@ xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$u_{p}/V_{A,i}$','$u_{a}/V_{A,i}$','$u_{r}/V_{A,i}$','Interpreter','latex','FontSize',fs)
+legend('$u_{p}/v_{A,i}$','$u_{a}/v_{A,i}$','$u_{r}/v_{A,i}$','Interpreter','latex','FontSize',fs)
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 ylabel('$\mathbf{u}_{i}$ components','Interpreter','latex','FontSize',fs)
 xlim([4,8])
@@ -472,8 +480,8 @@ xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$|u_{e}|/V_{A,i}$',...
-    '$|u_{i}|/V_{A,i}$',...
+legend('$|u_{e}|/v_{A,i}$',...
+    '$|u_{i}|/v_{A,i}$',...
     '$n_{e}/n_{e0}$',...
     '$n_{i}/n_{i0}$',...
     '$p_{e}/P_{i0}$',...
@@ -771,39 +779,42 @@ hold off
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 f27552 = figure(27552);
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 h1=subaxis(2,2,1,'SV',0.02,'SH',0.0,'MR',0.0,'ML',0.0,'PL',0.05,'PR',0.01);
-plot(yll,smoothdata(total_dKedt_1d)./(VA2c*Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
+plot(yll,smoothdata(total_dKedt_1d)./(Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
 hold on
-plot(yll,smoothdata(ve_Div_Pet_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
-plot(yll,smoothdata(Ke_Div_ve_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
-plot(yll,smoothdata(-qe_ne_ve_E_Gp_1d)./(VA2c*Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
-plot(yll,smoothdata(dum_pXIe_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
-xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
+plot(yll,smoothdata(ve_Div_Pet_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(Ke_Div_ve_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(-qe_ne_ve_E_Gp_1d)./(Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
+plot(yll,smoothdata(dum_pXIe_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+%xline(4,'--k'); xline(8,'--k'); 
+xline(6.6,'--b'); % xline(5.7,'--b')
 ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
 legend('$\frac{d \varepsilon^{k}_{e} /d t}{\Delta\varepsilon_{0}} $',...
     '$\frac{u_{e} \cdot \nabla \cdot \overline{P}_{e}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\varepsilon^{k}_{e}\nabla \cdot u_{e}}{\Delta\varepsilon_{0}}$',...
     '$\frac{-q_{e}n_{e}E\cdot u_{e}}{\Delta\varepsilon_{0}}$',...
-    '$\frac{m_{e}\mathbf{u}_{e} \cdot \mathbf{\Xi}_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{k}_{e}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs,...
     'Location','northeast','NumColumns',2)
-%xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
-xlim([4,8])
+%xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+xlim([5,9])
 xticks([]);
-ylim([-3.2, 3.2]) %<------------
-ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+%ylim([-3.2, 3.2]) %<------------
+%ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Kinetic power density terms','Interpreter','latex','FontSize',fs)
 hold off
 % Thermal
 %------------------------------------
 h1=subaxis(2,2,2,'SV',0.02,'SH',0.0,'MR',0.05,'ML',0.0,'PL',0.03,'PR',0.01);
-plot(yll,smoothdata(total_dUedt_1d),'Color',colorblind(10,:), 'LineWidth', lw)
+plot(yll,smoothdata(total_dUedt_1d)./(Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
 hold on
-plot(yll,smoothdata(dkQiik_05_e_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
-plot(yll,smoothdata(Pet_grad_ve_Gp_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
-plot(yll,smoothdata(Ue_Div_ve_Gp_1d)./(VA2c*Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
-plot(yll,smoothdata(dum_pXI2e_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
-xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
+plot(yll,smoothdata(dkQiik_05_e_Gp_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(Pet_grad_ve_Gp_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(Ue_Div_ve_Gp_1d)./(Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
+plot(yll,smoothdata(dum_pXI2e_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+%xline(4,'--k'); xline(8,'--k');  
+xline(6.6,'--b'); % xline(5.7,'--b')
 ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
 %%%%%%%%%%%%
 ax.YAxisLocation = 'right';
@@ -812,49 +823,53 @@ legend('$\frac{d \varepsilon^{th}_{e} / d t }{\Delta\varepsilon_{0}}$',...
     '$\frac{\nabla \cdot h_{e}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\nabla u_{e}:\overline{P}_{e}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\varepsilon^{th}_{e} \nabla \cdot u_{e}}{\Delta\varepsilon_{0}}$',...
-    '$\frac{0.5 Tr(m_{e}\overline{\mathbf{\Xi}}_{e})}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{th}_{e}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs,...
     'Location','northeast','NumColumns',2)
-%xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
+%xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
 xticks([])
-xlim([4,8])
-ylim([-15.2, 15.2]) %<--------------
-ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+xlim([5,9])
+%ylim([-15.2, 15.2]) %<--------------
+%ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Thermal power density terms','Interpreter','latex','FontSize',fs)
 hold off
 %--------------------------------------------------------------------------
 % Kinetic subplot(1,2,1)
 h1=subaxis(2,2,3,'SV',0.02,'SH',0.0,'MR',0.00,'ML',0.00,'PL',0.05,'PR',0.01);
-plot(yll,smoothdata(total_dKidt_1d)./(VA2c*Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
+plot(yll,smoothdata(total_dKidt_1d)./(Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
 hold on
-plot(yll,smoothdata(vi_Div_Pit_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
-plot(yll,smoothdata(Ki_Div_vi_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
-plot(yll,smoothdata(-qi_ni_vi_E_Gp_1d)./(VA2c*Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
-plot(yll,smoothdata(dum_pXIi_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
-xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
+plot(yll,smoothdata(vi_Div_Pit_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(Ki_Div_vi_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(-qi_ni_vi_E_Gp_1d)./(Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
+plot(yll,smoothdata(dum_pXIi_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+%xline(4,'--k'); xline(8,'--k');  
+xline(6.6,'--b'); % xline(5.7,'--b')
 ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
 legend('$\frac{d \varepsilon^{k}_{i} /d t}{\Delta\varepsilon_{0}} $',...
     '$\frac{u_{i} \cdot \nabla \cdot \overline{P}_{i}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\varepsilon^{k}_{i}\nabla \cdot u_{i}}{\Delta\varepsilon_{0}}$',...
     '$\frac{-q_{i}n_{i}E\cdot u_{i}}{\Delta\varepsilon_{0}}$',...
-    '$\frac{m_{i}\mathbf{u}_{i} \cdot \mathbf{\Xi}_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{k}_{i}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs,...
     'Location','northeast','NumColumns',2)
-xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
-xlim([4,8])
-ylim([-3.2, 3.2]) %<------------
-ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+xlim([5,9])
+%ylim([-3.2, 3.2]) %<------------
+%ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Kinetic power density terms','Interpreter','latex','FontSize',fs)
 hold off
 % Thermal
 %------------------------------------
 h1=subaxis(2,2,4,'SV',0.02,'SH',0.0,'MR',0.05,'ML',0.00,'PL',0.03,'PR',0.01);
 %h1=subaxis(2,2,2,'SV',0.01,'SH',0.0,'MR',0.05,'ML',0.0,'PL',0.02,'PR',0.01);
-plot(yll,smoothdata(total_dUidt_1d),'Color',colorblind(10,:), 'LineWidth', lw)
+plot(yll,smoothdata(total_dUidt_1d)./(Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
 hold on
-plot(yll,smoothdata(dkQiik_05_i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
-plot(yll,smoothdata(Pit_grad_vi_Gp_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
-plot(yll,smoothdata(Ui_Div_vi_Gp_1d)./(VA2c*Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
-plot(yll,smoothdata(dum_pXI2i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
-xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
+plot(yll,smoothdata(dkQiik_05_i_Gp_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(Pit_grad_vi_Gp_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(Ui_Div_vi_Gp_1d)./(Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
+plot(yll,smoothdata(dum_pXI2i_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+%xline(4,'--k'); xline(8,'--k');  
+xline(6.6,'--b'); % xline(5.7,'--b')
 ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
 %%%%%%%%%%%%
 ax.YAxisLocation = 'right';
@@ -863,18 +878,147 @@ legend('$\frac{d \varepsilon^{th}_{i} / d t }{\Delta\varepsilon_{0}}$',...
     '$\frac{\nabla \cdot h_{i}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\nabla u_{i}:\overline{P}_{i}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\varepsilon^{th}_{i} \nabla \cdot u_{i}}{\Delta\varepsilon_{0}}$',...
-    '$\frac{0.5 Tr(m_{i}\overline{\mathbf{\Xi}}_{i})}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{th}_{i}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs,...
     'Location','northeast','NumColumns',2)
-xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
-xlim([4,8])
-ylim([-10.2, 10.2]) %<--------------
-ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+xlim([5,9])
+%ylim([-10.2, 10.2]) %<--------------
+%ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Thermal power density terms','Interpreter','latex','FontSize',fs)
 hold off
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+x0=-1696;y0=170;width=1582;height=428; fs=25;
+f275523 = figure(275523);
+set(gcf,'position',[x0,y0,width,height])
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+h1=subaxis(1,2,1,'SV',0.02,'SH',0.0,'MR',0.0,'ML',0.0,'PL',0.05,'PR',0.01);
+plot(yll,smoothdata(total_dKedt_1d)./(Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
+hold on
+plot(yll,smoothdata(ve_Div_Pet_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(Ke_Div_ve_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(-qe_ne_ve_E_Gp_1d)./(Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
+plot(yll,smoothdata(dum_pXIe_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+%xline(4,'--k'); xline(8,'--k'); 
+xline(6.6,'--k','LineWidth', lw); % xline(5.7,'--b')
+ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
+legend('$\frac{d \varepsilon^{k}_{e} /d t}{\Delta\varepsilon_{0}} $',...
+    '$\frac{u_{e} \cdot \nabla \cdot \overline{P}_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\varepsilon^{k}_{e}\nabla \cdot u_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{-q_{e}n_{e}E\cdot u_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{k}_{e}}{\Delta\varepsilon_{0}}$',...
+    'Interpreter','latex','FontSize',1.3*fs,...
+    'Location','southeast','NumColumns',3)
+%xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+xlim([5,9])
+%xticks([]);
+ylim([-0.2, 0.2]) %<------------
+%ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Kinetic power density terms','Interpreter','latex','FontSize',fs)
+xlabel('$p / d_{i}$','Position',[6.8, -0.215],'Interpreter','latex','FontSize',fs)
+hold off
+% Thermal
+%------------------------------------
+h1=subaxis(1,2,2,'SV',0.02,'SH',0.0,'MR',0.05,'ML',0.0,'PL',0.03,'PR',0.01);
+plot(yll,smoothdata(total_dUedt_1d)./(Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
+hold on
+plot(yll,smoothdata(dkQiik_05_e_Gp_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(Pet_grad_ve_Gp_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(Ue_Div_ve_Gp_1d)./(Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
+plot(yll,smoothdata(dum_pXI2e_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+%xline(4,'--k'); xline(8,'--k');  
+xline(6.6,'--k','LineWidth', lw); % xline(5.7,'--b')
+ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
+%%%%%%%%%%%%
+ax.YAxisLocation = 'right';
+%%%%%%%%%%%%
+legend('$\frac{d \varepsilon^{th}_{e} / d t }{\Delta\varepsilon_{0}}$',...
+    '$\frac{\nabla \cdot h_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\nabla u_{e}:\overline{P}_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\varepsilon^{th}_{e} \nabla \cdot u_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{th}_{e}}{\Delta\varepsilon_{0}}$',...
+    'Interpreter','latex','FontSize',1.3*fs,...
+    'Location','southeast','NumColumns',3)
+%xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+%xticks([])
+xlim([5,9])
+ylim([-1.5, 1.5]) %<--------------
+%ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Thermal power density terms','Interpreter','latex','FontSize',fs)
+xlabel('$p / d_{i}$','Position',[6.8, -1.62],'Interpreter','latex','FontSize',fs)
+hold off
+%--------------------------------------------------------------------------
+
+% kinetic and thermal power for ions
+%--------------------------------------------------------------------------
+f2755232 = figure(2755232);
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+h1=subaxis(1,2,1,'SV',0.02,'SH',0.0,'MR',0.0,'ML',0.0,'PL',0.05,'PR',0.01);
+plot(yll,smoothdata(total_dKidt_1d)./(Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
+hold on
+plot(yll,smoothdata(vi_Div_Pit_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(Ki_Div_vi_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(-qi_ni_vi_E_Gp_1d)./(Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
+plot(yll,smoothdata(dum_pXIi_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+%xline(4,'--k'); xline(8,'--k'); 
+xline(6.6,'--k','LineWidth', lw); % xline(5.7,'--b')
+ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
+legend('$\frac{d \varepsilon^{k}_{i} /d t}{\Delta\varepsilon_{0}} $',...
+    '$\frac{u_{i} \cdot \nabla \cdot \overline{P}_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\varepsilon^{k}_{i}\nabla \cdot u_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{-q_{i}n_{e}E\cdot u_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{k}_{i}}{\Delta\varepsilon_{0}}$',...
+    'Interpreter','latex','FontSize',1.3*fs,...
+    'Location','northeast','NumColumns',3)
+%xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+xlim([5,9])
+%xticks([]);
+ylim([-0.2, 0.2]) %<------------
+%ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Kinetic power density terms','Interpreter','latex','FontSize',fs)
+xlabel('$p / d_{i}$','Position',[6.8, -0.22],'Interpreter','latex','FontSize',fs)
+hold off
+% Thermal
+%------------------------------------
+h1=subaxis(1,2,2,'SV',0.02,'SH',0.0,'MR',0.05,'ML',0.0,'PL',0.03,'PR',0.01);
+plot(yll,smoothdata(total_dUidt_1d)./(Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
+hold on
+plot(yll,smoothdata(dkQiik_05_i_Gp_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(Pit_grad_vi_Gp_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(Ui_Div_vi_Gp_1d)./(Pi0),'Color',colorblind(6,:), 'LineWidth', lw)
+plot(yll,smoothdata(dum_pXI2i_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+%xline(4,'--k'); xline(8,'--k');  
+xline(6.6,'--k','LineWidth', lw); % xline(5.7,'--b')
+ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
+%%%%%%%%%%%%
+ax.YAxisLocation = 'right';
+%%%%%%%%%%%%
+legend('$\frac{d \varepsilon^{th}_{i} / d t }{\Delta\varepsilon_{0}}$',...
+    '$\frac{\nabla \cdot h_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\nabla u_{i}:\overline{P}_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\varepsilon^{th}_{i} \nabla \cdot u_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{th}_{i}}{\Delta\varepsilon_{0}}$',...
+    'Interpreter','latex','FontSize',1.3*fs,...
+    'Location','northeast','NumColumns',3)
+%xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+%xticks([])
+xlim([5,9])
+ylim([-1.5, 1.5]) %<--------------
+%ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Thermal power density terms','Interpreter','latex','FontSize',fs)
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+hold off
+%--------------------------------------------------------------------------
 
 
+
+
+% This plot uses the other normalization
+%--------------------------------------------------------------------------
 f275512 = figure(275512);
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 h1=subaxis(2,2,1,'SV',0.02,'SH',0.0,'MR',0.0,'ML',0.0,'PL',0.05,'PR',0.01);
 plot(yll,smoothdata(total_dKedt_1d)./(VA2c*Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
 hold on
@@ -888,14 +1032,14 @@ legend('$\frac{d \varepsilon^{k}_{e} /d t}{\Delta\varepsilon_{0}} $',...
     '$\frac{u_{e} \cdot \nabla \cdot \overline{P}_{e}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\varepsilon^{k}_{e}\nabla \cdot u_{e}}{\Delta\varepsilon_{0}}$',...
     '$\frac{-q_{e}n_{e}E\cdot u_{e}}{\Delta\varepsilon_{0}}$',...
-    '$\frac{m_{e}\mathbf{u}_{e} \cdot \mathbf{\Xi}_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{k}_{e}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs,...
     'Location','northeast','NumColumns',2)
-%xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
+%xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
 xlim([0,10])
 xticks([]);
 ylim([-3.2, 3.2]) %<------------
-ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Kinetic power density terms','Interpreter','latex','FontSize',fs)
 hold off
 % Thermal
 %------------------------------------
@@ -915,10 +1059,10 @@ legend('$\frac{d \varepsilon^{th}_{e} / d t }{\Delta\varepsilon_{0}}$',...
     '$\frac{\nabla \cdot h_{e}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\nabla u_{e}:\overline{P}_{e}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\varepsilon^{th}_{e} \nabla \cdot u_{e}}{\Delta\varepsilon_{0}}$',...
-    '$\frac{0.5 Tr(m_{e}\overline{\mathbf{\Xi}}_{e})}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{th}_{e}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs,...
     'Location','northeast','NumColumns',2)
-%xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
+%xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
 xticks([])
 xlim([0,10])
 ylim([-15.2, 15.2]) %<--------------
@@ -939,13 +1083,13 @@ legend('$\frac{d \varepsilon^{k}_{i} /d t}{\Delta\varepsilon_{0}} $',...
     '$\frac{u_{i} \cdot \nabla \cdot \overline{P}_{i}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\varepsilon^{k}_{i}\nabla \cdot u_{i}}{\Delta\varepsilon_{0}}$',...
     '$\frac{-q_{i}n_{i}E\cdot u_{i}}{\Delta\varepsilon_{0}}$',...
-    '$\frac{m_{i}\mathbf{u}_{i} \cdot \mathbf{\Xi}_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{k}_{i}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs,...
     'Location','northeast','NumColumns',2)
-xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
 xlim([0,10])
 ylim([-3.2, 3.2]) %<------------
-ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Kinetic power density terms','Interpreter','latex','FontSize',fs)
 hold off
 % Thermal
 %------------------------------------
@@ -966,10 +1110,10 @@ legend('$\frac{d \varepsilon^{th}_{i} / d t }{\Delta\varepsilon_{0}}$',...
     '$\frac{\nabla \cdot h_{i}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\nabla u_{i}:\overline{P}_{i}}{\Delta\varepsilon_{0}}$',...
     '$\frac{\varepsilon^{th}_{i} \nabla \cdot u_{i}}{\Delta\varepsilon_{0}}$',...
-    '$\frac{0.5 Tr(m_{i}\overline{\mathbf{\Xi}}_{i})}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\Xi^{th}_{i}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs,...
     'Location','northeast','NumColumns',2)
-xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
 xlim([0,10])
 ylim([-10.2, 10.2]) %<--------------
 ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
@@ -1071,15 +1215,16 @@ hold off
 %}
 %--------------------------------------------------------------------------
 
-%{
-f217 = figure(217);
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
-plot(xll,smoothdata(Pet_grad_ve_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+%
+f2172 = figure(2172);
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+plot(yll,smoothdata(Pet_grad_ve_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
 hold on
-plot(xll,smoothdata(p_theta_e_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
-plot(xll,smoothdata(PiD_e_Gp_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(p_theta_e_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(PiD_e_Gp_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
 %plot(xll,Pet_grad_ve_Gp_1d + ve_Div_Pet_1d,'g')
-xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
+%xline(4,'--k'); xline(8,'--k'); 
+xline(6.6,'--b')
 ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
 %legend('dKe/dt','vedivPe','Kedivve','-qEe')
 legend('$\frac{\nabla u_{e}:\overline{P}_{e}}{\Delta\varepsilon_{0}}$',...
@@ -1087,20 +1232,21 @@ legend('$\frac{\nabla u_{e}:\overline{P}_{e}}{\Delta\varepsilon_{0}}$',...
     '$\frac{PiD_{e}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs)
 %plot(xll,ve_2_1d)
-xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
-ylabel('Energy rate terms','Interpreter','latex','FontSize',fs)
-xlim([4,8])
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+ylabel('Strain-pressure contributions','Interpreter','latex','FontSize',fs)
+xlim([5,9])
 ylim([-6.2, 6.2])
 hold off
 
-f2178 = figure(2178);
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
-plot(xll,smoothdata(Pit_grad_vi_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+f21782 = figure(21782);
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+plot(yll,smoothdata(Pit_grad_vi_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
 hold on
-plot(xll,smoothdata(p_theta_i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
-plot(xll,smoothdata(PiD_i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+plot(yll,smoothdata(p_theta_i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(PiD_i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
 %plot(xll,Pet_grad_ve_Gp_1d + ve_Div_Pet_1d,'g')
-xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
+%xline(4,'--k'); xline(8,'--k'); 
+xline(6.6,'--b')
 ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
 %legend('dKe/dt','vedivPe','Kedivve','-qEe')
 legend('$\frac{\nabla u_{i}:\overline{P}_{i}}{\Delta\varepsilon_{0}}$',...
@@ -1108,11 +1254,86 @@ legend('$\frac{\nabla u_{i}:\overline{P}_{i}}{\Delta\varepsilon_{0}}$',...
     '$\frac{PiD_{i}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs)
 %plot(xll,ve_2_1d)
-xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
-ylabel('Energy rate terms','Interpreter','latex','FontSize',fs)
-xlim([4,8])
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+ylabel('Strain-pressure contributions','Interpreter','latex','FontSize',fs)
+xlim([5,9])
 ylim([-2, 2])
 hold off
+
+
+%Dissipation surrogates
+%--------------------------------------------------------------------------
+f21712 = figure(21712);
+plot(yll,smoothdata(Zernitani_e_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+hold on
+plot(yll,smoothdata(p_theta_e_Gp_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(PiD_e_Gp_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+xline(6.6,'--k','LineWidth', lw)
+ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
+%legend('dKe/dt','vedivPe','Kedivve','-qEe')
+legend('$\frac{D_{ze}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{p\theta_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{Pi-D_{e}}{\Delta\varepsilon_{0}}$',...
+    'Interpreter','latex','FontSize',1.3*fs,...
+    'Location','southeast','NumColumns',2)
+%plot(xll,ve_2_1d)
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+ylabel('Energy transfer rates electrons','Interpreter','latex','FontSize',fs)
+xlim([5,9])
+ylim([-0.45, 0.45])
+hold off
+
+f217812 = figure(217812);
+plot(yll,smoothdata(Zernitani_i_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+hold on
+plot(yll,smoothdata(p_theta_i_Gp_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(PiD_i_Gp_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+%plot(xll,Pet_grad_ve_Gp_1d + ve_Div_Pet_1d,'g')
+%xline(4,'--k'); xline(8,'--k'); 
+xline(6.6,'--k','LineWidth', lw)
+ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
+%legend('dKe/dt','vedivPe','Kedivve','-qEe')
+legend('$\frac{D_{zi}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{p\theta_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{PiD_{i}}{\Delta\varepsilon_{0}}$',...
+    'Interpreter','latex','FontSize',fs)
+%plot(xll,ve_2_1d)
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+ylabel('Energy transfer rates ions','Interpreter','latex','FontSize',fs)
+xlim([5,9])
+ylim([-0.2, 0.2])
+hold off
+
+
+
+cut_1d= dtE_em_in_Gp_2{1,1}'; dtE_em_in_Gp_2_1d = cut_1d(xpc_i,:);
+cut_1d= Div_Poyn_v_Gp{1,1}'; Div_Poyn_v_Gp_1d = cut_1d(xpc_i,:);
+cut_1d= JdotE_Gp{1,1}'; JdotE_Gp_1d = cut_1d(xpc_i,:);
+
+%Poynting terms
+f217813 = figure(217813);
+plot(yll,smoothdata(dtE_em_in_Gp_2_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+hold on
+plot(yll,smoothdata(Div_Poyn_v_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(yll,smoothdata(JdotE_Gp_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+%plot(xll,Pet_grad_ve_Gp_1d + ve_Div_Pet_1d,'g')
+%xline(4,'--k'); xline(8,'--k'); 
+xline(6.6,'--b')
+ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
+%legend('dKe/dt','vedivPe','Kedivve','-qEe')
+legend('$\frac{d \varepsilon^{em}/dt}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\nabla \cdot \mathbf{S}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{\mathbf{J} \cdot \mathbf{E}}{\Delta\varepsilon_{0}}$',...
+    'Interpreter','latex','FontSize',fs)
+%plot(xll,ve_2_1d)
+xlabel('$p / d_{i}$','Interpreter','latex','FontSize',fs)
+ylabel('Poynting terms','Interpreter','latex','FontSize',fs)
+xlim([5,9])
+ylim([-13, 13])
+hold off
+
+
+%--------------------------------------------------------------------------
 
 % This is about my old use of ii and ij instead of the yang definition
 %--------------------------------------------------------------------------
@@ -1223,7 +1444,7 @@ hold off
 
 %This is to save the plots
 %--------------------------------------------------------------------------
-%
+%{
 cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
 saveas(f214,strcat('s_upuaur_'+ string(N_steps) +'.png'));
 saveas(f2145,strcat('s_upuaur_subset_'+ string(N_steps) +'.png'));
@@ -1235,6 +1456,8 @@ saveas(f217,strcat('s_PGu_PGuii_PGuij_'+ string(N_steps) +'.png'));
 saveas(f2175,strcat('s_PGu_PGuii_PGuij_subset_'+ string(N_steps) +'.png'));
 saveas(f218,strcat('s_PGu_PGuij_over_PGu_10_'+ string(N_steps) +'.png'));
 saveas(f2185,strcat('s_PGu_PGuij_over_PGu_10_subset'+ string(N_steps) +'.png'));
+
+saveas(f217813,strcat('s_poynting_1d_p_subset_subset'+ string(N_steps) +'.png'));
 
 cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
 saveas(f27551,strcat('electron_ion_energy_terms_'+ string(N_steps) +'.png'));
@@ -1254,3 +1477,55 @@ clf(f218); clf(f2185);
 cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
 
 %--------------------------------------------------------------------------
+
+
+
+% To check the correlation between two variavles and the lag udivP and qnEu 
+%------------------------------------------------------------------------
+
+n = 0:15;
+x = 0.84.^n;
+y = circshift(x,5);
+fun1=ve_Div_Pet_1d;%./max(abs(ve_Div_Pet_1d));
+fun2=-qe_ne_ve_E_Gp_1d;%./max(abs(qe_ne_ve_E_Gp_1d));
+[c,lags] = xcorr(fun1,fun2);
+f65=figure(65);
+subplot(1,2,1)
+plot(yll,fun1,'-+r')
+hold on
+plot(yll,fun2,'-+b')
+xlim([6.4 7.4])
+yline(0,'--')
+hold off
+subplot(1,2,2)
+stem(lags,c)
+
+div_ve = divergence(Vev_x,Vev_z);
+
+f66=figure(66);
+subplot(1,4,1)
+hc=pcolor(Vev_x);set(hc,'edgecolor','none')
+colorbar
+subplot(1,4,2)
+hc=pcolor(Vev_y);set(hc,'edgecolor','none')
+colorbar
+subplot(1,4,3)
+hc=pcolor(Vev_z);set(hc,'edgecolor','none')
+colorbar
+subplot(1,4,4)
+hc=pcolor(div_ve);set(hc,'edgecolor','none')
+colorbar
+
+kee=0.5.*(ve_Gp{1,1}.*ve_Gp{1,1} + ve_Gp{1,2}.*ve_Gp{1,2} + ve_Gp{1,3}.*ve_Gp{1,3}).*me.*ne_Gp{1,1};
+%kee=0.5.*(Vev_x.*Vev_x+Vev_y.*Vev_y+Vev_z.*Vev_z).*me.*ne_Gp{1,1}
+
+f67=figure(67);
+subplot(1,3,1)
+hc=pcolor(div_ve);set(hc,'edgecolor','none')
+colorbar
+subplot(1,3,2)
+hc=pcolor(kee);set(hc,'edgecolor','none')
+colorbar; caxis([0,0.1*max(max(kee))])
+subplot(1,3,3)
+hc=pcolor(kee.*div_ve);set(hc,'edgecolor','none')
+colorbar; caxis([-0.01*max(max(kee.*div_ve)),0.01*max(max(kee.*div_ve))])

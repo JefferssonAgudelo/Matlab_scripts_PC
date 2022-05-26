@@ -377,7 +377,7 @@ cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
 
 % Components of u electrons
 %--------------------------------------------------------------------------
-%{
+%
 f214 = figure(214);
 plot(xll,smoothdata(ve_1_1d)./VA2c,'Color',colorblind(1,:), 'LineWidth', lw)
 hold on
@@ -387,12 +387,12 @@ xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$u_{p}/V_{A,i}$','$u_{a}/V_{A,i}$','$u_{r}/V_{A,i}$','Interpreter','latex','FontSize',fs)
+legend('$u_{p}/v_{A,i}$','$u_{a}/v_{A,i}$','$u_{r}/v_{A,i}$','Interpreter','latex','FontSize',fs)
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 ylabel('$\mathbf{u}_{e}$ components','Interpreter','latex','FontSize',fs)
 %xlim([4,8])
 ylim([-1.9, 1.9])
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 hold off
 
 f2145 = figure(2145);
@@ -404,12 +404,12 @@ xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$u_{p}/V_{A,i}$','$u_{a}/V_{A,i}$','$u_{r}/V_{A,i}$','Interpreter','latex','FontSize',fs)
+legend('$u_{p}/v_{A,i}$','$u_{a}/v_{A,i}$','$u_{r}/v_{A,i}$','Interpreter','latex','FontSize',fs)
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 ylabel('$\mathbf{u}_{e}$ components','Interpreter','latex','FontSize',fs)
 xlim([4,8])
 ylim([-1.9, 1.9])
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 hold off
 %}
 %--------------------------------------------------------------------------
@@ -427,7 +427,7 @@ xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$u_{p}/V_{A,i}$','$u_{a}/V_{A,i}$','$u_{r}/V_{A,i}$','Interpreter','latex','FontSize',fs)
+legend('$u_{p}/v_{A,i}$','$u_{a}/v_{A,i}$','$u_{r}/v_{A,i}$','Interpreter','latex','FontSize',fs)
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 ylabel('$\mathbf{u}_{i}$ components','Interpreter','latex','FontSize',fs)
 %xlim([4,8])
@@ -444,7 +444,7 @@ xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$u_{p}/V_{A,i}$','$u_{a}/V_{A,i}$','$u_{r}/V_{A,i}$','Interpreter','latex','FontSize',fs)
+legend('$u_{p}/v_{A,i}$','$u_{a}/v_{A,i}$','$u_{r}/v_{A,i}$','Interpreter','latex','FontSize',fs)
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 ylabel('$\mathbf{u}_{i}$ components','Interpreter','latex','FontSize',fs)
 xlim([4,8])
@@ -472,8 +472,8 @@ xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
 ax = gca;
 ax.FontSize = fs;
 ax.TickLabelInterpreter ='latex';
-legend('$|u_{e}|/V_{A,i}$',...
-    '$|u_{i}|/V_{A,i}$',...
+legend('$|u_{e}|/v_{A,i}$',...
+    '$|u_{i}|/v_{A,i}$',...
     '$n_{e}/n_{e0}$',...
     '$n_{i}/n_{i0}$',...
     '$p_{e}/P_{i0}$',...
@@ -771,7 +771,7 @@ hold off
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 f2755 = figure(2755);
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 h1=subaxis(2,2,1,'SV',0.02,'SH',0.0,'MR',0.0,'ML',0.0,'PL',0.05,'PR',0.01);
 plot(xll,smoothdata(total_dKedt_1d)./(VA2c*Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
 hold on
@@ -792,7 +792,7 @@ legend('$\frac{d \varepsilon^{k}_{e} /d t}{\Delta\varepsilon_{0}} $',...
 xlim([4,8])
 xticks([]);
 ylim([-3.2, 3.2]) %<------------
-ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('kinetic power density terms','Interpreter','latex','FontSize',fs)
 hold off
 % Thermal
 %------------------------------------
@@ -819,7 +819,7 @@ legend('$\frac{d \varepsilon^{th}_{e} / d t }{\Delta\varepsilon_{0}}$',...
 xticks([])
 xlim([4,8])
 ylim([-15.2, 15.2]) %<--------------
-ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Thermal power density terms','Interpreter','latex','FontSize',fs)
 hold off
 %--------------------------------------------------------------------------
 % Kinetic subplot(1,2,1)
@@ -842,7 +842,7 @@ legend('$\frac{d \varepsilon^{k}_{i} /d t}{\Delta\varepsilon_{0}} $',...
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 xlim([4,8])
 ylim([-3.2, 3.2]) %<------------
-ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('kinetic power density terms','Interpreter','latex','FontSize',fs)
 hold off
 % Thermal
 %------------------------------------
@@ -869,12 +869,12 @@ legend('$\frac{d \varepsilon^{th}_{i} / d t }{\Delta\varepsilon_{0}}$',...
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 xlim([4,8])
 ylim([-10.2, 10.2]) %<--------------
-ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Thermal power density terms','Interpreter','latex','FontSize',fs)
 hold off
 
 
 f27551 = figure(27551);
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 h1=subaxis(2,2,1,'SV',0.02,'SH',0.0,'MR',0.0,'ML',0.0,'PL',0.05,'PR',0.01);
 plot(xll,smoothdata(total_dKedt_1d)./(VA2c*Pi0),'Color',colorblind(10,:), 'LineWidth', lw)
 hold on
@@ -895,7 +895,8 @@ legend('$\frac{d \varepsilon^{k}_{e} /d t}{\Delta\varepsilon_{0}} $',...
 %xlim([4,8])
 xticks([]);
 ylim([-3.2, 3.2]) %<------------
-ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+%ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('kinetic power density terms','Interpreter','latex','FontSize',fs)
 hold off
 % Thermal
 %------------------------------------
@@ -922,7 +923,8 @@ legend('$\frac{d \varepsilon^{th}_{e} / d t }{\Delta\varepsilon_{0}}$',...
 xticks([])
 %xlim([4,8])
 ylim([-15.2, 15.2]) %<--------------
-ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+%ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Thermal power density terms','Interpreter','latex','FontSize',fs)
 hold off
 %--------------------------------------------------------------------------
 % Kinetic subplot(1,2,1)
@@ -945,7 +947,7 @@ legend('$\frac{d \varepsilon^{k}_{i} /d t}{\Delta\varepsilon_{0}} $',...
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 %xlim([4,8])
 ylim([-3.2, 3.2]) %<------------
-ylabel('kinetic Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('kinetic power density terms','Interpreter','latex','FontSize',fs)
 hold off
 % Thermal
 %------------------------------------
@@ -972,7 +974,7 @@ legend('$\frac{d \varepsilon^{th}_{i} / d t }{\Delta\varepsilon_{0}}$',...
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
 %xlim([4,8])
 ylim([-10.2, 10.2]) %<--------------
-ylabel('Thermal Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Thermal power density terms','Interpreter','latex','FontSize',fs)
 hold off
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
@@ -1072,7 +1074,7 @@ hold off
 %--------------------------------------------------------------------------
 
 f217 = figure(217);
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 plot(xll,smoothdata(Pet_grad_ve_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
 hold on
 plot(xll,smoothdata(p_theta_e_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
@@ -1087,13 +1089,13 @@ legend('$\frac{\nabla u_{e}:\overline{P}_{e}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs)
 %plot(xll,ve_2_1d)
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
-ylabel('Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Strain-pressure contributions','Interpreter','latex','FontSize',fs)
 xlim([4,8])
 ylim([-6.2, 6.2])
 hold off
 
 f2178 = figure(2178);
-sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 plot(xll,smoothdata(Pit_grad_vi_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
 hold on
 plot(xll,smoothdata(p_theta_i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
@@ -1108,10 +1110,53 @@ legend('$\frac{\nabla u_{i}:\overline{P}_{i}}{\Delta\varepsilon_{0}}$',...
     'Interpreter','latex','FontSize',fs)
 %plot(xll,ve_2_1d)
 xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
-ylabel('Energy rate terms','Interpreter','latex','FontSize',fs)
+ylabel('Strain-pressure contributions','Interpreter','latex','FontSize',fs)
 xlim([4,8])
 ylim([-2, 2])
 hold off
+
+%Dissipation surrogates
+%--------------------------------------------------------------------------
+f2171 = figure(2171);
+plot(xll,smoothdata(Zernitani_e_Gp_1d)./(Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+hold on
+plot(xll,smoothdata(p_theta_e_Gp_1d)./(Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(xll,smoothdata(PiD_e_Gp_1d)./(Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+%plot(xll,Pet_grad_ve_Gp_1d + ve_Div_Pet_1d,'g')
+xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
+ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
+%legend('dKe/dt','vedivPe','Kedivve','-qEe')
+legend('$\frac{D_{ze}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{p\theta_{e}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{PiD_{e}}{\Delta\varepsilon_{0}}$',...
+    'Interpreter','latex','FontSize',fs)
+%plot(xll,ve_2_1d)
+xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
+ylabel('Energy transfer rates electrons','Interpreter','latex','FontSize',fs)
+xlim([4,8])
+ylim([-0.5, 0.5])
+hold off
+
+f21781 = figure(21781);
+plot(xll,smoothdata(Zernitani_i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(1,:), 'LineWidth', lw)
+hold on
+plot(xll,smoothdata(p_theta_i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(2,:), 'LineWidth', lw)
+plot(xll,smoothdata(PiD_i_Gp_1d)./(VA2c*Pi0),'Color',colorblind(5,:), 'LineWidth', lw)
+%plot(xll,Pet_grad_ve_Gp_1d + ve_Div_Pet_1d,'g')
+xline(4,'--k'); xline(8,'--k'); xline(5.7,'--b')
+ax = gca; ax.FontSize = fs; ax.TickLabelInterpreter ='latex';
+%legend('dKe/dt','vedivPe','Kedivve','-qEe')
+legend('$\frac{D_{zi}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{p\theta_{i}}{\Delta\varepsilon_{0}}$',...
+    '$\frac{PiD_{i}}{\Delta\varepsilon_{0}}$',...
+    'Interpreter','latex','FontSize',fs)
+%plot(xll,ve_2_1d)
+xlabel('$r / d_{i}$','Interpreter','latex','FontSize',fs)
+ylabel('Dissipation surrogates','Interpreter','latex','FontSize',fs)
+xlim([4,8])
+ylim([-2, 2])
+hold off
+%--------------------------------------------------------------------------
 
 % This is about my old use of ii and ij instead of the yang definition
 %--------------------------------------------------------------------------
@@ -1220,9 +1265,11 @@ hold off
 %}
 %--------------------------------------------------------------------------
 
+
+%--------------------------------------------------------------------------
 %This is to save the plots
 %--------------------------------------------------------------------------
-%
+%{
 cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
 saveas(f214,strcat('s_upuaur_'+ string(N_steps) +'.png'));
 saveas(f2145,strcat('s_upuaur_subset_'+ string(N_steps) +'.png'));

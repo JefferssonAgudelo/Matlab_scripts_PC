@@ -241,7 +241,7 @@ i=30; %3, 22, 19
     %saveas(f1,'CB103_log10_P2D_1500.png');
     saveas(f33,'CB104_log10_P2D_2000_points.png');
     
-    
+    %----------------------------------------------------------------------
     
     %{
     f12=figure(12);
@@ -382,6 +382,8 @@ i=30; %3, 22, 19
     hold off
     %}
     
+    %----------------------------------------------------------------------
+        
     f51=figure(51);
     %loglog(spectraB.kper,spectraB.P1Dper/rms(spectraB.P1Dper), 'k', spectraE.kper,spectraE.P1Dper/rms(spectraE.P1Dper), 'b',spectravi.kper,spectravi.P1Dper/rms(spectravi.P1Dper), 'r', spectrave.kper,spectrave.P1Dper/rms(spectrave.P1Dper), 'g', spectrani.kper,spectrani.P1Dper/rms(spectrani.P1Dper), 'c',spectrane.kper,spectrane.P1Dper/rms(spectrane.P1Dper), 'm')
     loglog(spectraB.kper,(spectraB.P1Dper./spectraB.kper)/rms(spectraB.P1Dper), 'k',spectravi.kper,(spectravi.P1Dper./spectravi.kper)/rms(spectravi.P1Dper), 'r')

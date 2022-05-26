@@ -118,6 +118,20 @@ title('$B_{xy}$','Interpreter','latex','FontSize',fs)
 sgtitle('One Dipole, $B_{x} = 3Mxz/r^{5}; B_{y} = 3Myz/r^{5}; B_{z} = M(3z^{2} -r^(2))/r^{5}; M =$' + string(M_i),'Interpreter','latex','FontSize',fs)
 
 
+% This is to calculate the maximum values to normalise
+%--------------------------------------------------------------------------
+B1=Bx1d; B2=By1d; B3=Bz1d;
+Bfield=sqrt(B1.^2 + B2.^2 + B3.^2);
+Bmax_abs= max(max(max(Bfield))); % 136.7523
+
+% For Paraview 
+% Bfield_dipole
+% (Bx/136.7523)*iHat + (By/136.7523)*jHat + (Bz/136.7523)*kHat  
+%--------------------------------------------------------------------------
+
+ 
+
+
 %divB = divergence(XL,YL,ZL,Bx1d,By1d,Bz1d); 
 %f341=figure(341);
 %histogram(divB)
@@ -217,6 +231,7 @@ title('$B_{xy}$','Interpreter','latex','FontSize',fs)
 sgtitle('Single Harris, $B_{x} = B_{0}\tanh(z/\lambda); B_{y}=B_{0}; B_{z}=0$ ; $\lambda =$'...
     + string(lambda_i) + '$d_{i}$' ,'Interpreter','latex','FontSize',fs)
 %--------------------------------------------------------------------------
+
 
 % Force free Harris current sheet
 % Energy release and transfer in guide field reconnection. Birn & Hesse,
@@ -551,8 +566,8 @@ M=0.5*ones(size(XL));
 L0_i = (Ly/2); L0 = L0_i.*ones(size(XL));
 d0_i =(Lz/4); d0 =d0_i.*ones(size(XL));
 
-x1 = 2.5045;
-r0_i=4;%0.3;
+x1 = 2.4045;
+r0_i=10;%0.3;
 r0=r0_i.*ones(size(XL));
 Bc = 1.0;
 
@@ -562,11 +577,13 @@ h0_i =(Lz/4); h0 =h0_i.*ones(size(XL)); %???
 M2 = M./(I0.*d0);
 h0p = d0.*( (M2 -1) + sqrt(M2.^2 - 2.*M2) );
 h0m = d0.*( (M2 -1) - sqrt(M2.^2 - 2.*M2) );
-%h0 = h0m;
+%h0 = h0m; % This doesn't work in the grid positive negative
+%h0 = h0p; % This doesn't work in the grid positive negative
 
 R_d = sqrt((YL-L0).^2 + (ZL + d0).^2);
 rc = sqrt((YL-L0).^2 + (ZL - h0).^2);
-alpha = 24.045;
+alpha_i = 2.4045; % This is the x_{1} of the paper
+alpha = alpha_i./r0_i; 
 
 alpharc = alpha.*rc;
 J0 = besselj(0,alpharc);
@@ -586,7 +603,7 @@ By_fr_1 = (-Bc.*J1 .*(ZL - h0)) ./ sqrt( (YL - L0).^2 + (ZL - h0).^2 ) + ...
 Bz_fr_1 = (Bc.*J1 .*(YL - L0)) ./ sqrt( (YL - L0).^2 + (ZL - h0).^2 ) - ...
         (I0./(2.*pi)) .* ( (YL - L0) ./ ( (YL - L0).^2 + (ZL + h0).^2 ) ) ;
 
-Bx_fr_2 = Bc.*J0; 
+Bx_fr_2 = 0.*Bc.*J0; % Bc.*J0; is it 0? 
 By_fr_2 = (-I0./(2.*pi)) .* ( (ZL - h0) ./ ( (YL - L0).^2 + (ZL - h0).^2 ) ) + ...
         (I0./(2.*pi)) .* ( (ZL + h0) ./ ( (YL - L0).^2 + (ZL + h0).^2 ) ) ;
 Bz_fr_2 = (I0./(2.*pi)) .* ( (YL - L0) ./ ( (YL - L0).^2 + (ZL - h0).^2 ) ) - ...
@@ -595,13 +612,33 @@ Bz_fr_2 = (I0./(2.*pi)) .* ( (YL - L0) ./ ( (YL - L0).^2 + (ZL - h0).^2 ) ) - ..
 
 % Get magnetic field satisfying the conditions 
 %--------------------------------------------------------------------------
-Bx_fr_12 = Bx_fr_1.*cnd1 + Bx_fr_2.*cnd2; 
+Bx_fr_12 = Bx_fr_1.*cnd1 + Bx_fr_2.*cnd2; % for some reason the Bx_fr_1 returns funny features this is why f37 shows fr_12_2
 By_fr_12 = By_fr_1.*cnd1 + By_fr_2.*cnd2; 
 Bz_fr_12 = Bz_fr_1.*cnd1 + Bz_fr_2.*cnd2; 
 
 Bx_fr_12_2 = Bx_fr_2; 
 By_fr_12_2 = By_fr_2; 
 Bz_fr_12_2 = Bz_fr_2; 
+
+% This is the version using the function form
+%--------------------------------------------------------------------------
+cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
+L0_i = (Ly/8); h0_i = (Lz/16); x1 = 2.4045; r0_i = 10; Bc = 0.01; 
+d0_i = (Lz/4); M0 = 0.5;
+[Bx_fr_12, By_fr_12, Bz_fr_12] = Real_One_flux_rope(XL,YL,ZL,L0_i,d0_i,M0,x1,r0_i,Bc,h0_i);
+%--------------------------------------------------------------------------
+
+% This is to calculate the maximum values to normalise
+%--------------------------------------------------------------------------
+B1=Bx_fr_12; B2=By_fr_12; B3=Bz_fr_12;
+Bfield=sqrt(B1.^2 + B2.^2 + B3.^2);
+Bmax_abs= max(max(max(Bfield))); % 0.1645
+
+% For Paraview 
+% Bfield_three_flux
+% (Bx/0.3458)*iHat + (By/0.3458)*jHat + (Bz/0.3458)*kHat 
+%--------------------------------------------------------------------------
+
 %--------------------------------------------------------------------------
 % The condition is fullfiled where is it?
 %{
@@ -625,10 +662,9 @@ end
 %subplot(2,3,2)
 %-------------------------------------------------------------------------- 
 
-%-------------------------------------------------------------------------- 
-
 %--------------------------------------------------------------------------
-XYZ7=stream3(XL,YL,ZL,Bx_fr_12_2,By_fr_12_2,Bz_fr_12_2,xstart,ystart,zstart);
+XYZ7=stream3(XL,YL,ZL,Bx_fr_12,By_fr_12,Bz_fr_12,xstart,ystart,zstart);
+%XYZ7=stream3(XL,YL,ZL,Bx_fr_12_2,By_fr_12_2,Bz_fr_12_2,xstart,ystart,zstart);
 f37=figure(37);
 hline=streamline(XYZ7);
 xlabel('$x/d_{i}$','Interpreter','latex','FontSize',fs); xlim([xl(1),xl(end)])
@@ -785,9 +821,403 @@ ylabel('$z/d_{i}$','Interpreter','latex','FontSize',fs)
 xlabel('$y/d_{i}$','Interpreter','latex','FontSize',fs)
 title('$B_{xy}$','Interpreter','latex','FontSize',fs)
 sgtitle('One Dipole, $B_{x} = 3Mxz/r^{5}; B_{y} = 3Myz/r^{5}; B_{z} = M(3z^{2} -r^(2))/r^{5}; M =$' + string(M_i),'Interpreter','latex','FontSize',fs)
+%--------------------------------------------------------------------------
+
+% This is to calculate the maximum values to normalise
+%--------------------------------------------------------------------------
+B1=Bx1dm; B2=By1dm; B3=Bz1dm;
+Bfield=sqrt(B1.^2 + B2.^2 + B3.^2);
+Bmax_abs= max(max(max(Bfield))) % 1.4137e+03
+%--------------------------------------------------------------------------
+
+
+
 
 
 %--------------------------------------------------------------------------
+% Real Two flux ropes (in construction) This is the one for three!
+% fluxropes
+%--------------------------------------------------------------------------
+% Lets define the grid
+%--------------------------------------------------------------------------
+Lx=40; Ly=40; Lz=40;
+Nx = 161; Ny = 161; Nz = 161;
+nx = Nx-1; ny = Ny-1; nz = Nz-1;
+dx = Lx/(nx); dy = Ly/(ny); dz = Lz/(nz);  
+
+%Lx=8; Ly=9; Lz=10; nx = 80; ny = 90; nz = 100;
+
+xl=linspace(-Lx,Lx,nx); yl=linspace(-Ly,Ly,ny); zl=linspace(-Lz,Lz,nz);
+%xl=linspace(0,Lx,nx); yl=linspace(0,Ly,ny); zl=linspace(0,Lz,nz);
+
+%rl=sqrt(xl.^2 + yl.^2 + zl.^2); This doesn't work
+[XL, YL, ZL]=meshgrid(xl,yl,zl);
+
+% For the streamlines
+fr=1;
+NN=200;  %Do this just once
+
+ax=xl(1); bx=xl(end);
+ay=yl(1); by=yl(end);
+az=zl(1); bz=zl(end);
+xstart = ax + (bx-ax)*rand(NN,1);
+ystart = ay + (by-ay)*rand(NN,1);
+zstart = az + (bz-az)*rand(NN,1);
+
+fs=14; % Font size
+sli=1; % slide 
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% parameters to make it a function
+%--------------------------------------------------------------------------
+%L0_i = (Ly/2); % about y position
+%h0_i = (Lz/4); % about z position
+%d0_i = (Lz/4); % This is for R_d but I am not using it yet 
+%M0 = 0.5; 
+%x1 = 2.5045; 
+%r0_i = 10;%0.3; 
+%using 0.4 the internal part doesn't look funny. 
+% I mean, without an elongated field line within. Although this might be the correct thing 
+%Bc = 1.0; 
+
+cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
+
+L0_i = (Ly/8); h0_i = (Lz/16); x1 = 2.4045; r0_i = 10; Bc = 0.01; 
+d0_i = (Lz/4); M0 = 0.5;
+%[Bx_fr1, By_fr1, Bz_fr1] = Real_One_flux_rope(XL,YL-20,ZL-20,L0_i,d0_i,M0,x1,r0_i,Bc,h0_i);
+[Bx_fr1, By_fr1, Bz_fr1] = Real_One_flux_rope(XL,YL-20,ZL+20,L0_i,d0_i,M0,x1,r0_i,Bc,h0_i);
+
+L0_i = (Ly/8); h0_i = (Lz/16); x1 = 2.4045; r0_i = 10; Bc = 0.01; 
+d0_i = (Lz/4); M0 = 0.5; 
+%[Bx_fr2, By_fr2, Bz_fr2] = Real_One_flux_rope(XL,YL,-ZL,L0_i,d0_i,M0,x1,r0_i,Bc,h0_i);
+[Bx_fr2, By_fr2, Bz_fr2] = Real_One_flux_rope(XL,YL+20,ZL-20,L0_i,d0_i,M0,x1,r0_i,Bc,h0_i);
+
+L0_i = (Ly/8); h0_i = (Lz/16); x1 = 2.4045; r0_i = 10; Bc = 0.01; 
+d0_i = (Lz/4); M0 = 0.5; 
+[Bx_fr3, By_fr3, Bz_fr3] = Real_One_flux_rope(XL,-(YL-20),-(ZL-20),L0_i,d0_i,M0,x1,r0_i,Bc,h0_i);
+
+
+Bx_T = Bx_fr1 + Bx_fr2 + Bx_fr3; % -
+By_T = By_fr1 + By_fr2 + By_fr3; % -
+Bz_T = Bz_fr1 + Bz_fr2 + Bz_fr3;
+
+XYZ7=stream3(XL,YL,ZL,Bx_fr2,By_fr2,Bz_fr2,xstart,ystart,zstart);
+f38=figure(38);
+hline=streamline(XYZ7);
+set( hline, 'Color', 'k' ) %if you prefer
+xlabel('$x/d_{i}$','Interpreter','latex','FontSize',fs); xlim([xl(1),xl(end)])
+ylabel('$y/d_{i}$','Interpreter','latex','FontSize',fs); ylim([yl(1),yl(end)])
+zlabel('$z/d_{i}$','Interpreter','latex','FontSize',fs); zlim([zl(1),zl(end)])
+view(3);
+title('Flux rope field lines 2','Interpreter','latex','FontSize',fs)
+
+XYZ7=stream3(XL,YL,ZL,Bx_T,By_T,Bz_T,xstart,ystart,zstart);
+f41=figure(41);
+hline=streamline(XYZ7);
+set( hline, 'Color', 'k' ) %if you prefer
+xlabel('$x/d_{i}$','Interpreter','latex','FontSize',fs); xlim([xl(1),xl(end)])
+ylabel('$y/d_{i}$','Interpreter','latex','FontSize',fs); ylim([yl(1),yl(end)])
+zlabel('$z/d_{i}$','Interpreter','latex','FontSize',fs); zlim([zl(1),zl(end)])
+view(3);
+title('Flux rope field lines 123','Interpreter','latex','FontSize',fs)
+
+
+% Now doing a rotation
+L0_i = (Ly/(8)); h0_i = (Lz/(16)); x1 = 2.4045; r0_i = 10; Bc = 0.1; 
+d0_i = (Lz/4); M0 = 0.5;
+[Bx_R1, By_R1, Bz_R1] = Real_One_flux_rope(XL,YL,ZL,L0_i,d0_i,M0,x1,r0_i,Bc,h0_i);
+%[Bx_R2, By_R2, Bz_R2] = Real_One_flux_rope(XL,YL,-ZL,L0_i,d0_i,M0,x1,r0_i,Bc,h0_i);
+
+%
+t=pi/6; % multiply here for a random number
+Rx = [1 0 0; 0 cos(t) -sin(t) ; 0 sin(t) cos(t)] ;
+Ry = [cos(t) 0 sin(t) ; 0 1 0 ; -sin(t) 0  cos(t)] ;
+Rz = [cos(t) -sin(t) 0 ; sin(t) cos(t) 0 ; 0 0 1] ;
+
+Rr=Ry;
+
+XL_p = XL.*Rr(1,1) + YL.*Rr(2,1) + ZL.*Rr(3,1);
+YL_p = XL.*Rr(1,2) + YL.*Rr(2,2) + ZL.*Rr(3,2);
+ZL_p = XL.*Rr(1,3) + YL.*Rr(2,3) + ZL.*Rr(3,3);
+
+Bx_p = Bx_R1.*Rr(1,1) + By_R1.*Rr(2,1) + Bz_R1.*Rr(3,1);
+By_p = Bx_R1.*Rr(1,2) + By_R1.*Rr(2,2) + Bz_R1.*Rr(3,2);
+Bz_p = Bx_R1.*Rr(1,3) + By_R1.*Rr(2,3) + Bz_R1.*Rr(3,3);
+
+%--------------------------------------------------------------------------
+XYZ7=stream3(XL_p,YL_p,ZL_p,Bx_p,By_p,Bz_p,xstart,ystart,zstart);
+%XYZ7=stream3(XL,YL,ZL,Bx_T,By_T,Bz_T,xstart,ystart,zstart);
+f40=figure(40);
+hline=streamline(XYZ7);
+set( hline, 'Color', 'k' ) %if you prefer
+xlabel('$x/d_{i}$','Interpreter','latex','FontSize',fs); xlim([xl(1),xl(end)])
+ylabel('$y/d_{i}$','Interpreter','latex','FontSize',fs); ylim([yl(1),yl(end)])
+zlabel('$z/d_{i}$','Interpreter','latex','FontSize',fs); zlim([zl(1),zl(end)])
+view(3);
+title('Flux rope field lines','Interpreter','latex','FontSize',fs)
+%--------------------------------------------------------------------------
+
+% This is to calculate the maximum values to normalise
+%--------------------------------------------------------------------------
+B1=Bx_T; B2=By_T; B3=Bz_T;
+Bfield=sqrt(B1.^2 + B2.^2 + B3.^2);
+Bmax_abs= max(max(max(Bfield))); % 0.3458
+
+% For Paraview 
+% Bfield_three_flux
+% (Bx/0.3458)*iHat + (By/0.3458)*jHat + (Bz/0.3458)*kHat  
+%--------------------------------------------------------------------------
+
+
+% this is to save the data for the three flux ropes
+%--------------------------------------------------------------------------
+cd '/Volumes/PSC_DiRAC_DATA/MagneTORE/Synthetic_field_configurations'
+i=1;
+for i=1:2
+    if (i==1)
+        filename='Three_fluxropes';
+        filenameh5 = 'Three_fluxropes.h5'; 
+        Bxh5 = permute(Bx_T,[2,1,3]);
+        Byh5 = permute(By_T,[2,1,3]);
+        Bzh5 = permute(Bz_T,[2,1,3]);
+    elseif (i==2)
+        filename='Tilted_fluxrope';
+        filenameh5 = 'Tilted_fluxrope.h5'; 
+        Bxh5 = permute(Bx_p,[2,1,3]);
+        Byh5 = permute(By_p,[2,1,3]);
+        Bzh5 = permute(Bz_p,[2,1,3]); 
+    end
+
+%if isfile('dipole.h5'), delete dipole.h5; end
+
+ssA=size(permute(Bx_T,[2,1,3]));
+xh5=permute(XL,[2,1,3]); yh5=permute(YL,[2,1,3]); zh5=permute(ZL,[2,1,3]);
+% y,x,z
+
+% Create the h5 data file
+h5create(filenameh5,'/Bx',ssA)
+h5create(filenameh5,'/By',ssA)
+h5create(filenameh5,'/Bz',ssA)
+% Write the h5 data file
+h5write(filenameh5, '/Bx', Bxh5)
+h5write(filenameh5, '/By', Byh5)
+h5write(filenameh5, '/Bz', Bzh5)
+
+% This only works saving the scalar components
+% Also I have to change by hand the resolution in the xdmfwrite.m file % <------
+xdmfwrite(filenameh5,ssA,'double');
+end
+%--------------------------------------------------------------------------
+
+
+
+%--------------------------------------------------------------------------
+% Toroidal field
+%--------------------------------------------------------------------------
+
+% Defining the coordinates so its only positive
+%--------------------------------------------------------------------------
+Lx=40; Ly=40; Lz=40;
+Nx = 161; Ny = 161; Nz = 161;
+nx = Nx-1; ny = Ny-1; nz = Nz-1;
+dx = Lx/(nx); dy = Ly/(ny); dz = Lz/(nz);  
+
+xl=linspace(0,Lx,nx); yl=linspace(0,Ly,ny); zl=linspace(0,Lz,nz);
+
+[XL, YL, ZL]=meshgrid(xl,yl,zl);
+
+% For the streamlines
+fr=1; NN=200;  %Do this just once
+
+ax=xl(1); bx=xl(end);
+ay=yl(1); by=yl(end);
+az=zl(1); bz=zl(end);
+xstart = ax + (bx-ax)*rand(NN,1);
+ystart = ay + (by-ay)*rand(NN,1);
+zstart = az + (bz-az)*rand(NN,1);
+
+fs=14; % Font size
+sli=1; % slide 
+%--------------------------------------------------------------------------
+% Lets define the coordinate system
+%--------------------------------------------------------------------------
+
+R0=10;
+r0=3;
+mu0=acosh(R0/r0);
+AL= r0.*sinh(mu0).*ones(size(XL));
+coshmu = ((XL.^2 + YL.^2 + ZL.^2 + AL.^2)./sqrt((XL.^2 + YL.^2 + ZL.^2 + AL.^2).^2 - 4.*(AL.^2).*(XL.^2 + YL.^2)));
+coseta = ((XL.^2 + YL.^2 + ZL.^2 - AL.^2)./sqrt((XL.^2 + YL.^2 + ZL.^2 - AL.^2).^2 - 4.*(AL.^2).*(ZL.^2)));
+PHI = atan(YL./XL);
+
+%--------------------------------------------------------------------------
+
+% Define the magnetic components
+%--------------------------------------------------------------------------
+
+% https://en.wikipedia.org/wiki/Whipple_formulae
+% denote the Legendre functions of the second kind (vanishing in the central line of the toroid). A
+
+% Define the CKN coeficients
+
+C1 = ones(size(XL)); % I will choose this so there is no parker spiral
+% To save space I will take only C1
+
+K1 = (AL.*2^(3/2))./pi;
+K2 = K1; 
+K3 = K1;
+K4 = ((AL.^2).*2^(5/2))./(3.*pi);
+K5 = ((AL.^2).*2^(3/2))./(pi);
+K6 = ((AL.^2).*2^(3/2))./(3.*pi);
+K7 = K4;
+K8 = K4;
+
+N1 = cos(PHI);
+N2 = sin(PHI);
+N3 = 1;
+N4 = cos(2.*PHI);
+N5 = N3;
+N6 = sin(2.*PHI);
+N7 = N1;
+N8 = N2;
+
+% this needs the derivatives of the expressions
+
+CKN1 = C1.* K1.*N1;
+CKN2 = C1.* K2.*N1;
+CKN3 = C1.* K3.*N1;
+CKN4 = C1.* K4.*N1;
+CKN5 = C1.* K5.*N1;
+CKN6 = C1.* K6.*N1;
+CKN7 = C1.* K7.*N1;
+CKN8 = C1.* K8.*N1;
+
+CKNT8 = CKN1+CKN2+CKN3+CKN4+CKN5+CKN6+CKN7+CKN8;   
+
+% Now the terms that include the legendre functions
+
+%------>
+%Error using legendre (line 102) X must be real and in the range (-1,1).
+%------>
+% This is why I had to normalise
+coshmu_n = coshmu./sqrt(sum(coshmu.^2));
+sinhmu_n = sqrt(1-coshmu_n.^2);
+coseta_n = coseta./sqrt(sum(coseta.^2));
+sineta_n = sqrt(1-coseta_n.^2);
+
+a1 = 1; % This needs to be changed accordingly
+G1 = legendre(1,coshmu_n,'sch') ;%- a1.*legendre(1,coshmu_n);
+G2 = legendre(1,coshmu_n,'sch') ;%- a1.*legendre(1,coshmu_n);
+G3 = legendre(1,coshmu_n,'sch') ;%- a1.*legendre(1,coshmu_n);
+G4 = legendre(2,coshmu_n,'sch') ;%- a1.*legendre(2,coshmu_n);
+G5 = legendre(1,coshmu_n,'sch') ;%- a1.*legendre(1,coshmu_n);
+G6 = legendre(2,coshmu_n,'sch') ;%- a1.*legendre(2,coshmu_n);
+G7 = legendre(1,coshmu_n,'sch') ;%- a1.*legendre(1,coshmu_n);
+G8 = legendre(1,coshmu_n,'sch') ;%- a1.*legendre(1,coshmu_n);
+
+G1p = diff(G1); % This unfurtonatelly are numerical differentiations 
+%so they reduce one cell it must be changed
+G2p = diff(G2);
+G3p = diff(G3);
+G4p = diff(G4);
+G5p = diff(G5);
+G6p = diff(G6);
+G7p = diff(G7);
+G8p = diff(G8);
+
+n = 1; % This needs to be changed accordingly
+H1n = coseta_n;   %cos(n.*ETA);
+H2n = H1n;
+H3n = sineta_n; %n.*sin(n.*ETA);
+H4n = H1n;
+H5n = (n^2 + 1/4).*H1n;
+H6n = H1n;
+H7n = H3n;
+H8n = H3n;
+
+H1np = diff(H1n);
+H2np = diff(H2n);
+H3np = diff(H3n);
+H4np = diff(H4n);
+H5np = diff(H5n);
+H6np = diff(H6n);
+H7np = diff(H7n);
+H8np = diff(H8n);
+
+
+f1=figure(1)
+plot(G1(1,:,1,1))
+
+% I am not sure this is the right thing to do. But this is to do the
+% product
+
+G1c=squeeze(G1(1,:,:,:));
+G2c=squeeze(G2(1,:,:,:));
+G3c=squeeze(G3(1,:,:,:));
+G4c=squeeze(G4(1,:,:,:));
+G5c=squeeze(G5(1,:,:,:));
+G6c=squeeze(G6(1,:,:,:));
+G7c=squeeze(G7(1,:,:,:));
+G8c=squeeze(G8(1,:,:,:));
+
+G1pc=squeeze(G1p(1,:,:,:));
+G2pc=squeeze(G2p(1,:,:,:));
+G3pc=squeeze(G3p(1,:,:,:));
+G4pc=squeeze(G4p(1,:,:,:));
+G5pc=squeeze(G5p(1,:,:,:));
+G6pc=squeeze(G6p(1,:,:,:));
+G7pc=squeeze(G7p(1,:,:,:));
+G8pc=squeeze(G8p(1,:,:,:));
+
+% Now calculating the product
+GH8mu = (G1c+2.*(coshmu_n-coseta_n).*G1pc).*H1n +...
+        (G2c+2.*(coshmu_n-coseta_n).*G2pc).*H2n +...;
+        (G3c+2.*(coshmu_n-coseta_n).*G3pc).*H3n +...
+        (G4c+2.*(coshmu_n-coseta_n).*G4pc).*H4n +...
+        (G5c+2.*(coshmu_n-coseta_n).*G5pc).*H5n +...
+        (G6c+2.*(coshmu_n-coseta_n).*G6pc).*H6n +...
+        (G7c+2.*(coshmu_n-coseta_n).*G7pc).*H7n +...
+        (G8c+2.*(coshmu_n-coseta_n).*G8pc).*H8n;
+    
+    % This should have the Hinp at the end, not Hin
+GH8eta =G1c.* (sineta_n.*H1n + 2.*(coshmu_n -coseta_n).* H1n); + ...    
+        G2c.* (sineta_n.*H2n + 2.*(coshmu_n -coseta_n).* H2n) + ...
+        G3c.* (sineta_n.*H3n + 2.*(coshmu_n -coseta_n).* H3n) + ...
+        G4c.* (sineta_n.*H4n + 2.*(coshmu_n -coseta_n).* H4n) + ...
+        G5c.* (sineta_n.*H5n + 2.*(coshmu_n -coseta_n).* H5n) + ...
+        G6c.* (sineta_n.*H6n + 2.*(coshmu_n -coseta_n).* H6n) + ...
+        G7c.* (sineta_n.*H7n + 2.*(coshmu_n -coseta_n).* H7n) + ...
+        G8c.* (sineta_n.*H8n + 2.*(coshmu_n -coseta_n).* H8n);
+
+GH8phi =G1c.*H1n + ...
+        G2c.*H2n + ...
+        G3c.*H3n + ...
+        G4c.*H4n + ...
+        G5c.*H5n + ...
+        G6c.*H6n + ...
+        G7c.*H7n + ...
+        G8c.*H8n ;
+        
+Bmu = ((sinhmu_n .* sqrt(coshmu_n-coseta_n))./(2.*AL)) .* CKNT8.*GH8mu;
+
+Beta = (sqrt(coshmu_n-coseta_n)./(2.*AL)) .* CKNT8 .* GH8eta ; 
+
+Bphi = ((coshmu_n-coseta_n).^(3/2)./(AL.*sinhmu_n)) .* CKNT8 .*GH8phi; %This should be CKNTP8 not CKNT8
+    
+XYZ7=stream3(XL,YL,ZL,Bmu,Beta,Bphi,xstart,ystart,zstart);
+f39=figure(39);
+hline=streamline(XYZ7);
+set( hline, 'Color', 'k' ) %if you prefer
+xlabel('$x/d_{i}$','Interpreter','latex','FontSize',fs); xlim([xl(1),xl(end)])
+ylabel('$y/d_{i}$','Interpreter','latex','FontSize',fs); ylim([yl(1),yl(end)])
+zlabel('$z/d_{i}$','Interpreter','latex','FontSize',fs); zlim([zl(1),zl(end)])
+view(3);
+title('Flux rope field lines','Interpreter','latex','FontSize',fs)
+
+%--------------------------------------------------------------------------
+
+
 
 % Save the plots
 %--------------------------------------------------------------------------
@@ -855,6 +1285,9 @@ subplot(3,3,9)
 dump=DIVB{1,9}; histogram(dump,100); title('Multiple dipoles')
 sgtitle('$$\nabla \cdot B$$' ,'Interpreter','latex','FontSize',fs)
 
+
+f3411=figure(3411);
+dump=DIVB{1,7}; histogram(dump,100); title('Flux rope')
 %--------------------------------------------------------------------------
 
 %
@@ -925,7 +1358,7 @@ for i=1:9
 
 %if isfile('dipole.h5'), delete dipole.h5; end
 
-ssA=size(permute(Bx1d,[2,1,3]));
+ssA=size(permute(Bxh5,[2,1,3]));
 xh5=permute(XL,[2,1,3]); yh5=permute(YL,[2,1,3]); zh5=permute(ZL,[2,1,3]);
 % y,x,z
 
@@ -960,6 +1393,10 @@ h5write(filenameh5, '/Bz', Bzh5)
 % Also I have to change by hand the resolution in the xdmfwrite.m file % <------
 xdmfwrite(filenameh5,ssA,'double');
 end
+%--------------------------------------------------------------------------
+
+
+
 
 
 

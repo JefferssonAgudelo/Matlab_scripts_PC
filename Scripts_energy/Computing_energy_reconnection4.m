@@ -39,7 +39,7 @@ H=zeros(N);
 % To save some variables in a file for all the times. Uncomment this when
 % running again the program to generate the data
 %--------------------------------------------------------------------------
-%
+%{
 Vectorsc=cell(6,N);
 Tensorsc=cell(4,N);
 Densitiesc=cell(2,N);
@@ -50,6 +50,10 @@ Int_energy_terms_ic=cell(7,N);
 Int_energy_terms_ec=cell(7,N);
 Param_proxiesc=cell(6,N);
 %}
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+ptheta_pidi_avg=cell(N,4);
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -77,6 +81,7 @@ k00=sqrt(k0x*k0x + k0y*k0y + k0z*k0z);
 
 in=19;
 
+%Here is where the xll is 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,8 +138,8 @@ vi{1,3} =h5read(fileID,strcat(V_1st,'/vz_i/p0/3d'),start,count)./VA2c; %viz=viz(
 ve{1,1} =h5read(fileID,strcat(V_1st,'/vx_e/p0/3d'),start,count)./VA2c; %vex=vex(nx1:nx2,ny1:ny2,nz1:nz2);
 ve{1,2} =h5read(fileID,strcat(V_1st,'/vy_e/p0/3d'),start,count)./VA2c; %vey=vey(nx1:nx2,ny1:ny2,nz1:nz2);
 ve{1,3} =h5read(fileID,strcat(V_1st,'/vz_e/p0/3d'),start,count)./VA2c; %vez=vez(nx1:nx2,ny1:ny2,nz1:nz2);
-nic1{1,1} = h5read(fileID,strcat(n_1st,'/n_i/p0/3d'),start,count); %ni=ni(nx1:nx2,ny1:ny2,nz1:nz2);
-nec1{1,1} = h5read(fileID,strcat(n_1st,'/n_e/p0/3d'),start,count); %ne=ne(nx1:nx2,ny1:ny2,nz1:nz2);
+ni{1,1} = h5read(fileID,strcat(n_1st,'/n_i/p0/3d'),start,count); %ni=ni(nx1:nx2,ny1:ny2,nz1:nz2);
+ne{1,1} = h5read(fileID,strcat(n_1st,'/n_e/p0/3d'),start,count); %ne=ne(nx1:nx2,ny1:ny2,nz1:nz2);
 Pij_i{1,1} =h5read(fileID,strcat(T_1st,'/Txx_i/p0/3d'),start,count)./Pi0; %Pxxi=Pxxi(nx1:nx2,ny1:ny2,nz1:nz2);
 Pij_i{1,2} =h5read(fileID,strcat(T_1st,'/Txy_i/p0/3d'),start,count)./Pi0; %Pxyi=Pxyi(nx1:nx2,ny1:ny2,nz1:nz2);
 Pij_i{1,3} =h5read(fileID,strcat(T_1st,'/Txz_i/p0/3d'),start,count)./Pi0; %Pxzi=Pxzi(nx1:nx2,ny1:ny2,nz1:nz2);
@@ -242,6 +247,7 @@ ve = Ref_Frame_2(uip,ujp,ukp,Qb); clearvars Qb
 %--------------------------------------------------------------------------
 %Now the proper transformation of the tensor.
 %--------------------------------------------------------------------------
+
 %For ions
 GPij=cell(3,3);
 %--------------------------------------------------------------------------
@@ -259,6 +265,24 @@ Qb=GPij;
 Pij_e = Ref_Frame_2(uip,ujp,ukp,Qb); clearvars Qb
 %--------------------------------------------------------------------------
 
+% This is to get the central momment pressure.
+%------------------------------------------------------------------
+PPij_i=cell(3,3);
+PPij_e=cell(3,3);
+for i=1:3
+    for j=1:3
+        if(isempty(Pij_i{i,j}) == 1)
+            continue
+        end
+        PPij_i{i,j} = Pij_i{i,j} - ni{1,1}.*mi.*vi{1,i}.*vi{1,j};
+        PPij_e{i,j} = Pij_e{i,j} - ne{1,1}.*me.*ve{1,i}.*ve{1,j};
+    end
+end
+
+% This is just to rename the variable  
+Pij_i = PPij_i;
+Pij_e = PPij_e;
+%------------------------------------------------------------------
 
 
 %In the new reference frame the (rh,a,p) calculate the energy terms
@@ -266,14 +290,15 @@ Pij_e = Ref_Frame_2(uip,ujp,ukp,Qb); clearvars Qb
 % This is to unlock. These are the lines to calculate the energy terms
 %{\  
 % Get again the densities right
-ni=nic1{1,1};
-ne=nec1{1,1};
+%ni=nic1{1,1};
+%ne=nec1{1,1};
 % Kinetic energy densities 
 %------------------------------------------------------------------
-Ki = 0.5.*ni.* mi.*(vi{1,1}.*vi{1,1} + vi{1,2}.*vi{1,2} + vi{1,3}.*vi{1,3});
-Ke = 0.5.*ne.* me.*(ve{1,1}.*ve{1,1} + ve{1,2}.*ve{1,2} + ve{1,3}.*vi{1,3});
+Ki = 0.5.*ni{1,1}.* mi.*(vi{1,1}.*vi{1,1} + vi{1,2}.*vi{1,2} + vi{1,3}.*vi{1,3});
+Ke = 0.5.*ne{1,1}.* me.*(ve{1,1}.*ve{1,1} + ve{1,2}.*ve{1,2} + ve{1,3}.*vi{1,3});
 %------------------------------------------------------------------
 
+% FIXME % The transformation of P must be done first
 % Internal energy densities from Fadanelli et al, 2020 
 %------------------------------------------------------------------
 Ui = 0.5.*(Pij_i{1,1} + Pij_i{2,2} + Pij_i{3,3});
@@ -466,10 +491,10 @@ Ui_Div_vi = Ui.*Div_vi;
 Ue_Div_ve = Ue.*Div_ve; 
 
 %qi_ni_vi_E
-qi_ni_vi_E = qi.*ni.*(vi{1,1}.*E{1,1} + vi{1,2}.*E{1,2} + vi{1,3}.*E{1,3});
+qi_ni_vi_E = qi.*ni{1,1}.*(vi{1,1}.*E{1,1} + vi{1,2}.*E{1,2} + vi{1,3}.*E{1,3});
 
 %qe_ne_ve_E
-qe_ne_ve_E = qe.*ne.*(ve{1,1}.*E{1,1} + ve{1,2}.*E{1,2} + ve{1,1}.*E{1,3});
+qe_ne_ve_E = qe.*ne{1,1}.*(ve{1,1}.*E{1,1} + ve{1,2}.*E{1,2} + ve{1,1}.*E{1,3});
 
 %vi_grad_Ki
 vi_grad_Ki = vi{1,1}.*grad_Ki{1,1} + vi{1,2}.*grad_Ki{1,2} + vi{1,3}.*grad_Ki{1,3}; 
@@ -487,13 +512,13 @@ ve_grad_Ue = ve{1,1}.*grad_Ue{1,1} + ve{1,2}.*grad_Ue{1,2} + ve{1,3}.*grad_Ue{1,
 
 % Zenitani paramater
 %------------------------------------------------------------------
-Zernitani_i =  (J{1,1} -nic1{1,1}.*qi.*vi{1,1}).*E{1,1} + J{1,1}.*(vi{1,2}.*B{1,3} -vi{1,3}.*B{1,2}) + ...
-               (J{1,2} -nic1{1,1}.*qi.*vi{1,2}).*E{1,2} + J{1,2}.*(vi{1,3}.*B{1,1} -vi{1,1}.*B{1,3}) + ...
-               (J{1,3} -nic1{1,1}.*qi.*vi{1,3}).*E{1,3} + J{1,3}.*(vi{1,1}.*B{1,2} -vi{1,2}.*B{1,1});
+Zernitani_i =  (J{1,1} -ni{1,1}.*qi.*vi{1,1}).*E{1,1} + J{1,1}.*(vi{1,2}.*B{1,3} -vi{1,3}.*B{1,2}) + ...
+               (J{1,2} -ni{1,1}.*qi.*vi{1,2}).*E{1,2} + J{1,2}.*(vi{1,3}.*B{1,1} -vi{1,1}.*B{1,3}) + ...
+               (J{1,3} -ni{1,1}.*qi.*vi{1,3}).*E{1,3} + J{1,3}.*(vi{1,1}.*B{1,2} -vi{1,2}.*B{1,1});
            
-Zernitani_e =  (J{1,1} -nec1{1,1}.*qe.*ve{1,1}).*E{1,1} + J{1,1}.*(ve{1,2}.*B{1,3} -ve{1,3}.*B{1,2}) + ...
-               (J{1,2} -nec1{1,1}.*qe.*ve{1,2}).*E{1,2} + J{1,2}.*(ve{1,3}.*B{1,1} -ve{1,1}.*B{1,3}) + ...
-               (J{1,3} -nec1{1,1}.*qe.*ve{1,3}).*E{1,3} + J{1,3}.*(ve{1,1}.*B{1,2} -ve{1,2}.*B{1,1});           
+Zernitani_e =  (J{1,1} -ne{1,1}.*qe.*ve{1,1}).*E{1,1} + J{1,1}.*(ve{1,2}.*B{1,3} -ve{1,3}.*B{1,2}) + ...
+               (J{1,2} -ne{1,1}.*qe.*ve{1,2}).*E{1,2} + J{1,2}.*(ve{1,3}.*B{1,1} -ve{1,1}.*B{1,3}) + ...
+               (J{1,3} -ne{1,1}.*qe.*ve{1,3}).*E{1,3} + J{1,3}.*(ve{1,1}.*B{1,2} -ve{1,2}.*B{1,1});           
 %------------------------------------------------------------------
 
 % Pi-D and ptheta terms
@@ -526,6 +551,22 @@ PiD_e = Pij_e{1,1}.*DD_e{1,1} + Pij_e{1,2}.*DD_e{1,2} + Pij_e{1,3}.*DD_e{1,3} + 
 %------------------------------------------------------------------
 
 
+% Averaging this terms over the subdomain
+%--------------------------------------------------------------------------
+% Parameter proxies 
+p_theta_i_avg = mean(p_theta_i,'all') ;
+p_theta_e_avg = mean(p_theta_e,'all') ;
+PiD_i_avg = mean(PiD_i,'all') ;
+PiD_e_avg = mean(PiD_e,'all') ;
+
+ptheta_pidi_avg{in,1} = p_theta_i_avg;
+ptheta_pidi_avg{in,2} = p_theta_e_avg;
+ptheta_pidi_avg{in,3} = PiD_i_avg;
+ptheta_pidi_avg{in,4} = PiD_e_avg;
+%--------------------------------------------------------------------------
+
+
+
 %------------------------------------------------------------------
 % From the definition in the code I think Tij is actually Pij as
 % Pij = m * int f(vi - ui)(vj - uj) dv^3 and not int( fvivj )dv^3 which is
@@ -541,8 +582,8 @@ for i=1:3
         if(isempty(Pij_i{i,j}) == 1)
             continue
         end
-        PPij_i{i,j} = Pij_i{i,j} + ni.*mi.*vi{1,i}.*vi{1,j};
-        PPij_e{i,j} = Pij_e{i,j} + ne.*me.*ve{1,i}.*ve{1,j};
+        PPij_i{i,j} = Pij_i{i,j} + ni{1,1}.*mi.*vi{1,i}.*vi{1,j};
+        PPij_e{i,j} = Pij_e{i,j} + ne{1,1}.*me.*ve{1,i}.*ve{1,j};
     end
 end
 %------------------------------------------------------------------
@@ -557,8 +598,8 @@ for i=1:3
         if(isempty(Pij_i{i,j}) == 1)
             continue
         end
-        Tij_i{i,j} =Pij_i{i,j}./(3.*ni);
-        Tij_e{i,j} =Pij_e{i,j}./(3.*ne);
+        Tij_i{i,j} =Pij_i{i,j}./(ni{1,1});
+        Tij_e{i,j} =Pij_e{i,j}./(ne{1,1});
     end
 end
 %------------------------------------------------------------------
@@ -566,8 +607,8 @@ end
 
 %Lets compute the averages to see what is what
 %------------------------------------------------------------------
-ni_bar=mean(ni,'all');
-ne_bar=mean(ne,'all');
+ni_bar=mean(ni{1,1},'all');
+ne_bar=mean(ne{1,1},'all');
 
 PPij_i_bar=zeros(3);
 PPij_e_bar=zeros(3);
@@ -619,11 +660,40 @@ for i=1:3
         if(isempty(PPij_i{i,j}) == 1)
             continue
         end
-        dk_Qijk_i{i,j} = vth_i.*k00.*( Pij_i{i,j} - Pij_i_bar(i,j) - ((i == j).*(ni - ni_bar).*Tij_i_bar(i,j)));
-        dk_Qijk_e{i,j} = vth_e.*k00.*( Pij_e{i,j} - Pij_e_bar(i,j) - ((i == j).*(ne - ne_bar).*Tij_e_bar(i,j)));        
+        dk_Qijk_i{i,j} = vth_i.*k00.*( Pij_i{i,j} - Pij_i_bar(i,j) - ((i == j).*(ni{1,1} - ni_bar).*Tij_i_bar(i,j)));
+        dk_Qijk_e{i,j} = vth_e.*k00.*( Pij_e{i,j} - Pij_e_bar(i,j) - ((i == j).*(ne{1,1} - ne_bar).*Tij_e_bar(i,j)));        
     end
 end
 
+dk_Qijk_i2=cell(3,3);
+dk_Qijk_e2=cell(3,3);
+for i=1:3
+    for j=1:3
+        if(isempty(PPij_i{i,j}) == 1)
+            continue
+        end
+        dk_Qijk_i2{i,j} = -(vth_i./k00).*del2( Pij_i{i,j} - Pij_i_bar(i,j));
+        dk_Qijk_e2{i,j} = -(vth_e./k00).*del2( Pij_e{i,j} - Pij_e_bar(i,j));        
+    end
+end
+
+% This is to smooth the second derivative thing
+%-------------------------------------------------------------------------
+filtvec3=[3,3,3];
+dk_Qijk_i3=cell(3,3);
+dk_Qijk_e3=cell(3,3);
+for i=1:3
+    for j=1:3
+        if(isempty(PPij_i{i,j}) == 1)
+            continue
+        end
+        Pij_ifil{i,j} = medfilt3(Pij_i{i,j},filtvec3);
+        Pij_efil{i,j} = medfilt3(Pij_e{i,j},filtvec3);
+        dk_Qijk_i3{i,j} = -(vth_i./k00).*del2( Pij_ifil{i,j} - Pij_i_bar(i,j));
+        dk_Qijk_e3{i,j} = -(vth_e./k00).*del2( Pij_efil{i,j} - Pij_e_bar(i,j));        
+    end
+end
+%-----------------------------------------------------------------------------
 %------------------------------------------------------------------
 
 %Now lets compute the poynting terms
@@ -663,9 +733,22 @@ E_em = 0.5.*( eps0.*E2 + B2./mu0 );
 dt_E_em = - JdotE - Div_Poyn_v;  
 
 % Time change of the electromagnetic energy 
+
+% These are the divvergence of h
+%------------------------------------------------------------------
+dkQiik_05_i{1,1} = (dk_Qijk_i{1,1} + dk_Qijk_i{2,2} + dk_Qijk_i{3,3})/2; 
+dkQiik_05_e{1,1} = (dk_Qijk_e{1,1} + dk_Qijk_e{2,2} + dk_Qijk_e{3,3})/2;
+
+dkQiik_05_i2{1,1} = (dk_Qijk_i2{1,1} + dk_Qijk_i2{2,2} + dk_Qijk_i2{3,3})/2; 
+dkQiik_05_e2{1,1} = (dk_Qijk_e2{1,1} + dk_Qijk_e2{2,2} + dk_Qijk_e2{3,3})/2;
+%------------------------------------------------------------------
+
 %------------------------------------------------------------------
 %}
 %--------------------------------------------------------------------------
+
+
+
 
 
 
@@ -686,12 +769,11 @@ cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
 %--------------------------------------------------------------------------
 % calculate the quantities on the slides for scalars
 %--------------------------------------------------------------------------
-nic{1,1}=ni; 
-nec{1,1}=ne;
-Gp=nic;
+Gp=ni;
 [ni_Gp, sliceInd,subX,subY,subZ] = Vars_on_Slice(Gp,pt,vec,radi); clearvars GP
-Gp=nec;
+Gp=ne;
 [ne_Gp, sliceInd,subX,subY,subZ] = Vars_on_Slice(Gp,pt,vec,radi); clearvars GP
+
 %--------------------------------------------------------------------------
 % Scalar terms from the energy analysis
 %--------------------------------------------------------------------------
@@ -870,6 +952,20 @@ Gp=dk_Qijk_i;
 Gp=dk_Qijk_e;
 [dk_Qijk_e_Gp, sliceInd,subX,subY,subZ] = Vars_on_Slice(Gp,pt,vec,radi); clearvars GP
 
+%-----------------------------------------------------------------------------
+Gp=dk_Qijk_i2;
+[dk_Qijk_i2_Gp, sliceInd,subX,subY,subZ] = Vars_on_Slice(Gp,pt,vec,radi); clearvars GP
+
+Gp=dk_Qijk_e2;
+[dk_Qijk_e2_Gp, sliceInd,subX,subY,subZ] = Vars_on_Slice(Gp,pt,vec,radi); clearvars GP
+
+Gp=dk_Qijk_i3;
+[dk_Qijk_i3_Gp, sliceInd,subX,subY,subZ] = Vars_on_Slice(Gp,pt,vec,radi); clearvars GP
+
+Gp=dk_Qijk_e3;
+[dk_Qijk_e3_Gp, sliceInd,subX,subY,subZ] = Vars_on_Slice(Gp,pt,vec,radi); clearvars GP
+%-----------------------------------------------------------------------------
+
 Gp=grad_vi;
 [grad_vi_Gp, sliceInd,subX,subY,subZ] = Vars_on_Slice(Gp,pt,vec,radi); clearvars GP
 
@@ -877,16 +973,27 @@ Gp=grad_ve;
 [grad_ve_Gp, sliceInd,subX,subY,subZ] = Vars_on_Slice(Gp,pt,vec,radi); clearvars GP
 %--------------------------------------------------------------------------------------
 
+
 % Total derivatives Fadanelli
 %--------------------------------------------------------------------------------------
 dkQiik_05_i_Gp{1,1} = (dk_Qijk_i_Gp{1,1} + dk_Qijk_i_Gp{2,2} + dk_Qijk_i_Gp{3,3})/2; 
 dkQiik_05_e_Gp{1,1} = (dk_Qijk_e_Gp{1,1} + dk_Qijk_e_Gp{2,2} + dk_Qijk_e_Gp{3,3})/2;
 
+dkQiik_05_i2_Gp{1,1} = (dk_Qijk_i2_Gp{1,1} + dk_Qijk_i2_Gp{2,2} + dk_Qijk_i2_Gp{3,3})/2; 
+dkQiik_05_e2_Gp{1,1} = (dk_Qijk_e2_Gp{1,1} + dk_Qijk_e2_Gp{2,2} + dk_Qijk_e2_Gp{3,3})/2;
+
+
+
+% These two are based on the collisionless case. These two might be wrong.
+% But I am not using them anywhere else
+%---- -------- ---------- ---------- -------- ---------- --------- ------
 dtUi_Gp{1,1} = - Ui_Div_vi_Gp{1,1} - Pit_grad_vi_Gp{1,1} - dkQiik_05_i_Gp{1,1};
 dtUe_Gp{1,1} = - Ue_Div_ve_Gp{1,1} - Pet_grad_ve_Gp{1,1} - dkQiik_05_e_Gp{1,1};
 
 dtKi_Gp{1,1} = - Ki_Div_vi_Gp{1,1} - vi_Div_Pit_Gp{1,1} + qi_ni_vi_E_Gp{1,1};
 dtKe_Gp{1,1} = - Ke_Div_ve_Gp{1,1} - ve_Div_Pet_Gp{1,1} + qe_ne_ve_E_Gp{1,1};
+%---- -------- ---------- ---------- -------- ---------- --------- ------
+%}
 %--------------------------------------------------------------------------
 %}
 %--------------------------------------------------------------------------
@@ -898,8 +1005,8 @@ dtKe_Gp{1,1} = - Ke_Div_ve_Gp{1,1} - ve_Div_Pet_Gp{1,1} + qe_ne_ve_E_Gp{1,1};
 %--------------------------------------------------------------------------
 % calculate the quantities on the slides for scalars
 %--------------------------------------------------------------------------
-Gp=nic1{1,1}; ni_Gp{1,1}=Gp(:,:,slide_n); clearvars GP
-Gp=nec1{1,1}; ne_Gp{1,1}=Gp(:,:,slide_n); clearvars GP
+Gp=ni{1,1}; ni_Gp{1,1}=Gp(:,:,slide_n); clearvars GP
+Gp=ne{1,1}; ne_Gp{1,1}=Gp(:,:,slide_n); clearvars GP
 
 %--------------------------------------------------------------------------
 % Scalar terms from the energy analysis
@@ -1661,9 +1768,77 @@ dtUi_Gp_j = dtUi_Gp;
 %}
 %--------------------------------------------------------------------------
 
-%Save the data on the plane.  <----------------This is to save the data
+
+% Save data in the new frame and in the subdomain
+%--------------------------------------------------------------------------
+%{
+%--------------------------------------------------------------------------
+% Vectors
+Vectorsc{1,in} =B;
+Vectorsc{2,in} =E;
+Vectorsc{3,in} =vi;
+Vectorsc{4,in} =ve;
+Vectorsc{5,in} =J;
+Vectorsc{6,in} = Poyn_v; 
+
+%Tensors
+Tensorsc{1,in} = Pij_i;
+Tensorsc{2,in} = Pij_e;
+Tensorsc{3,in} = grad_vi;
+Tensorsc{4,in} = grad_ve;
+
+% Densities
+Densitiesc{1,in} = ni;
+Densitiesc{2,in} = ne;
+
+% Poyn theorem terms
+Poyn_theoc{1,in} = dt_E_em; %This is the one calculated adding the terms 
+Poyn_theoc{2,in} = Div_Poyn_v;
+Poyn_theoc{3,in} = JdotE;
+
+%Kinetic Energy
+kin_energy_terms_ic{1,in} = vi_grad_Ki;
+kin_energy_terms_ic{2,in} = vi_Div_Pit;
+kin_energy_terms_ic{3,in} = Ki_Div_vi;
+kin_energy_terms_ic{4,in} = qi_ni_vi_E;
+
+kin_energy_terms_ec{1,in} = ve_grad_Ke;
+kin_energy_terms_ec{2,in} = ve_Div_Pet;
+kin_energy_terms_ec{3,in} = Ke_Div_ve;
+kin_energy_terms_ec{4,in} = qe_ne_ve_E;
+
+% Internal energy terms
+Int_energy_terms_ic{1,in} = vi_grad_Ui;
+Int_energy_terms_ic{2,in} = dk_Qijk_i;
+Int_energy_terms_ic{3,in} = dkQiik_05_i;
+Int_energy_terms_ic{4,in} = Pit_grad_vi;
+Int_energy_terms_ic{5,in} = Pit_grad_vi_ii;
+Int_energy_terms_ic{6,in} = Pit_grad_vi_ij;
+Int_energy_terms_ic{7,in} = Ui_Div_vi; 
+
+Int_energy_terms_ec{1,in} = ve_grad_Ue;
+Int_energy_terms_ec{2,in} = dk_Qijk_e; 
+Int_energy_terms_ec{3,in} = dkQiik_05_e;
+Int_energy_terms_ec{4,in} = Pet_grad_ve;
+Int_energy_terms_ec{5,in} = Pet_grad_ve_ii;
+Int_energy_terms_ec{6,in} = Pet_grad_ve_ij;
+Int_energy_terms_ec{7,in} = Ue_Div_ve; 
+
+% Parameter proxies 
+Param_proxiesc{1,in} = Zernitani_i;
+Param_proxiesc{2,in} = Zernitani_e;
+Param_proxiesc{3,in} = p_theta_i;
+Param_proxiesc{4,in} = p_theta_e;
+Param_proxiesc{5,in} = PiD_i;
+Param_proxiesc{6,in} = PiD_e;
+%}
 %--------------------------------------------------------------------------
 
+
+%Save the data on the plane.  <----------------This is to save the data
+%--------------------------------------------------------------------------
+%
+%--------------------------------------------------------------------------
 % Vectors
 Vectorsc{1,in} =B_Gp;
 Vectorsc{2,in} =E_Gp;
@@ -1722,6 +1897,9 @@ Param_proxiesc{3,in} = p_theta_i_Gp;
 Param_proxiesc{4,in} = p_theta_e_Gp;
 Param_proxiesc{5,in} = PiD_i_Gp;
 Param_proxiesc{6,in} = PiD_e_Gp;
+%}
+%--------------------------------------------------------------------------
+
 
 %--------------------------------------------------------------------------
 
@@ -1750,28 +1928,88 @@ save('variabletimefile_NoRF_yx.mat','Vectorsc','Tensorsc','Densitiesc','Poyn_the
 %
 cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
 
-save('variabletimefile_WithRF.mat','Vectorsc','Tensorsc','Densitiesc','Poyn_theoc',...
+save('variabletimefile_WithRF_2022.mat','Vectorsc','Tensorsc','Densitiesc','Poyn_theoc',...
     'kin_energy_terms_ic','kin_energy_terms_ec',...
-    'Int_energy_terms_ic','Int_energy_terms_ec','Param_proxiesc')
+    'Int_energy_terms_ic','Int_energy_terms_ec','Param_proxiesc') %<---- This is the corrected one _Gp
 %}
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Once the data are stored in a file  <------------------------------------
 %--------------------------------------------------------------------------
-load ('variabletimefile.mat') %<----- This is the one that actually has the energy terms in time
-load ('variabletimefile_NoRF_yx.mat')
+%load ('variabletimefile.mat') %<----- This is the one that actually has the energy terms in time
+%load ('variabletimefile_NoRF_yx.mat')
+%load ('variabletimefile_WithRF2.mat')
 %dt_energydensities_ic=cell(5,N);
 
+
+% This is to calculate the energy time derivatives
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+load ('variabletimefile_WithRF_2022.mat')
+
+%Run the first block of this file 
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data'; %This is important because the xdmf files are in that directory
+path = '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
+% useful parameters used in the simulation
+%--------------------------------------------------------------------------
+kb = 1.; mu0 =1.; mi_over_me_ =100.; vA_over_c_ = 0.1; B0_ = vA_over_c_;
+mi = 1.; me = 1. / mi_over_me_; eps0=1.;
+omega_pi=1;
+Omega_e=vA_over_c_*sqrt(mi_over_me_)*omega_pi;
+Omega_i=Omega_e / mi_over_me_;
+TOmega_e=1/Omega_e; 
+TOmega_i=1/Omega_i;
+dt=0.06;
+%------------------------------------------------------------------
+%vectors as 1 arrow 3 columns
+%mi=1;
+mime=100;
+%me=mi/mime;
+qi=1;
+qe=-1;
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+S = dir(fullfile(path,'*.h5'));
+N=numel(S); % number of files to use <---------------- This is the N 
+H=zeros(N);
+
+%--------------------------------------------------------------------------
+ptheta_pidi_avg=cell(N,4);
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+nx1=166;    nx2=333;
+ny1=232;    ny2=400;
+nz1=1200;   nz2=1367;
+
+%px2 = 400; py2 = 400; pz2 = 168; For the no reference change
+px2 = 168; py2 = 168; pz2 = 168;
+start = [nx1 ny1 nz1];
+count = [px2 py2 pz2];
+%--------------------------------------------------------------------------
+resx=0.06; %0.06081
+resy=0.06;
+resz=0.06; %0.06152
+
+Lx=px2*resx; k0x=1/Lx;
+Ly=px2*resy; k0y=1/Ly;
+Lz=px2*resz; k0z=1/Lz;
+k00=sqrt(k0x*k0x + k0y*k0y + k0z*k0z);
+%--------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%--------------------------------------------------------------------------
 in=19;
-% This is to calculate the energy derivatives
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data'; %This is important because the xdmf files are in that directory
+path = '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
+
 ai=2; bi=N-1;
 dt_energydensities_ic = cell(ai,bi);
 for in=ai:bi
@@ -1840,10 +2078,15 @@ Pet_grad_ve_ij_Gp = Int_energy_terms_ec{6,in} ;
 Ue_Div_ve_Gp = Int_energy_terms_ec{7,in} ; 
 
 %--------------------------------------------------------------------------
-% Div_Pi_dot_vi
+%%% Div_Pi_dot_vi <----- this one is the one that appears to work
 Div_Pis_dot_vi_Gp{1,1} = Pit_grad_vi_Gp{1,1} + vi_Div_Pit_Gp{1,1};
-% Div_Pe_dot_e
+%%% Div_Pe_dot_e
 Div_Pes_dot_ve_Gp{1,1} = Pet_grad_ve_Gp{1,1} + ve_Div_Pet_Gp{1,1};
+%--------------------------------------------------------------------------
+% Div_Pi_dot_vi 
+%Div_Pis_dot_vi_Gp{1,1} = Pit_grad_vi_Gp + vi_Div_Pit_Gp;
+% Div_Pe_dot_e
+%Div_Pes_dot_ve_Gp{1,1} = Pet_grad_ve_Gp + ve_Div_Pet_Gp;
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -1862,6 +2105,7 @@ PiD_e_Gp = Param_proxiesc{6,in} ;
 %calculating the time derivatives
 %
 %--------------------------------------------------------------------------
+%in=19; %<----- comment this when using the full for loop.
 str_1 = string(S(in-1).name); newStr_1 = extractBetween(str_1,"pfd.","_p000000.h5");
 N_steps_1 = str2double(newStr_1); time_1=dt*N_steps_1;
 str_2 = string(S(in+0).name); newStr_2 = extractBetween(str_2,"pfd.","_p000000.h5");
@@ -1951,7 +2195,7 @@ end
 %--------------------------------------------------------------------------
 %
 cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
-save('variabletimefile_WithRF2.mat','Vectorsc','Tensorsc','Densitiesc','Poyn_theoc',...
+save('variabletimefile_WithRF_2022_time.mat','Vectorsc','Tensorsc','Densitiesc','Poyn_theoc',...
     'kin_energy_terms_ic','kin_energy_terms_ec',...
     'Int_energy_terms_ic','Int_energy_terms_ec','Param_proxiesc','dt_energydensities_ic')
 %}
@@ -1960,10 +2204,9 @@ save('variabletimefile_WithRF2.mat','Vectorsc','Tensorsc','Densitiesc','Poyn_the
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-in =19;
-
 % This only works once dt_energydensities_ic is loaded
 %--------------------------------------------------------------------------
+in =19;
 %
 dtKi_in_Gp_2{1,1} = dt_energydensities_ic{1,in} ;
 dtKe_in_Gp_2{1,1} = dt_energydensities_ic{2,in} ;
@@ -1973,8 +2216,6 @@ dtE_em_in_Gp_2{1,1} = dt_energydensities_ic{5,in} ;
 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 
 % This was a one time workspace thing.
 cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
@@ -1989,7 +2230,6 @@ in=19;
 %--------------------------------------------------------------------------
 % this part is exclusive to compute the averages in time.
 % Once loaded the variabletimefile_*.mat
-
 %{
 dtKe_in_Gp_m=zeros(1,N-2); dtKe_in_Gp_std=zeros(1,N-2);
 ve_grad_Ke_Gp_m=zeros(1,N-2); ve_grad_Ke_Gp_std=zeros(1,N-2);
@@ -2275,15 +2515,91 @@ load ('variabletimefile.mat') %<----- This is the one that actually has the ener
 cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
 load ('energy_things.mat') %   <------------------------
 
-in=1;
-in=16; %<--- 96
-in=19;
 
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+load('variabletimefile_WithRF2.mat') 
+% This is the file that I used for the aricle and it goes with plots_with_RFchange.m
+% This file contains only the variables on the plane.
+
+cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
+path = '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
+
+
+
+
+
+% This is the part of the plots
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+load('variabletimefile_WithRF_2022_time.mat')
+
+%Run the first block of this file 
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data'; %This is important because the xdmf files are in that directory
+path = '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
+% useful parameters used in the simulation
+%--------------------------------------------------------------------------
+kb = 1.; mu0 =1.; mi_over_me_ =100.; vA_over_c_ = 0.1; B0_ = vA_over_c_;
+mi = 1.; me = 1. / mi_over_me_; eps0=1.;
+omega_pi=1;
+Omega_e=vA_over_c_*sqrt(mi_over_me_)*omega_pi;
+Omega_i=Omega_e / mi_over_me_;
+TOmega_e=1/Omega_e; 
+TOmega_i=1/Omega_i;
+dt=0.06;
+%------------------------------------------------------------------
+%vectors as 1 arrow 3 columns
+%mi=1;
+mime=100;
+%me=mi/mime;
+qi=1;
+qe=-1;
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+S = dir(fullfile(path,'*.h5'));
+N=numel(S); % number of files to use <---------------- This is the N 
+H=zeros(N);
+
+%--------------------------------------------------------------------------
+%%%%ptheta_pidi_avg=cell(N,4);
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+nx1=166;    nx2=333;
+ny1=232;    ny2=400;
+nz1=1200;   nz2=1367;
+
+%px2 = 400; py2 = 400; pz2 = 168; For the no reference change
+px2 = 168; py2 = 168; pz2 = 168;
+start = [nx1 ny1 nz1];
+count = [px2 py2 pz2];
+%--------------------------------------------------------------------------
+resx=0.06; %0.06081
+resy=0.06;
+resz=0.06; %0.06152
+
+Lx=px2*resx; k0x=1/Lx;
+Ly=px2*resy; k0y=1/Ly;
+Lz=px2*resz; k0z=1/Lz;
+k00=sqrt(k0x*k0x + k0y*k0y + k0z*k0z);
+%--------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%--------------------------------------------------------------------------
+
+in=19;
+%in=18;
+
+% This is the block to run the plots loading the needed variables
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This part includes all the plots that are related to the time derivatives
 % and all the plots in time. Do not erase it 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-for in=1:N-1
+for in=2:N-1
 S = dir(fullfile(path,'*.h5'));
 N=numel(S); % number of files to use <---------------- This is the N 
 H=zeros(N);
@@ -2298,7 +2614,7 @@ newStr = extractBetween(str,"pfd.","_p000000.h5");
 N_steps = str2double(newStr); time_t = dt*N_steps;
 
 %--------------------------------------------------------------------------
-
+%
 % Vectors
 B_Gp = Vectorsc{1,in} ;
 %
@@ -2357,7 +2673,7 @@ Div_Pis_dot_vi_Gp{1,1} = Pit_grad_vi_Gp{1,1} + vi_Div_Pit_Gp{1,1};
 % Div_Pe_dot_e
 Div_Pes_dot_ve_Gp{1,1} = Pet_grad_ve_Gp{1,1} + ve_Div_Pet_Gp{1,1};
 %--------------------------------------------------------------------------
-
+%}
 %--------------------------------------------------------------------------
 % Parameter proxies 
 Zernitani_i_Gp = Param_proxiesc{1,in} ;
@@ -2367,6 +2683,8 @@ p_theta_e_Gp = Param_proxiesc{4,in} ;
 PiD_i_Gp = Param_proxiesc{5,in} ;
 PiD_e_Gp = Param_proxiesc{6,in} ;
 %--------------------------------------------------------------------------
+
+
 %}
 %--------------------------------------------------------------------------
 %calculating the time derivatives
@@ -2458,19 +2776,11 @@ dtE_em_in_Gp_2{1,1} = dt_energydensities_ic{5,in} ;
 %}
 %--------------------------------------------------------------------------
 
-% Plots 1D
-%--------------------------------------------------------------------------
-cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
-To_plot_1D_cuts
-
-%--------------------------------------------------------------------------
 
 % Plots 2D on the slide last used <------
-
 %--------------------------------------------------------------------------
 %PLOTS!
 %--------------------------------------------------------------------------
-
 %repeated control
 %--------------------------------------------------------------------------
 %{
@@ -2629,7 +2939,7 @@ yy = linspace(yll(10),yll(end-10),NN4);
 [xx, yy] = meshgrid(xx,yy);
 aaa5=stream2(XLL,YLL,ubx,vby,xx,yy);
 
-NN5=10; 
+NN5=6; 
 xx5 = linspace(xll(10),xll(end-10),NN5);
 yy5 = linspace(yll(10),yll(end-10),NN5);
 [xx5, yy5] = meshgrid(xx5,yy5);
@@ -2653,7 +2963,7 @@ bbbb5m=stream2(XLL,YLL,-ubx,-vby,xx5,yy5);
 
 
 cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_energy'
-
+cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
 % This is to call the script that will make and save the latests plots
 %--------------------------------------------------------------------------
 c=1;
@@ -2663,24 +2973,448 @@ E0 = B0*VA2c;
 Pi0 = mi*VA2c*VA2c;
 Pe0 = me*VA2c*VA2c;
 
+%DeltaEpsilon0=VA2c*Pi0;
+DeltaEpsilon0=Pi0;
+
 dCp=25;
 colorFVBl=[0 0 0 0.2];
 sv=3; asf=3;
 fs=18; lw=1.5;
 
-plots_with_RFchange;
+% This is temp. just erase it
 %--------------------------------------------------------------------------
+%{
+%--------------------------------------------------------------------------
+f19=figure(19);
+%--------------------------------------------------------------------------
+h1=subaxis(1,5,1,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+%dum_p=dtKe_Gp{1,1} + ve_grad_Ke_Gp{1,1}; %dtKe_Gp This is the wrong one!
+dum_p = dtKe_in_Gp_2{1,1} + ve_grad_Ke_Gp{1,1};
+dum_p=(dum_p)./(Pi0);  
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h1,BWR); 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside'; 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%caxis([-1.1 1.1]); hcb.Ticks = linspace(-2,2,5); hcb.TickLabels = [-2,-1,0,1,2] ;  
+hcb.Ticks = linspace(-0.05,0.05,5); hcb.TickLabels = [-0.05,-0.03,0,0.03,0.05] ; caxis([-0.05 0.05]);
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10]; ax.YLabel.Position = [-0.5, 5];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8]; ax.XLabel.Position = [5, -0.5];    
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+title('$\frac{d\varepsilon^{k}_{e}/dt}{\Delta\varepsilon_{0}} $','Interpreter','latex','FontSize',fs);
+%rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------------------------------------
+h2=subaxis(1,5,2,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+dum_p=ve_Div_Pet_Gp{1,1};
+dum_p=(dum_p)./(Pi0);   
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h2,BWR); 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside';
+%hcb.Ticks = linspace(-7,7,5); hcb.TickLabels = [-7,-3,0,3,7] ; caxis([-8 8]); 
+%hcb.Ticks = linspace(-0.5,0.5,5); hcb.TickLabels = [-0.5,-0.3,0,0.3,0.5] ; caxis([-0.6 0.6]); 
+hcb.Ticks = linspace(-0.2,0.2,5); hcb.TickLabels = [-0.2,-0.1,0,0.1,0.2] ; caxis([-0.23 0.23]); 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8]; ax.XLabel.Position = [5, -0.5];   
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+title('$\frac{\mathbf{u}_{e} \cdot \nabla \cdot \overline{\mathbf{P}}_{e}}{\Delta\varepsilon_{0}}$','Interpreter','latex','FontSize',fs);
+%rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------------------------------------
+h3=subaxis(1,5,3,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+dum_p=Ke_Div_ve_Gp{1,1};
+dum_p=(dum_p)./(Pi0); 
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h3,BWR); %caxis([-5 5]) 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside';
+hcb.Ticks = linspace(-0.05,0.05,5); hcb.TickLabels = [-0.05,-0.03,0,0.03,0.05] ; caxis([-0.05 0.05]); 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8];ax.XLabel.Position = [5, -0.5];    
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+%rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+title('$\frac{\varepsilon^{k}_{e} \nabla \cdot \mathbf{u}_{e}}{\Delta\varepsilon_{0}}$','Interpreter','latex','FontSize',fs);
+hold off
+%--------------------------------------------------------------------------
+h4=subaxis(1,5,4,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+dum_p=-qe_ne_ve_E_Gp{1,1};
+dum_p=(dum_p)./(Pi0);  
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h4,BWR); %caxis([-5 5]) 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside';
+%hcb.Ticks = linspace(-0.5,0.5,5); hcb.TickLabels = [-0.5,-0.3,0,0.3,0.5] ; caxis([-0.6 0.6]); 
+hcb.Ticks = linspace(-0.2,0.2,5); hcb.TickLabels = [-0.2,-0.1,0,0.1,0.2] ; caxis([-0.23 0.23]); 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8];ax.XLabel.Position = [5, -0.5];    
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+%rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+title('$\frac{-q_{e}n_{e}\mathbf{u}_{e} \cdot \mathbf{E}}{\Delta\varepsilon_{0}}$','Interpreter','latex','FontSize',fs);
+hold off
+%--------------------------------------------------------------------------
+h5=subaxis(1,5,5,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+dum_pXIe=dtKe_in_Gp_2{1,1} + ve_grad_Ke_Gp{1,1} + ve_Div_Pet_Gp{1,1} + Ke_Div_ve_Gp{1,1} -qe_ne_ve_E_Gp{1,1};    
+dum_p=(dum_pXIe)./(Pi0); 
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h5,BWR); %caxis([-5 5]) 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside';
+%hcb.Ticks = linspace(-1.2,1.2,5); hcb.TickLabels = [-1.2,-0.6,0,0.6,1.2] ; caxis([-1.3 1.3]); 
+hcb.Ticks = linspace(-0.2,0.2,5); hcb.TickLabels = [-0.2,-0.1,0,0.1,0.2] ; caxis([-0.23 0.23]); 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8];ax.XLabel.Position = [5, -0.5];    
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+%rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+title('$\frac{\Xi^{k}_{e}}{\Delta\varepsilon_{0}}$','Interpreter','latex','FontSize',fs);
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',fs)
+hold off
+
+f21=figure(21);
+%--------------------------------------------------------------------------
+h1=subaxis(1,5,1,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+dum_p=dtUe_in_Gp_2{1,1} + ve_grad_Ue_Gp{1,1}; 
+dum_p=(dum_p)./(Pi0); 
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h1,BWR); 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside'; 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%caxis([-15 15]); hcb.Ticks = linspace(-14,14,5); hcb.TickLabels = [-14,-7,0,7,14] ;  
+caxis([-0.5 0.5]); hcb.Ticks = linspace(-0.4,0.4,5); hcb.TickLabels = [-0.4,-0.2,0,0.2,0.4] ;  
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10]; ax.YLabel.Position = [-0.5, 5];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8]; ax.XLabel.Position = [5, -0.5];    
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+title('$\frac{d\varepsilon^{th}_{e}/dt}{\Delta\varepsilon_{0}} $','Interpreter','latex','FontSize',fs);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------------------------------------
+h2=subaxis(1,5,2,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+dum_p=dkQiik_05_e_Gp{1,1};
+dum_p=(dum_p)./(Pi0); 
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h2,BWR); 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside';
+hcb.Ticks = linspace(-0.05,0.05,5); hcb.TickLabels = [-0.05,-0.03,0,0.03,0.05] ; caxis([-0.06 0.06]); 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8]; ax.XLabel.Position = [5, -0.5];   
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+title('$\frac{\nabla \cdot \mathbf{h}_{e}}{\Delta\varepsilon_{0}}$','Interpreter','latex','FontSize',fs);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------------------------------------
+h3=subaxis(1,5,3,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+dum_p=Pet_grad_ve_Gp{1,1};
+dum_p=(dum_p)./(Pi0);
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h3,BWR); %caxis([-5 5]) 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside';
+hcb.Ticks = linspace(-1.4,1.4,5); hcb.TickLabels = [-1.4,-0.7,0,0.7,1.4] ; caxis([-1.5 1.5]); 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8];ax.XLabel.Position = [5, -0.5];    
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+title('$\frac{\nabla \mathbf{u}_{e} : \overline{\mathbf{P}}_{e}}{{\Delta\varepsilon_{0}}}$','Interpreter','latex','FontSize',fs);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------------------------------------
+h4=subaxis(1,5,4,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+dum_p=Ue_Div_ve_Gp{1,1}; 
+dum_p=(dum_p)./(Pi0);  
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h4,BWR); %caxis([-5 5]) 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside';
+hcb.Ticks = linspace(-1.4,1.4,5); hcb.TickLabels = [-1.4,-0.7,0,0.7,1.4] ; caxis([-1.5 1.5]); 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8];ax.XLabel.Position = [5, -0.5];    
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+title('$\frac{\varepsilon^{th}_{e} \nabla \cdot \mathbf{u}_{e}}{\Delta\varepsilon_{0}}$','Interpreter','latex','FontSize',fs);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------------------------------------
+h5=subaxis(1,5,5,'SV',0.01,'SH',0.004,'MR',0.005,'ML',0.05,'PL',0.005,'PR',0.006);
+dum_pXI2e=dtUe_in_Gp_2{1,1} + ve_grad_Ue_Gp{1,1} + dkQiik_05_e_Gp{1,1} + Pet_grad_ve_Gp{1,1} +...
+    Ue_Div_ve_Gp{1,1} ;%+ dum_pXIe;    
+dum_p=(dum_pXI2e)./(Pi0);  
+dum_p = medfilt2(dum_p,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p);
+hold on
+hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+lim_yp=max(max(max(abs(dum_p)))); colormap(h5,BWR); %caxis([-5 5]) 
+set(hc,'edgecolor','none')
+hcb=colorbar; hcb.Location = 'northoutside';
+hcb.Ticks = linspace(-1.4,1.4,5); hcb.TickLabels = [-1.4,-0.7,0,0.7,1.4] ; caxis([-1.5 1.5]); 
+%hcb.Ticks = linspace(-3.0,3.0,5); hcb.TickLabels = [-3.0,-1.5,0,1.5,3.0] ; caxis([-3.0 3.0]); 
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%hcb.Ruler.Exponent = -1;
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$p / d_{i}$'; ax.YTick = [2 4 6 8 10];
+ax.XLabel.String = '$r / d_{i}$'; ax.XTick = [2 4 6 8];ax.XLabel.Position = [5, -0.5];    
+xlim([xll(1) xll(end)]); ylim([yll(1) yll(end)]);
+title('$\frac{\Xi^{th}_{e}}{\Delta\varepsilon_{0}}$','Interpreter','latex','FontSize',fs);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',fs)
+%-------
+%}
+%--------------------------------------------------------------------------
+%
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+saveas(19,strcat('pow_kin_e_2_'+ string(N_steps) +'.png')); %More plots_pre_ingerview
+saveas(21,strcat('pow_the_e_2_'+ string(N_steps) +'.png'));
+saveas(20,strcat('pow_kin_i_'+ string(N_steps) +'.png'));
+saveas(22,strcat('pow_the_i_'+ string(N_steps) +'.png'));
+
+saveas(151,strcat('pe_Pi_e_'+ string(N_steps) +'.png'));
+saveas(161,strcat('pe_Pi_i_'+ string(N_steps) +'.png'));
+saveas(1512,strcat('pe_Pi_e_sub_'+ string(N_steps) +'.png'));
+saveas(146,strcat('Blines_B_ue_ui_'+ string(N_steps) +'.png'));
+
+saveas(f275523,strcat('1D_power_density_p_ele_'+ string(N_steps) +'.png'));
+saveas(f17,strcat('2D_and_1D_energy_rates_'+ string(N_steps) +'.png'));
+
+clf(f19)
+cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
+
+
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+saveas(211,strcat('Pxyz_divh_e_'+ string(N_steps) +'.png'));
+saveas(212,strcat('divh2_divh2filtered_e_'+ string(N_steps) +'.png'));
+saveas(213,strcat('divh_divh2filtered_e_'+ string(N_steps) +'.png'));
+%--------------------------------------------------------------------------
+
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+%saveas(1462,strcat('Blines_ve_only_ue_ui_'+ string(N_steps) +'.png'));
+%saveas(f1462,strcat('cos_ui2ue_uiE_uiueB'+ string(N_steps) +'.png'));
+%saveas(f9981,strcat('pressure_balance_2'+ string(N_steps) +'.png'));
+%%plotwithRF
+saveas(f214,strcat('energy_time'+ string(N_steps) +'.png'));
+saveas(f215,strcat('energy_time_semilogy'+ string(N_steps) +'.png'));
+cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
+%}
+end
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
+cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_energy'
+plots_with_RFchange;
+
+
+f67=figure(67);
+subplot(4,1,1)
+dum_p1=p_theta_e_Gp{1,1};
+dum_pn1=sqrt(sum(dum_p1.*dum_p1,'all'));
+dum_p1 = dum_p1./(dum_pn1);
+dum_p1 = medfilt2(dum_p1,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p1);
+set(hc,'edgecolor','none')
+colormap(BWR);
+colorbar
+caxis([-0.01 0.01])
+subplot(4,1,2)
+dum_p2=PiD_e_Gp{1,1};
+dum_pn2=sqrt(sum(dum_p2.*dum_p2,'all'));
+dum_p2 = dum_p2./(dum_pn2);
+dum_p2 = medfilt2(dum_p2,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p2);
+set(hc,'edgecolor','none')
+colormap(BWR);
+colorbar
+caxis([-0.01 0.01])
+
+subplot(4,1,3)
+%dum_p1=p_theta_e_Gp{1,1};
+dum_p1=Zernitani_e_Gp{1,1};
+dum_pn1=sqrt(sum(dum_p1.*dum_p1,'all'));
+dum_p1 = dum_p1./(dum_pn1);
+dum_p2=PiD_e_Gp{1,1};
+dum_pn2=sqrt(sum(dum_p2.*dum_p2,'all'));
+dum_p2 = dum_p2./(dum_pn2);
+dum_p21=dum_p1.*(abs(dum_p1)>abs(dum_p2));
+%dum_p21=ones(size(dum_p2)).*(sign(dum_p1)==sign(dum_p2));
+%%dum_p21=dum_p2.*(sign(dum_p1)~=sign(dum_p2));
+%dum_p21=ones(size(dum_p2)).*(abs((dum_p1)) < 0.001);
+dum_p21 = medfilt2(dum_p21,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p21);
+set(hc,'edgecolor','none')
+colormap(BWR);
+colorbar
+caxis([-0.01 0.01])
+hold on
+rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+subplot(4,1,4)
+dum_p1=Zernitani_e_Gp{1,1};
+dum_pn1=sqrt(sum(dum_p1.*dum_p1,'all'));
+dum_p1 = dum_p1./(dum_pn1);
+dum_p2=PiD_e_Gp{1,1};
+dum_pn2=sqrt(sum(dum_p2.*dum_p2,'all'));
+dum_p2 = dum_p2./(dum_pn2);
+dum_p21=dum_p2.*(abs(dum_p1)<abs(dum_p2));
+dum_p21 = medfilt2(dum_p21,filtvec); %filter
+hc = pcolor(XLL,YLL,dum_p21);
+set(hc,'edgecolor','none')
+colormap(BWR);
+colorbar
+caxis([-0.01 0.01])
+hold on
+rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+plot(5.8, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------------------------------------
+
+
+
+
+% Plots 1D
+%--------------------------------------------------------------------------
+cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
+load('colorblind_colormap.mat');
+To_plot_1D_cuts
+
+cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
+load('colorblind_colormap.mat');
+To_plot_1D_cuts_2
+
+
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+
+saveas(98,strcat('hist_pow_ele_'+ string(N_steps) +'.png'));
+saveas(981,strcat('hist_pow_ion_'+ string(N_steps) +'.png'));
+
+saveas(f2755,strcat('1D_power_density_r_'+ string(N_steps) +'.png'));
+saveas(f27552,strcat('1D_power_density_p_'+ string(N_steps) +'.png'));
+
+saveas(f275523,strcat('1D_power_density_p_ele_'+ string(N_steps) +'.png'));%This one
+saveas(f2755232,strcat('1D_power_density_p_ion_'+ string(N_steps) +'.png'));
+
+saveas(f2145,strcat('s_upuaur_subset_'+ string(N_steps) +'.png'));
+saveas(f214,strcat('s_upuaur_r_'+ string(N_steps) +'.png'));
+saveas(f2142,strcat('s_upuaur_p_'+ string(N_steps) +'.png'));
+
+saveas(f21712,strcat('Dissipation_surrogates_p_e_'+ string(N_steps) +'.png'));
+saveas(f217812,strcat('Dissipation_surrogates_p_i_'+ string(N_steps) +'.png'));
+
+saveas(f21781,strcat('Dissipation_surrogates_r_i_'+ string(N_steps) +'.png'));
+saveas(f2171,strcat('Dissipation_surrogates_r_e_'+ string(N_steps) +'.png'));
+
+saveas(f17,strcat('s_surrugates_p_e_'+ string(N_steps) +'.png'));
+saveas(f217,strcat('s_PGu_PGuii_PGuij_r_e_'+ string(N_steps) +'.png'));
+saveas(f2171,strcat('s_PGu_PGuii_PGuij_r_e_'+ string(N_steps) +'.png'));
+saveas(f2172,strcat('s_PGu_PGuii_PGuij_p_e_'+ string(N_steps) +'.png'));
+saveas(f21782,strcat('s_PGu_PGuii_PGuij_p_i_'+ string(N_steps) +'.png'));
+
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+saveas(f146,strcat('Ba_uea_uia_vectors_big'+ string(N_steps) +'.png'));
+
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+saveas(f2324,strcat('panel_2_'+ string(N_steps) +'.png'));
+%--------------------------------------------------------------------------
+
+
 
 
 % !!! THESE ARE ALL THE OTHER PLOTS !!!!
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
-%{
+%-->{
 % To get the critical points and separatrix curves in the plane
 %%%%
 %--------------------------------------------------------------------------
-%{
+%
 % Get the critical points (ubx = 0;   vby = 0; wbz =0;)
 % Define the zero
 %zero_d=0.01;
@@ -2755,12 +3489,32 @@ saddle_cond1 =  ((imag(EIGV1)==0) & (imag(EIGV2)==0)) ; % complex part equal zer
 saddle_cond2 =  ( sign(real(EIGV1))~=sign(real(EIGV2)) ) ; % opposite sign
 
 % This is spiral source 
-%saddle_cond1 =  ((imag(EIGV1)~=0) & (imag(EIGV2)~=0)) ; % Complex
-%saddle_cond2 =  ( (sign(real(EIGV1)) > 0) & (sign(real(EIGV2)) > 0 ) ) ; % real part positive sign
+saddle_cond3 =  ((imag(EIGV1)~=0) & (imag(EIGV2)~=0)) ; % Complex
+saddle_cond4 =  ( (sign(real(EIGV1)) > 0) & (sign(real(EIGV2)) > 0 ) ) ; % real part positive sign
+
+% This is spiral sink 
+saddle_cond5 =  ((imag(EIGV1)~=0) & (imag(EIGV2)~=0)) ; % Complex
+saddle_cond6 =  ( (sign(real(EIGV1)) < 0) & (sign(real(EIGV2)) < 0 ) ) ; % real part positive sign
+
+% This is center  %(There is no point fullfiling this condition)
+saddle_cond7 =  ((real(EIGV1)==0) & (real(EIGV2)==0)) ; % real part zero
+saddle_cond8 =  ( sign(imag(EIGV1))~=sign(imag(EIGV2)) ) ; % complex part opposite sign
 
 %saddle_cond12 = (saddle_cond1 & saddle_cond2); 
 saddle_cond12 = EIGV1.*(saddle_cond1).* (saddle_cond2); % this allows to use the NaN conversion
 A12=saddle_cond12;  A12(A12 == 0) = NaN;  %rrr=ubx(~isnan(A12));size(rrr);
+
+%saddle_cond34 = (saddle_cond3 & saddle_cond4); 
+saddle_cond34 = EIGV1.*(saddle_cond3).* (saddle_cond4); % this allows to use the NaN conversion
+A34=saddle_cond34;  A34(A34 == 0) = NaN;  %rrr=ubx(~isnan(A12));size(rrr);
+
+%saddle_cond56 = (saddle_cond5 & saddle_cond6); 
+saddle_cond56 = EIGV1.*(saddle_cond5).* (saddle_cond6); % this allows to use the NaN conversion
+A56=saddle_cond56;  A56(A56 == 0) = NaN;  %rrr=ubx(~isnan(A12));size(rrr);
+
+%saddle_cond78 = (saddle_cond7 & saddle_cond8); 
+saddle_cond78 = EIGV1.*(saddle_cond7).* (saddle_cond8); % this allows to use the NaN conversion
+A78=saddle_cond78;  A78(A78 == 0) = NaN;  %rrr=ubx(~isnan(A12));size(rrr);
 
 % Get the coordinates of the points where the conditions are fullfilled
 XLc2 = XLL(~isnan(A12)); YLc2 = YLL(~isnan(A12));  
@@ -2777,28 +3531,140 @@ ccc12m=stream2(XLL,YLL,-ubx,-vby,YLc2,XLc2);
 %ccc12=stream2(XLL,YLL,ubx11,vby11,YLc2,XLc2);
 %-------------------------------------------------
 
+
+% Get the maximum and minimum values
+%--------------------------------------------------------------------------
+A = sqrt(ubx.*ubx + vby.*vby)./0.1;
+[M,I] = max(A);
+At=A';
+[Mm,Im] = max(At);
+[XI,YI]=meshgrid(Im,I);
+
+f321=figure(321)
+subplot(2,2,1)
+scatter(I,M)
+subplot(2,2,2)
+scatter(Im,Mm)
+subplot(2,2,3)
+%pcolor((XI.*YI)')
+v = [0.1,0.2];
+[M3,c] = contour(A,v,'-k','ShowText','on');c.LineWidth = 1.5; 
+%[M3,c] =contour(dum_p2,0.1); 
+subplot(2,2,4)
+pcolor(A)
+hold on
+contour(A,v,'ShowText','on')
+colorbar
+hold off
+
+
+
+xity = YLL(I);
+f322=figure(322)
+plot(xity)
 %--------------------------------------------------------------------------
 
 % Plots
 %colorFVBl=[0.5 0.5 0.5 0.5];
 colorFVBl=[0 0 0 0.5];
 
+% Thisis to check the critical points distribution
+%--------------------------------------------------------------------------
+f29951=figure(29951);
+h1=subplot(1,3,1);
+dum_p = (real(EIGV1).*saddle_cond12)./real(EIGV1); dum_p(dum_p == 0) = NaN; % This is to erase the unimportant points
+dum_p2 = (real(EIGV2).*saddle_cond12)./real(EIGV2); dum_p(dum_p == 0) = NaN; % This is to erase the unimportant points
+dum_p = dum_p + dum_p2;
+hc=pcolor(YLL,XLL,real(dum_p));
+hold on 
+set(hc,'edgecolor','none'); colormap(h1,jet(1))
+%hlines1=streamline(ccc12); set(hlines1,'LineWidth',1,'Color', 'k');
+xlim([xll(1) xll(end)]);
+ylim([yll(1) yll(end)]);
+xlabel('$$r / d_{i}$$','Interpreter','latex','FontSize',20);
+ylabel('$$p / d_{i}$$','Interpreter','latex','FontSize',20);
+%title('$$ Blines$$','Interpreter','latex','FontSize',20)
+set(gca,'XScale','lin','YScale','lin','FontSize',18)
+title('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}, \ Separatrices$$','Interpreter','latex','FontSize',20)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+%rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+%plot(5.58, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+%plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------
+h2=subplot(1,3,2);
+dum_p = (real(EIGV1).*saddle_cond34)./real(EIGV1); dum_p(dum_p == 0) = NaN; % This is to erase the unimportant points 
+dum_p2 = (real(EIGV2).*saddle_cond34)./real(EIGV2); dum_p(dum_p == 0) = NaN;
+dum_p = dum_p + dum_p2;
+hc=pcolor(YLL,XLL,real(dum_p));
+hold on
+set(hc,'edgecolor','none'); colormap(h2,winter(1))
+%hlines1=streamline(ccc12); set(hlines1,'LineWidth',1,'Color', 'k');
+xlim([xll(1) xll(end)]);
+ylim([yll(1) yll(end)]);
+xlabel('$$r / d_{i}$$','Interpreter','latex','FontSize',20);
+ylabel('$$p / d_{i}$$','Interpreter','latex','FontSize',20);
+%title('$$ Blines$$','Interpreter','latex','FontSize',20)
+set(gca,'XScale','lin','YScale','lin','FontSize',18)
+title('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}, \ Separatrices$$','Interpreter','latex','FontSize',20)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+%rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+%plot(5.58, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+%plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------------------------------------
+h3=subplot(1,3,3);
+dum_p = (real(EIGV1).*saddle_cond56)./real(EIGV1); dum_p(dum_p == 0) = NaN; % This is to erase the unimportant points 
+dum_p2 = (real(EIGV2).*saddle_cond56)./real(EIGV2); dum_p(dum_p == 0) = NaN;
+dum_p = dum_p + dum_p2;
+hc=pcolor(YLL,XLL,real(dum_p));
+hold on
+set(hc,'edgecolor','none'); colormap(h3,summer(1))
+%hlines1=streamline(ccc12); set(hlines1,'LineWidth',1,'Color', 'k');
+xlim([xll(1) xll(end)]);
+ylim([yll(1) yll(end)]);
+xlabel('$$r / d_{i}$$','Interpreter','latex','FontSize',20);
+ylabel('$$p / d_{i}$$','Interpreter','latex','FontSize',20);
+%title('$$ Blines$$','Interpreter','latex','FontSize',20)
+set(gca,'XScale','lin','YScale','lin','FontSize',18)
+title('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}, \ Separatrices$$','Interpreter','latex','FontSize',20)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+%rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+%plot(5.58, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+%plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+hold off
+%--------------------------------------------------------------------------
+
+
+% Get the coordinates of the points where the conditions are fullfilled
+XLc2 = XLL(~isnan(A12)); YLc2 = YLL(~isnan(A12));  
+% Get the streamlines of the B startting only at the saddle points
+%ccc1=stream2(XLL,YLL,ubx,vby,XLc2,YLc2); %This is transported for some reason<------------
+ccc12=stream2(XLL,YLL,ubx,vby,YLc2,XLc2); % This is the one that matchs the points <--------------
+ccc12m=stream2(XLL,YLL,-ubx,-vby,YLc2,XLc2); 
+
+ccc12c{1,1}=ccc12{1,102}; ccc12mc{1,1}=ccc12m{1,102};
+ccc12c{1,2}=ccc12{1,77}; ccc12mc{1,2}=ccc12m{1,77};
+
+%ccc12=stream2(XLL,YLL,-ubx,-vby,YLc2,XLc2);
+%ccc12m=stream2(XLL,YLL,-ubx,-vby,YLc2,XLc2);
+%--------------------------------------------------------------------------
 % This is the best plot (This is not working and I don't know why)
 f299=figure(299);
 dum_p = (real(EIGV1).*saddle_cond12)./real(EIGV1); dum_p(dum_p == 0) = NaN; % This is to erase the unimportant points
 %dum_p = (imag(EIGV1).*saddle_cond12)./imag(EIGV1); dum_p(dum_p == 0) = NaN; % This is to erase the unimportant points
 dum_p2 = sqrt(ubx.^2 + vby.^2); %vcounl = [zero_d];
-[M,c] =contour(xll,yll,dum_p2,zero_d); c.LineWidth = 1.5;
+[M3,c] =contour(xll,yll,dum_p2,zero_d); c.LineWidth = 1.5;
 hold on 
 h2=quiver(xll(1:sv:end,1:sv:end), yll(1:sv:end,1:sv:end), ubx(1:sv:end,1:sv:end), vby(1:sv:end,1:sv:end), 0);
 set(h2,'AutoScale','on', 'AutoScaleFactor', asf, 'Color', 'm');
 %hc=pcolor(YLL,XLL,dum_p);
 hc=pcolor(YLL,XLL,real(dum_p));
 set(hc,'edgecolor','none'); colormap(jet(1))
-hlines1=streamline(ccc12);set(hlines1,'LineWidth',1.0,'Color', 'g');% [0.2,0.1,0.5]);
-hlines1=streamline(ccc12m);set(hlines1,'LineWidth',1.0,'Color', 'g');
-hlines2=streamline(aaa);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
-hlines3=streamline(aaam);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
+hlines1=streamline(ccc12c);set(hlines1,'LineWidth',1.0,'Color', 'g');% [0.2,0.1,0.5]);
+hlines1=streamline(ccc12mc);set(hlines1,'LineWidth',1.0,'Color', 'g');
+%hlines2=streamline(aaa);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
+%hlines3=streamline(aaam);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
 hlines2=streamline(bbbb5);set(hlines2,'LineWidth',1.0, 'Color', colorFVBl);%colorFVBl);
 hlines3=streamline(bbbb5m);set(hlines3,'LineWidth',1.0, 'Color', colorFVBl);
 xlim([xll(1) xll(end)]);
@@ -2809,6 +3675,9 @@ ylabel('$$p / d_{i}$$','Interpreter','latex','FontSize',20);
 set(gca,'XScale','lin','YScale','lin','FontSize',18)
 title('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}, \ Separatrices$$','Interpreter','latex','FontSize',20)
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+plot(5.58, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
 hold off
 
 %clearvars ccc12 ccc12m aaa aaam bbbb5 bbbb5m 
@@ -2827,7 +3696,7 @@ end
 %--------------------------------------------------------------------------
 % This plot is to see how the eigenvalues are distributed along the 2D plane
 %--------------------------------------------------------------------------
-%{
+%
 %--------------------------------------------------------------------------
 f99=figure(99)
 subplot(2,2,1)
@@ -2840,6 +3709,7 @@ hc=pcolor(real(EIGV2)'); set(hc,'edgecolor','none'); colorbar; title('real2')
 subplot(2,2,4); dum_p = real(EIGV2).*imag(EIGV2);
 hc=pcolor(dum_p'); set(hc,'edgecolor','none'); colorbar;  title('imag1')
 %hc=pcolor(imag(EIGV2)'); set(hc,'edgecolor','none'); colorbar;  title('imag2')
+
 
 f199=figure(199)
 subplot(1,3,1)
@@ -2863,7 +3733,8 @@ dum_p2 = sqrt(ubx.^2 + vby.^2); %vcounl = [zero_d];
 [M,c] =contour(xll,yll,dum_p2,zero_d); 
 c.LineWidth = 1.5;
 hold on 
-hc=pcolor(YLL,XLL,dum_p);
+%hc=pcolor(YLL,XLL,dum_p);
+hc=pcolor(YLL,XLL,real(dum_p));
 set(hc,'edgecolor','none'); colormap(jet(1))
 hlines1=streamline(ccc12);
 set(hlines1,'LineWidth',1,'Color', 'k');
@@ -2875,6 +3746,9 @@ ylabel('$$p / d_{i}$$','Interpreter','latex','FontSize',20);
 set(gca,'XScale','lin','YScale','lin','FontSize',18)
 title('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}, \ Separatrices$$','Interpreter','latex','FontSize',20)
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+rectangle('Position',[4 5 4 4],'LineWidth',1.5);
+plot(5.58, 6.6,'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
+plot(6.5, 6.2, 'kp', 'MarkerSize',10, 'MarkerFaceColor','k');
 hold off
 %--------------------------------------------------------------------------
 
