@@ -1,19 +1,16 @@
 %#-----------------------------------------------------------------------
-%C= 10^{-3}; beta =1
+%
 %#----------------------------------------------------------------------
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cd '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin'; %This is important because the xdmf files are in that directory
 path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin';
-
 S = dir(fullfile(path,'pfd.*.h5'));
 N=numel(S); % number of files to use
 H=zeros(N);
-
-in=2;
 for in=2:N
     disp(strcat('Computing step ...',S(in).name))    
     fileID =  S(in).name; %change the 1 per i
-    h5disp(fileID);
+    %h5disp(fileID);
     info = h5info(fileID);
     EHJ_1st = info.Groups(16).Name;
       
@@ -49,22 +46,22 @@ for in=2:N
     N_steps = str2double(newStr);
     time_t = dt*N_steps;    
     %----------------------------------------------------------------------
-    
-    
-    
+       
     % Making plots
     %----------------------------------------------------------------------
     fs=20;
     %----------------------------------------------------------------------
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     [kp2J, kpJ]=meshgrid(spectraB.kpar,spectraB.kper);
-    P2D=spectraB.P2D/max(max(spectraB.P2D));
+    %P2D=spectraB.P2D/max(max(spectraB.P2D));
+    P2D=spectraB.P2D;
     
     f1=figure(1);
-    [C,h]=contourf(spectraB.kpar,spectraB.kper,log10(P2D'),'LevelStep',0.5);
+    [C,h]=contourf(spectraB.kpar,spectraB.kper,log10(P2D'),'LevelStep',0.1);
     set(h,'LineColor','none')
     lim = caxis; 
-    caxis([-6 0]);
+    %caxis([-6 0]); % normalised to the Max
+    caxis([1 10]); % Without normalisation 
     colormap(jet)
     colorbar
     set(gca,'XScale','log','YScale','log','FontSize',fs)
@@ -85,43 +82,48 @@ for in=2:N
         '$$ \ \omega_{pe}^{-1}$$','Interpreter','latex','FontSize',fs)
     hold off
     
-    P1D_perB=(spectraB.P1Dper)./(max(spectraB.P1Dper));
+    %P1D_perB=(spectraB.P1Dper)./(max(spectraB.P1Dper));
+    P1D_perB=(spectraB.P1Dper);
     f2=figure(2);
     loglog(spectraB.kper,P1D_perB,'-k','LineWidth',2)
     hold on
     set(gca,'FontSize',20)
     x2=log10([1 14]);     y2=x2.*(-3); 
-    xlim([1 52.36]); ylim([10^(-6) 10^(0)]);
+    xlim([1 52.36]); 
+    %ylim([10^(-6) 10^(0)]);
+    ylim([10^(1) 10^(10)]);
     y1=get(gca,'ylim');
     loglog(10.^x2,10.^y2,'--b','LineWidth',2)
     txt5 = '$$ k_{\perp}^{-3}$$';
-    text(4.5 , 10e-2,txt5,'Interpreter','latex','FontSize',fs);  
+    %text(4.5 , 10e-2,txt5,'Interpreter','latex','FontSize',fs);  
     xlabel('$k_\perp d_i$','Interpreter','latex','FontSize',fs)
     ylabel('$P^{\psi}_{1D_\perp}$','Interpreter','latex','FontSize',fs)
-    xlim([1 14]); ylim([10^(-6) 10^0])
     legend({'$\mathbf{B}$'},'Interpreter','latex','FontSize',fs)
     title('$t = \ $'+string(round(time_t,2)) + ...
         '$$ \ \omega_{pe}^{-1}$$','Interpreter','latex','FontSize',fs)
     hold off
     
-    P1D_parB=(spectraB.P1Dpar)/(max(spectraB.P1Dpar));    
-    f3=figure(3);
-    loglog(spectraB.kpar,P1D_parB,'-k','LineWidth',2)
-    hold on
-    set(gca,'FontSize',20)
-    x2=log10([1 14]);     y2=x2.*(-3); 
-    xlim([1 52.36]); ylim([10^(-6) 10^(0)]);
-    loglog(10.^x2,10.^y2,'--b','LineWidth',2)
-    txt5 = '$$ k_{\perp}^{-3}$$';
-    text(4.5 , 10e-2,txt5,'Interpreter','latex','FontSize',fs);  
-    xlim([1 14]); ylim([10^(-6) 10^(0)]);
-    y1=get(gca,'ylim');
-    xlabel('$k_\| d_i$','Interpreter','latex','FontSize',fs)
-    ylabel('$P^{\psi}_{1D_\|}$','Interpreter','latex','FontSize',fs)
-    legend({'$\mathbf{B}$'},'Interpreter','latex','FontSize',fs)
-    title('$t = \ $'+string(round(time_t,2)) + ...
-        '$$ \ \omega_{pe}^{-1}$$','Interpreter','latex','FontSize',fs)
-    hold off 
+    
+%     %P1D_parB=(spectraB.P1Dpar)/(max(spectraB.P1Dpar)); 
+%     P1D_parB=(spectraB.P1Dpar);
+%     f3=figure(3);
+%     loglog(spectraB.kpar,P1D_parB,'-k','LineWidth',2)
+%     hold on
+%     set(gca,'FontSize',20)
+%     x2=log10([1 14]);     y2=x2.*(-3); 
+%     xlim([1 52.36]); ylim([10^(-6) 10^(0)]);
+%     loglog(10.^x2,10.^y2,'--b','LineWidth',2)
+%     txt5 = '$$ k_{\perp}^{-3}$$';
+%     text(4.5 , 10e-2,txt5,'Interpreter','latex','FontSize',fs);  
+%     xlim([1 14]); ylim([10^(-6) 10^(0)]);
+%     y1=get(gca,'ylim');
+%     xlabel('$k_\| d_i$','Interpreter','latex','FontSize',fs)
+%     ylabel('$P^{\psi}_{1D_\|}$','Interpreter','latex','FontSize',fs)
+%     legend({'$\mathbf{B}$'},'Interpreter','latex','FontSize',fs)
+%     title('$t = \ $'+string(round(time_t,2)) + ...
+%         '$$ \ \omega_{pe}^{-1}$$','Interpreter','latex','FontSize',fs)
+%     hold off 
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     
@@ -130,9 +132,156 @@ for in=2:N
     cd /Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/spectra
     % Save the plots
     %-------------------------------------------------------------------------
-    saveas(f1,strcat(S(in).name,'2DB_spectrum.png'));
-    saveas(f2,strcat(S(in).name,'1DB_spectrum_per.png'));
-    saveas(f3,strcat(S(in).name,'1DB_spectrum_par.png'));
+    saveas(f1,strcat(num2str(time_t),'2DB_spectrum.png'));
+    saveas(f2,strcat(num2str(time_t),'1DB_spectrum_per.png'));
+    %saveas(f3,strcat(num2str(time_t),'1DB_spectrum_par.png'));
     cd '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin'; 
-    
+    %----------------------------------------------------------------------
+
 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% This is to calculate and plot rms and energy 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cd '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin'; %This is important because the xdmf files are in that directory
+path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin';
+S = dir(fullfile(path,'pfd.*.h5'));
+N=numel(S); % number of files to use
+H=zeros(N);
+
+B_rms_a=zeros(1,N);
+J_rms_a=zeros(1,N);
+energy_b_a=zeros(1,N);
+B_std_a=zeros(1,N);
+J_std_a=zeros(1,N);
+epoch_a=zeros(1,N); 
+
+for in=1:N
+    disp(strcat('Computing step ...',S(in).name))    
+    fileID =  S(in).name; %change the 1 per i
+    %h5disp(fileID);
+    info = h5info(fileID);
+    EHJ_1st = info.Groups(16).Name;
+      
+    Bx=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+    By=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'));
+    Bz=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'));
+        
+    Jx=h5read(fileID,strcat(EHJ_1st,'/jx_ec/p0/3d'));
+    Jy=h5read(fileID,strcat(EHJ_1st,'/jy_ec/p0/3d'));
+    Jz=h5read(fileID,strcat(EHJ_1st,'/jz_ec/p0/3d'));
+    
+    %------------------------------------------------------------------
+    resx=2*pi/32; 
+    resy=2*pi/32;
+    resz=2*pi/32; 
+    
+    res=resx;
+    threshold=14;
+    dt=0.085022; 
+    
+    %----------------------------------------------------------------------
+    str = string(S(in).name);
+    newStr = extractBetween(str,"pfd.","_p000000.h5");
+    N_steps = str2double(newStr);
+    time_t = dt*N_steps;    
+    %----------------------------------------------------------------------
+    
+    % Calculating rms
+    %----------------------------------------------------------------------
+    
+    B_mag = sqrt(Bx.^2 + By.^2 + Bz.^2);
+    B_mean = mean(B_mag,'all');
+    
+    J_mag = sqrt(Jx.^2 + Jy.^2 + Jz.^2);
+    J_mean = mean(J_mag,'all');
+    
+    B_rms2 = rms(B_mag,"all");
+    J_rms2 = rms(J_mag,"all");
+    
+    B2_mean = mean(B_mag.^2,'all');
+%     B_rms=sqrt(B2_mean - B_mean.^2);
+%     J2_mean = mean(J_mag.^2,'all');
+%     J_rms=sqrt(J2_mean - J_mean.^2);
+
+    ener_b = (0.5)*B2_mean^2;
+    
+    A=B_mag;
+    NN=size(A);
+    NV=NN(1)*NN(2)*NN(3);
+    B_mag1 = reshape(B_mag,[1,NV]);
+    J_mag1 = reshape(J_mag,[1,NV]);
+    B_std = std(B_mag1);
+    J_std = std(J_mag1);
+        
+    B_rms_a(1,in)=B_rms2;
+    J_rms_a(1,in)=J_rms2;
+    energy_b_a(1,in)=ener_b;
+    B_std_a(1,in)=B_std;
+    J_std_a(1,in)=J_std;
+    
+    epoch_a(1,in) = time_t;
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Make the plots
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%--------------------------------------------------------------------------
+fs=20;
+%rms
+%--------------------------------------------------------------------------
+f4=figure(4);
+plot(epoch_a,B_rms_a,'-k','LineWidth',2)
+hold on
+plot(epoch_a,J_rms_a,'-b','LineWidth',2)
+set(gca,'FontSize',20)
+xlim([0 800]);
+%ylim([10^(1) 10^(10)]);
+xlabel('$t (\omega_{pe}^{-1}) $','Interpreter','latex','FontSize',fs)
+ylabel('$\psi^{rms}$','Interpreter','latex','FontSize',fs)
+legend({'$|B|$','$|J|$',},'Interpreter','latex','FontSize',fs)
+%title('$\psi^{rms} = \sqrt{\langle \psi^{2} \rangle - \langle \psi \rangle^{2}}$','Interpreter','latex','FontSize',fs)
+hold off
+%--------------------------------------------------------------------------
+
+%std 
+%--------------------------------------------------------------------------
+f5=figure(5);
+plot(epoch_a,B_std_a,'-k','LineWidth',2)
+hold on
+plot(epoch_a,J_std_a,'-b','LineWidth',2)
+set(gca,'FontSize',20)
+xlim([0 800]);
+%ylim([10^(1) 10^(10)]);
+xlabel('$t (\omega_{pe}^{-1}) $','Interpreter','latex','FontSize',fs)
+ylabel('$\psi^{std}$','Interpreter','latex','FontSize',fs)
+legend({'$|B|$','$|J|$',},'Interpreter','latex','FontSize',fs)
+title('$\psi^{std} = \sqrt{\langle \psi^{2} \rangle - \langle \psi \rangle^{2}}$','Interpreter','latex','FontSize',fs)
+hold off
+%--------------------------------------------------------------------------
+
+%B energy 
+%--------------------------------------------------------------------------
+f6=figure(6);
+semilogy(epoch_a,energy_b_a,'-k','LineWidth',2)
+set(gca,'FontSize',20)
+xlim([0 800]);
+%ylim([10^(1) 10^(10)]);
+xlabel('$t (\omega_{pe}^{-1}) $','Interpreter','latex','FontSize',fs)
+ylabel('$B^{2}/2$','Interpreter','latex','FontSize',fs)
+%legend({'$|B|$','$|J|$',},'Interpreter','latex','FontSize',fs)
+%title('$\psi^{std} = \sqrt{\langle \psi^{2} \rangle - \langle \psi \rangle^{2}}$','Interpreter','latex','FontSize',fs)
+%--------------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+cd /Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/spectra
+%-------------------------------------------------------------------------
+saveas(f4,'time_BJ_rms.png');
+saveas(f5,'time_BJ_std.png');
+saveas(f6,'time_B_energy.png');
+cd '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin';
+%----------------------------------------------------------------------
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
