@@ -3,9 +3,19 @@
 %#----------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-cd '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin'; 
-%This is important because the xdmf files are in that directory
 path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin';
+%path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_alfven';
+
+% For the scripts
+path_s= '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
+
+% To save the plots
+path_B = strcat(path,'/spectra/unnormalised/Magnetic_field/P2D');
+path_M = strcat(path,'/spectra/unnormalised/Momentum/P2D');
+path_1D = strcat(path,'/spectra/unnormalised/P1D_per');
+path_tp = strcat(path,'/spectra/unnormalised/time_plots');
+
+cd(path)
 S = dir(fullfile(path,'pfd.*.h5'));
 N=numel(S); % number of files to use
 H=zeros(N);
@@ -15,6 +25,13 @@ N2=numel(S2); % number of files to use
 H2=zeros(N2);
 in=2;
 %--------------------------------------------------------------------------
+
+% This has to be changed according to the resolution of each simulation
+%----------------------------------------------------------------------
+resx=2*pi/32;    resy=2*pi/32;    resz=2*pi/32; 
+res=resx;    threshold=14;    dt=0.085022; 
+%----------------------------------------------------------------------
+
 for in=2:N
     %----------------------------------------------------------------------
     disp(strcat('Computing step ...',S(in).name))    
@@ -49,22 +66,17 @@ for in=2:N
     %Jx=h5read(fileID,strcat(EHJ_1st,'/jx_ec/p0/3d'));
     %Jy=h5read(fileID,strcat(EHJ_1st,'/jy_ec/p0/3d'));
     %Jz=h5read(fileID,strcat(EHJ_1st,'/jz_ec/p0/3d'));
-
-    px_e=h5read(fileID2,strcat(moments_1st,'/px_e_UP/p0/3d'));
-    py_e=h5read(fileID2,strcat(moments_1st,'/py_e_UP/p0/3d'));
-    pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e_UP/p0/3d'));
     
-    px_i=h5read(fileID2,strcat(moments_1st,'/px_i_UP/p0/3d'));
-    py_i=h5read(fileID2,strcat(moments_1st,'/py_i_UP/p0/3d'));
-    pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i_UP/p0/3d'));
+    px_e=h5read(fileID2,strcat(moments_1st,'/px_e/p0/3d'));
+    py_e=h5read(fileID2,strcat(moments_1st,'/py_e/p0/3d'));
+    pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e/p0/3d'));
     
-    %----------------------------------------------------------------------
-    resx=2*pi/32;    resy=2*pi/32;    resz=2*pi/32; 
-    
-    res=resx;    threshold=14;    dt=0.085022; 
-    %----------------------------------------------------------------------
-      
-    cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra'
+    px_i=h5read(fileID2,strcat(moments_1st,'/px_i/p0/3d'));
+    py_i=h5read(fileID2,strcat(moments_1st,'/py_i/p0/3d'));
+    pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i/p0/3d'));
+ 
+    %----------------------------------------------------------------------  
+    cd(path_s)
     spectraB=CalcSpectra_CB(Bx,By,Bz,res,threshold);
     %spectraE=CalcSpectra_CB(Ex,Ey,Ez,res,threshold);
     %spectraJ=CalcSpectra_CB(Jx,Jy,Jz,res,threshold);
@@ -191,23 +203,15 @@ for in=2:N
 %         '$$ \ \omega_{pe}^{-1}$$','Interpreter','latex','FontSize',fs)
 %     hold off 
     %----------------------------------------------------------------------
-        
-    %----------------------------------------------------------------------
-    cd /Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/spectra
-    % Save the plots
-    %-------------------------------------------------------------------------
-    saveas(f1,strcat(num2str(time_t),'2DB_spectrum.png'));
-    saveas(f2,strcat(num2str(time_t),'2DPe_spectrum.png'));
-    saveas(f3,strcat(num2str(time_t),'1DBPe_spectrum_per.png'));
-    %-------------------------------------------------------------------------
-    cd /Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/spectra/unnormalised/Magnetic_field/P2D
+    
+    cd(path_B)
     saveas(f1,strcat(num2str(time_t),'P2DB_spectrum.png'));
-    cd /Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/spectra/unnormalised/Momentum/P2D
+    cd(path_M)
     saveas(f2,strcat(num2str(time_t),'P1DB_spectrum_per.png'));
-    cd /Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/spectra/unnormalised/P1D_per    
+    cd(path_1D)    
     saveas(f3,strcat(num2str(time_t),'P1DB_spectrum_per.png'));
     %saveas(f3,strcat(num2str(time_t),'1DB_spectrum_par.png'));
-    cd '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin'; 
+    cd(path); 
     %----------------------------------------------------------------------
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,8 +219,7 @@ end
 
 % This is to calculate and plot rms and energy 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-cd '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin'; 
-path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin';
+cd(path);
 %--------------------------------------------------------------------------
 S = dir(fullfile(path,'pfd.*.h5'));
 N=numel(S); % number of files to use
@@ -263,16 +266,13 @@ for in=1:N
     Jy=h5read(fileID,strcat(EHJ_1st,'/jy_ec/p0/3d'));
     Jz=h5read(fileID,strcat(EHJ_1st,'/jz_ec/p0/3d'));
     
-    px_e=h5read(fileID2,strcat(moments_1st,'/px_e_UP/p0/3d'));
-    py_e=h5read(fileID2,strcat(moments_1st,'/py_e_UP/p0/3d'));
-    pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e_UP/p0/3d'));
+    px_e=h5read(fileID2,strcat(moments_1st,'/px_e/p0/3d'));
+    py_e=h5read(fileID2,strcat(moments_1st,'/py_e/p0/3d'));
+    pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e/p0/3d'));
     
-    px_i=h5read(fileID2,strcat(moments_1st,'/px_i_UP/p0/3d'));
-    py_i=h5read(fileID2,strcat(moments_1st,'/py_i_UP/p0/3d'));
-    pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i_UP/p0/3d'));
-    %------------------------------------------------------------------
-    resx=2*pi/32;    resy=2*pi/32;    resz=2*pi/32;     
-    res=resx;    threshold=14;    dt=0.085022;     
+    px_i=h5read(fileID2,strcat(moments_1st,'/px_i/p0/3d'));
+    py_i=h5read(fileID2,strcat(moments_1st,'/py_i/p0/3d'));
+    pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i/p0/3d'));
     %----------------------------------------------------------------------
     str = string(S(in).name);
     newStr = extractBetween(str,"pfd.","_p000000.h5");
@@ -385,7 +385,7 @@ semilogy(epoch_a,energy_b_a,'-k','LineWidth',2)
 hold on
 semilogy(epoch_a,energy_Pei_a,'-b','LineWidth',2)
 set(gca,'FontSize',20)
-xlim([0 800]);
+%xlim([0 800]);
 %ylim([10^(1) 10^(10)]);
 xlabel('$t (\omega_{pe}^{-1}) $','Interpreter','latex','FontSize',fs)
 ylabel('$\langle \varepsilon \rangle$','Interpreter','latex','FontSize',fs)
@@ -395,11 +395,11 @@ hold off
 %--------------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-cd /Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/spectra/unnormalised/time_plots
+cd(path_tp)
 %-------------------------------------------------------------------------
 saveas(f4,'time_BJpepi_rms.png');
 saveas(f5,'time_BJpepi_std.png');
 saveas(f6,'time_Bpepi_energy.png');
-cd '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin';
+cd(path);
 %----------------------------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
