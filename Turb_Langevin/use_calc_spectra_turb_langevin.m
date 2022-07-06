@@ -3,8 +3,11 @@
 %#----------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin';
-%path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_alfven';
+%path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/res100';
+%path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_alfven/res100';
+
+%path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/big_box';
+path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_harris_langevin/harris_langevin_nopert';
 
 % For the scripts
 path_s= '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
@@ -14,6 +17,19 @@ path_B = strcat(path,'/spectra/unnormalised/Magnetic_field/P2D');
 path_M = strcat(path,'/spectra/unnormalised/Momentum/P2D');
 path_1D = strcat(path,'/spectra/unnormalised/P1D_per');
 path_tp = strcat(path,'/spectra/unnormalised/time_plots');
+
+if not(isfolder(path_B))
+    mkdir(path_B)
+end
+if not(isfolder(path_M))
+    mkdir(path_M)
+end
+if not(isfolder(path_1D))
+    mkdir(path_1D)
+end
+if not(isfolder(path_tp))
+    mkdir(path_tp)    
+end
 
 cd(path)
 S = dir(fullfile(path,'pfd.*.h5'));
@@ -28,9 +44,12 @@ in=2;
 
 % This has to be changed according to the resolution of each simulation
 %----------------------------------------------------------------------
-resx=2*pi/32;    resy=2*pi/32;    resz=2*pi/32; 
-res=resx;    threshold=14;    dt=0.085022; 
-%----------------------------------------------------------------------
+
+% ngrid=32; threshold=16;    dt=0.085022;  Lx=2*pi; Ly=2*pi; Lz=2*pi;% for ngrid 32
+%ngrid=100; threshold=16;    dt=0.027207; Lx=2*pi; Ly=2*pi; Lz=2*pi; 
+%ngrid=100; threshold=16;    dt=0.081621; Lx=3*2*pi; Ly=3*2*pi; Lz=3*2*pi; %big box
+
+%--------------------------------------------------------------------------
 
 for in=2:N
     %----------------------------------------------------------------------
@@ -39,6 +58,28 @@ for in=2:N
     %h5disp(fileID);
     info = h5info(fileID);
     EHJ_1st = info.Groups(16).Name;
+    
+    %--------------------------------------------------------------------------
+    grid_dt = info.Groups(20).Attributes;
+    dt=double(grid_dt(15).Value);
+ 
+    grid_ng = info.Groups(19).Attributes; 
+    dx=grid_ng(10).Value(1);
+    dy=grid_ng(10).Value(2);
+    dz=grid_ng(10).Value(3);
+ 
+    grid_length = info.Groups(17).Attributes;
+    Lx=grid_length(4).Value(1) - grid_length(3).Value(1);
+    Ly=grid_length(4).Value(2) - grid_length(3).Value(2);
+    Lz=grid_length(4).Value(3) - grid_length(3).Value(3);
+ 
+    resx=double(Lx)/double(dx);    
+    resy=double(Ly)/double(dy);    
+    resz=double(Lz)/double(dz); res=resx;
+    
+    threshold=16; 
+    %--------------------------------------------------------------------------
+    
     %----------------------------------------------------------------------
     disp(strcat('Computing step ...',S2(in).name))    
     fileID2 =  S2(in).name; %change the 1 per i
@@ -67,13 +108,22 @@ for in=2:N
     %Jy=h5read(fileID,strcat(EHJ_1st,'/jy_ec/p0/3d'));
     %Jz=h5read(fileID,strcat(EHJ_1st,'/jz_ec/p0/3d'));
     
-    px_e=h5read(fileID2,strcat(moments_1st,'/px_e/p0/3d'));
-    py_e=h5read(fileID2,strcat(moments_1st,'/py_e/p0/3d'));
-    pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e/p0/3d'));
+%     px_e=h5read(fileID2,strcat(moments_1st,'/px_e/p0/3d'));
+%     py_e=h5read(fileID2,strcat(moments_1st,'/py_e/p0/3d'));
+%     pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e/p0/3d'));
+%     
+%     px_i=h5read(fileID2,strcat(moments_1st,'/px_i/p0/3d'));
+%     py_i=h5read(fileID2,strcat(moments_1st,'/py_i/p0/3d'));
+%     pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i/p0/3d'));
     
-    px_i=h5read(fileID2,strcat(moments_1st,'/px_i/p0/3d'));
-    py_i=h5read(fileID2,strcat(moments_1st,'/py_i/p0/3d'));
-    pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i/p0/3d'));
+    % This has to be fixed because it is only the popullation in or out of the harris
+    px_e=h5read(fileID2,strcat(moments_1st,'/px_e_UP/p0/3d')); 
+    py_e=h5read(fileID2,strcat(moments_1st,'/py_e_UP/p0/3d'));
+    pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e_UP/p0/3d'));
+    
+    px_i=h5read(fileID2,strcat(moments_1st,'/px_i_UP/p0/3d'));
+    py_i=h5read(fileID2,strcat(moments_1st,'/py_i_UP/p0/3d'));
+    pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i_UP/p0/3d'));
  
     %----------------------------------------------------------------------  
     cd(path_s)
@@ -113,8 +163,8 @@ for in=2:N
     x3=log10([0.06 0.2]); y3=(3/2)*x3 + 1.4;
     hold on
     loglog(10.^x3,10.^y3,'--k','LineWidth',2)
-    ylim([1 14])
-    xlim([1 14])
+    ylim([1 threshold])
+    xlim([1 threshold])
     txt = '$k_{\perp} \sim k_{\parallel}^{3/2}$';
     txt2 = '$k_{\perp} \sim k_{\parallel}$';
     text(0.1,0.4,txt,'Interpreter','latex','FontSize',fs)
@@ -144,8 +194,8 @@ for in=2:N
     x3=log10([0.06 0.2]); y3=(3/2)*x3 + 1.4;
     hold on
     loglog(10.^x3,10.^y3,'--k','LineWidth',2)
-    ylim([1 14])
-    xlim([1 14])
+    ylim([1 threshold])
+    xlim([1 threshold])
     txt = '$k_{\perp} \sim k_{\parallel}^{3/2}$';
     txt2 = '$k_{\perp} \sim k_{\parallel}$';
     text(0.1,0.4,txt,'Interpreter','latex','FontSize',fs)
@@ -169,9 +219,9 @@ for in=2:N
     %loglog(spectraPi.kper,P1D_perPi,'-r','LineWidth',2)
     set(gca,'FontSize',20)
     x2=log10([1 14]);     y2=x2.*(-3); 
-    xlim([1 52.36]); 
+    xlim([0.1 threshold]); 
     %ylim([10^(-6) 10^(0)]);
-    ylim([10^(1) 10^(10)]);
+    ylim([10^(3) 10^(13)]);
     y1=get(gca,'ylim');
     loglog(10.^x2,10.^y2,'--b','LineWidth',2)
     txt5 = '$$ k_{\perp}^{-3}$$';
@@ -190,7 +240,7 @@ for in=2:N
 %     hold on
 %     set(gca,'FontSize',20)
 %     x2=log10([1 14]);     y2=x2.*(-3); 
-%     xlim([1 52.36]); ylim([10^(-6) 10^(0)]);
+%     xlim([0.1 threshold]); ylim([10^(-6) 10^(0)]);
 %     loglog(10.^x2,10.^y2,'--b','LineWidth',2)
 %     txt5 = '$$ k_{\perp}^{-3}$$';
 %     text(4.5 , 10e-2,txt5,'Interpreter','latex','FontSize',fs);  
@@ -266,13 +316,21 @@ for in=1:N
     Jy=h5read(fileID,strcat(EHJ_1st,'/jy_ec/p0/3d'));
     Jz=h5read(fileID,strcat(EHJ_1st,'/jz_ec/p0/3d'));
     
-    px_e=h5read(fileID2,strcat(moments_1st,'/px_e/p0/3d'));
-    py_e=h5read(fileID2,strcat(moments_1st,'/py_e/p0/3d'));
-    pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e/p0/3d'));
+%     px_e=h5read(fileID2,strcat(moments_1st,'/px_e/p0/3d'));
+%     py_e=h5read(fileID2,strcat(moments_1st,'/py_e/p0/3d'));
+%     pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e/p0/3d'));
+%     
+%     px_i=h5read(fileID2,strcat(moments_1st,'/px_i/p0/3d'));
+%     py_i=h5read(fileID2,strcat(moments_1st,'/py_i/p0/3d'));
+%     pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i/p0/3d'));
     
-    px_i=h5read(fileID2,strcat(moments_1st,'/px_i/p0/3d'));
-    py_i=h5read(fileID2,strcat(moments_1st,'/py_i/p0/3d'));
-    pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i/p0/3d'));
+    px_e=h5read(fileID2,strcat(moments_1st,'/px_e_UP/p0/3d'));
+    py_e=h5read(fileID2,strcat(moments_1st,'/py_e_UP/p0/3d'));
+    pz_e=h5read(fileID2,strcat(moments_1st,'/pz_e_UP/p0/3d'));
+    
+    px_i=h5read(fileID2,strcat(moments_1st,'/px_i_UP/p0/3d'));
+    py_i=h5read(fileID2,strcat(moments_1st,'/py_i_UP/p0/3d'));
+    pz_i=h5read(fileID2,strcat(moments_1st,'/pz_i_UP/p0/3d'));
     %----------------------------------------------------------------------
     str = string(S(in).name);
     newStr = extractBetween(str,"pfd.","_p000000.h5");
@@ -351,7 +409,7 @@ plot(epoch_a,J_rms_a,'-b','LineWidth',2)
 plot(epoch_a,Pe_rms_a,'-r','LineWidth',2)
 plot(epoch_a,Pi_rms_a,'-c','LineWidth',2)
 set(gca,'FontSize',20)
-xlim([0 800]);
+%xlim([0 800]);
 %ylim([10^(1) 10^(10)]);
 xlabel('$t (\omega_{pe}^{-1}) $','Interpreter','latex','FontSize',fs)
 ylabel('$\psi^{rms}$','Interpreter','latex','FontSize',fs)
@@ -369,7 +427,7 @@ plot(epoch_a,J_std_a,'-b','LineWidth',2)
 plot(epoch_a,Pe_std_a,'-r','LineWidth',2)
 plot(epoch_a,Pi_std_a,'-c','LineWidth',2)
 set(gca,'FontSize',20)
-xlim([0 800]);
+%xlim([0 800]);
 %ylim([10^(1) 10^(10)]);
 xlabel('$t (\omega_{pe}^{-1}) $','Interpreter','latex','FontSize',fs)
 ylabel('$\psi^{std}$','Interpreter','latex','FontSize',fs)
