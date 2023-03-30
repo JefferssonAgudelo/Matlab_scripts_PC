@@ -416,7 +416,7 @@ set(hc,'edgecolor','none')
 %colorbar; colormap(h1,flipud(turbo))
 colorbar; colormap(h1,BWR)
 lim_yp=0.7*max(max(max(abs(dum_p))));
-caxis([-lim_yp,lim_yp])
+caxis([-lim_yp,lim_yp]);
 hcb=colorbar; hcb.Location = 'eastoutside';
 hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
@@ -494,8 +494,6 @@ saveas(f37,strcat(num2str(time_t),'Bz_stack_long.png'));
 %}
 % %--------------------------------------------------------------------------
 % %--------------------------------------------------------------------------
-
-
 
 
 
