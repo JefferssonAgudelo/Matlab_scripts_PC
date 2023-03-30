@@ -6,6 +6,8 @@ function spectra=CalcSpectra_CB(varx,vary,varz,res,threshold)
 %This code is based on Luca Franci's routines (see Franci et al. ApJ 2018)
 %and adapted by Lloyd Woodham [Current version: 15/08/2019].
 %Adapted by Jeffersson Agudelo [version: 21/10/19]
+
+%--------------------------------------------------------------------------
 disp('Computing 2D and 1D spectra...')
 [kpar,kper,P2D]=Compute2Dspectrum(res,varx,vary,varz);
 [P1Dper,P1Dpar]=Compute1DSpectra(P2D,kper,threshold);
@@ -13,7 +15,9 @@ spectra.kpar=kpar; spectra.kper=kper;
 spectra.P2D=P2D; spectra.P1Dpar=P1Dpar; spectra.P1Dper=P1Dper;
 clear varx vary varz;
 end
+%--------------------------------------------------------------------------
 
+%--------------------------------------------------------------------------
 function [kpar,kper,P2D,Nkper]=Compute2Dspectrum(res,var1,var2,var3)
 %Compute the 2D power swpectrum of variables 'var1', 'var2' & 'var3'.
 
@@ -57,6 +61,7 @@ dkpar=kz(2)-kz(1);
 nkpar=fix(max(max(kz)/dkpar))+1;
 kpar=(0:nkpar-1).*dkpar;
 
+% This is asumming the x and y coordinates are of the same size
 dkper=kx(2)-kx(1);
 nkper=fix(max(max(kp)/dkper))+1;
 kper=(0:nkper-1).*dkper;

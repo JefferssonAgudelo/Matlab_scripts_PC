@@ -1,4 +1,4 @@
-function xdmf = xdmfwrite(filename,size,datatype)
+function xdmf = xdmfwrite(filename,size,OXYZ,DXDYDZ,datatype)
 %XDMFWRITE  Create an XDMF text file for an associated 3D H5 file.
 %   XDMFWRITE(FILENAME,SIZE,DATATYPE) creates an
 %   XDMF file with 3D extents given by SIZE and with attribute datasets
@@ -33,16 +33,16 @@ xdmf = fopen([filename(1:end-3), '.xdmf'], 'w');
 
 fprintf(xdmf, '%s\n', '<?xml version="1.0"?>');
 fprintf(xdmf, '%s\n', '<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd"[]>');
-fprintf(xdmf, '%s\n', '<Xdmf xmlns:xi="http://www.w3.org/2003/XInclude" Version="2.2">');
+fprintf(xdmf, '%s\n', '<Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="2.2">');
 fprintf(xdmf, '%s\n', ' <Domain>');
 fprintf(xdmf, '%s\n', ' ');
 fprintf(xdmf, '%s\n', '  <Grid Name="Cell Data" GridType="Uniform">');
-fprintf(xdmf, '%s\n', ['    <Topology TopologyType="3DCoRectMesh" Dimensions="',num2str(size(3)+1), ' ', num2str(size(2)+1), ' ', num2str(size(1)+1), '"></Topology>']);
+fprintf(xdmf, '%s\n', ['    <Topology TopologyType="3DCoRectMesh" Dimensions="',num2str(size(3)+1),' ',num2str(size(2)+1),' ',num2str(size(1)+1),'"></Topology>']);
 fprintf(xdmf, '%s\n', '    <Geometry Type="ORIGIN_DXDYDZ">');
 fprintf(xdmf, '%s\n', '      <!-- Origin -->');
-fprintf(xdmf, '%s\n', '      <DataItem Format="XML" Dimensions="3">0 0 0</DataItem>');
+fprintf(xdmf, '%s\n', '      <DataItem Format="XML" Dimensions="3"> ',num2str(OXYZ(3)),' ',num2str(OXYZ(2)),' ',num2str(OXYZ(1)),'</DataItem>');
 fprintf(xdmf, '%s\n', '      <!-- DxDyDz (Spacing/Resolution)-->');
-fprintf(xdmf, '%s\n', '      <DataItem Format="XML" Dimensions="3">0.25 0.25 0.25</DataItem>');
+fprintf(xdmf, '%s\n', '      <DataItem Format="XML" Dimensions="3"> ',num2str(DXDYDZ(3)),' ',num2str(DXDYDZ(2)),' ',num2str(DXDYDZ(1)),'</DataItem>'); %it was 0.25
 fprintf(xdmf, '%s\n', '    </Geometry>');
 
 for i = 1: totalsets

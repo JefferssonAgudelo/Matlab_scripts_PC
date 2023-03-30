@@ -913,7 +913,7 @@ clearvars -except  in ...
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
-cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data'; %This is important because the xdmf files are in that directory
+cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data'; 
 path = '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
 
 % useful parameters used in the simulation
@@ -1070,7 +1070,29 @@ fs=18; lw=1.5;
 fs=20;
 %--------------------------------------------------------------------------
 
+nx1=166;    nx2=333;
+ny1=232;    ny2=400;
+nz1=1200;   nz2=1367;
+%px2 = 400; py2 = 400; pz2 = 168; For the no reference change
+px2 = 168; py2 = 168; pz2 = 168;
+start = [nx1 ny1 nz1];
+count = [px2 py2 pz2];
+resx=0.06; %0.06081
+resy=0.06;
+resz=0.06; %0.06152
+Lx=px2*resx; k0x=1/Lx;
+Ly=px2*resy; k0y=1/Ly;
+Lz=px2*resz; k0z=1/Lz;
+k00=sqrt(k0x*k0x + k0y*k0y + k0z*k0z);
+xl=linspace(nx1,nx1+px2,px2)*resx;
+yl=linspace(ny1,ny1+py2,py2)*resy;
+zl=linspace(nz1,nz1+pz2,pz2)*resz;
 
+
+%px2 = 400; py2 = 400; pz2 = 168; For the no reference change
+px2 = 168; py2 = 168; pz2 = 168;
+start = [nx1 ny1 nz1];
+count = [px2 py2 pz2];
 %--------------------------------------------------------------------------
 %To check withouth directly taking cuts no need to compute variables on the
 %slides. This is meant to be a complementary way to show what happens in
@@ -1081,6 +1103,7 @@ fs=20;
 [X,Y,Z] = meshgrid(xl,yl,zl);
 ypc_i=127; 
 xpc_i = 93; 
+
 xslice = 17.08;%xl(xpc_i);%[-1.2,0.8,2];   
 yslice = 17.84;%yl(ypc_i);%[];
 zslice = zl(46); %<-- this is the correct slice in z after ref transformation
@@ -1106,6 +1129,9 @@ zslice = [zl(1)];
 xslice = [];  
 yslice = [];
 zslice = [zl(1), zl(46), zl(end)];
+
+caz=-136.7335
+cel=16.1799
 
 x0=-20;y0=112;width=880;height=740; fs=20;
 timesst=2; %<---- This is to define how many times the standard deviation for the treshhold 

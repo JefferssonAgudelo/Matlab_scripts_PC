@@ -1,6 +1,6 @@
 % This is to get the energy 
 
-cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data'; %This is important because the xdmf files are in that directory
+cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
 path = '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
 
 % useful parameters used in the simulation
