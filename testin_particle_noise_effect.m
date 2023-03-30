@@ -35,8 +35,8 @@ H=zeros(N);
 % running again the program to generate the data
 %--------------------------------------------------------------------------
 %
-T_velocities_sub=cell(6,N);
-T_ratios_sub=cell(8,N);
+%T_velocities_sub=cell(6,N);
+%T_ratios_sub=cell(8,N);
 T_energy_terms_sub=cell(8,N);
 
 %}
@@ -65,11 +65,9 @@ k00=sqrt(k0x*k0x + k0y*k0y + k0z*k0z);
 %--------------------------------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
 in=19;
 % This is tocalculate the ratios and velocities.
-% The veocities and all the terms have been normalized
+% The velocities and all the terms have been normalized
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for in=1:N
@@ -115,13 +113,13 @@ Pe0 = me*VA2c*VA2c;
 %%%% DIFFERENT VALUES BECAUSE OF ITS MASS?????
 %--------------------------------------------------------------------------
 
-% This is over the whole box!
+% This is over the whole box! (This is outdated and doesn't have the correction for the central moment)
 %------------------------------------------------------------------
 %{
 %Magnetic energy density
-B{1,1} =h5read(fileID,strcat(B_1st,'/hx/p0/3d'))./B0; %Bx=Bx(nx1:nx2,ny1:ny2,nz1:nz2);
-B{1,2} =h5read(fileID,strcat(B_1st,'/hy/p0/3d'))./B0; %By=By(nx1:nx2,ny1:ny2,nz1:nz2);
-B{1,3} =h5read(fileID,strcat(B_1st,'/hz/p0/3d'))./B0; %Bz=Bz(nx1:nx2,ny1:ny2,nz1:nz2);
+B{1,1} =h5read(fileID,strcat(B_1st,'/hx/p0/3d'))./B0; 
+B{1,2} =h5read(fileID,strcat(B_1st,'/hy/p0/3d'))./B0; 
+B{1,3} =h5read(fileID,strcat(B_1st,'/hz/p0/3d'))./B0; 
 
 energy_B = 0.5.*(B{1,1}.^2 + B{1,2}.^2 + B{1,3}.^2);
 clearvars B;
@@ -132,9 +130,9 @@ clearvars energy_B;
 T_energy_terms{1,in} = energy_B_in; 
 
 %Electric energy density
-E{1,1} =h5read(fileID,strcat(E_1st,'/ex/p0/3d'))./E0; %Ex=Ex(nx1:nx2,ny1:ny2,nz1:nz2);
-E{1,2} =h5read(fileID,strcat(E_1st,'/ey/p0/3d'))./E0; %Ey=Ey(nx1:nx2,ny1:ny2,nz1:nz2);
-E{1,3} =h5read(fileID,strcat(E_1st,'/ez/p0/3d'))./E0; %Ez=Ez(nx1:nx2,ny1:ny2,nz1:nz2);
+E{1,1} =h5read(fileID,strcat(E_1st,'/ex/p0/3d'))./E0; 
+E{1,2} =h5read(fileID,strcat(E_1st,'/ey/p0/3d'))./E0; 
+E{1,3} =h5read(fileID,strcat(E_1st,'/ez/p0/3d'))./E0; 
 
 energy_E = 0.5.*(E{1,1}.^2 + E{1,2}.^2 + E{1,3}.^2);
 clearvars E;
@@ -144,15 +142,15 @@ clearvars energy_E;
 
 T_energy_terms{2,in} = energy_E_in; 
 
-%J{1,1} =h5read(fileID,strcat(J_1st,'/jx/p0/3d'))./VA2c; %Jx=Jx(nx1:nx2,ny1:ny2,nz1:nz2);
-%J{1,2} =h5read(fileID,strcat(J_1st,'/jy/p0/3d'))./VA2c; %Jy=Jy(nx1:nx2,ny1:ny2,nz1:nz2);
-%J{1,3} =h5read(fileID,strcat(J_1st,'/jz/p0/3d'))./VA2c; %Jz=Jz(nx1:nx2,ny1:ny2,nz1:nz2);
+%J{1,1} =h5read(fileID,strcat(J_1st,'/jx/p0/3d'))./VA2c; 
+%J{1,2} =h5read(fileID,strcat(J_1st,'/jy/p0/3d'))./VA2c; 
+%J{1,3} =h5read(fileID,strcat(J_1st,'/jz/p0/3d'))./VA2c; 
 
 %Kinetic energy density ions
-vi{1,1} =h5read(fileID,strcat(V_1st,'/vx_i/p0/3d'))./VA2c; %vix=vix(nx1:nx2,ny1:ny2,nz1:nz2);
-vi{1,2} =h5read(fileID,strcat(V_1st,'/vy_i/p0/3d'))./VA2c; %viy=viy(nx1:nx2,ny1:ny2,nz1:nz2);
-vi{1,3} =h5read(fileID,strcat(V_1st,'/vz_i/p0/3d'))./VA2c; %viz=viz(nx1:nx2,ny1:ny2,nz1:nz2);
-ni{1,1} = h5read(fileID,strcat(n_1st,'/n_i/p0/3d')); %ni=ni(nx1:nx2,ny1:ny2,nz1:nz2);
+vi{1,1} =h5read(fileID,strcat(V_1st,'/vx_i/p0/3d'))./VA2c; 
+vi{1,2} =h5read(fileID,strcat(V_1st,'/vy_i/p0/3d'))./VA2c; 
+vi{1,3} =h5read(fileID,strcat(V_1st,'/vz_i/p0/3d'))./VA2c; 
+ni{1,1} = h5read(fileID,strcat(n_1st,'/n_i/p0/3d')); 
 
 energy_vi = 0.5.*mi.*(ni{1,1}).*(vi{1,1}.^2 + vi{1,2}.^2 + vi{1,3}.^2);
 clearvars vi ni;
@@ -163,10 +161,10 @@ clearvars energy_vi;
 T_energy_terms{3,in} = energy_vi_in; 
 
 %Kinetic energy density electrons
-ve{1,1} =h5read(fileID,strcat(V_1st,'/vx_e/p0/3d'))./VA2c; %vex=vex(nx1:nx2,ny1:ny2,nz1:nz2);
-ve{1,2} =h5read(fileID,strcat(V_1st,'/vy_e/p0/3d'))./VA2c; %vey=vey(nx1:nx2,ny1:ny2,nz1:nz2);
-ve{1,3} =h5read(fileID,strcat(V_1st,'/vz_e/p0/3d'))./VA2c; %vez=vez(nx1:nx2,ny1:ny2,nz1:nz2);
-ne{1,1} = h5read(fileID,strcat(n_1st,'/n_e/p0/3d')); %ne=ne(nx1:nx2,ny1:ny2,nz1:nz2);
+ve{1,1} =h5read(fileID,strcat(V_1st,'/vx_e/p0/3d'))./VA2c; 
+ve{1,2} =h5read(fileID,strcat(V_1st,'/vy_e/p0/3d'))./VA2c; 
+ve{1,3} =h5read(fileID,strcat(V_1st,'/vz_e/p0/3d'))./VA2c; 
+ne{1,1} = h5read(fileID,strcat(n_1st,'/n_e/p0/3d')); 
 
 energy_ve = 0.5.*me.*(ne{1,1}).*(ve{1,1}.^2 + ve{1,2}.^2 + ve{1,3}.^2);
 clearvars ve ne;
@@ -178,12 +176,12 @@ T_energy_terms{4,in} = energy_ve_in;
 
 
 %Thermal energy density ions
-Pij_i{1,1} =h5read(fileID,strcat(T_1st,'/Txx_i/p0/3d'))./Pi0; %Pxxi=Pxxi(nx1:nx2,ny1:ny2,nz1:nz2);
-%Pij_i{1,2} =h5read(fileID,strcat(T_1st,'/Txy_i/p0/3d'))./Pi0; %Pxyi=Pxyi(nx1:nx2,ny1:ny2,nz1:nz2);
-%Pij_i{1,3} =h5read(fileID,strcat(T_1st,'/Txz_i/p0/3d'))./Pi0; %Pxzi=Pxzi(nx1:nx2,ny1:ny2,nz1:nz2);
-Pij_i{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_i/p0/3d'))./Pi0; %Pyyi=Pyyi(nx1:nx2,ny1:ny2,nz1:nz2);
-%Pij_i{2,3} =h5read(fileID,strcat(T_1st,'/Tyz_i/p0/3d'))./Pi0; %Pyzi=Pyzi(nx1:nx2,ny1:ny2,nz1:nz2);
-Pij_i{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_i/p0/3d'))./Pi0; %Pzzi=Pzzi(nx1:nx2,ny1:ny2,nz1:nz2);
+Pij_i{1,1} =h5read(fileID,strcat(T_1st,'/Txx_i/p0/3d'))./Pi0; 
+%Pij_i{1,2} =h5read(fileID,strcat(T_1st,'/Txy_i/p0/3d'))./Pi0; 
+%Pij_i{1,3} =h5read(fileID,strcat(T_1st,'/Txz_i/p0/3d'))./Pi0; 
+Pij_i{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_i/p0/3d'))./Pi0; 
+%Pij_i{2,3} =h5read(fileID,strcat(T_1st,'/Tyz_i/p0/3d'))./Pi0; 
+Pij_i{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_i/p0/3d'))./Pi0; 
 
 energy_Pij_i = 0.5.*(Pij_i{1,1} + Pij_i{1,2} + Pij_i{1,3});
 clearvars Pij_i;
@@ -194,12 +192,12 @@ clearvars energy_Pij_i;
 T_energy_terms{5,in} = energy_Pij_i_in; 
 
 %Kinetic energy density electrons
-Pij_e{1,1} =h5read(fileID,strcat(T_1st,'/Txx_e/p0/3d'))./Pe0; %Pxxe=Pxxe(nx1:nx2,ny1:ny2,nz1:nz2);
-%Pij_e{1,2} =h5read(fileID,strcat(T_1st,'/Txy_e/p0/3d'))./Pe0; %Pxye=Pxye(nx1:nx2,ny1:ny2,nz1:nz2);
-%Pij_e{1,3} =h5read(fileID,strcat(T_1st,'/Txz_e/p0/3d'))./Pe0; %Pxze=Pxze(nx1:nx2,ny1:ny2,nz1:nz2);
-Pij_e{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_e/p0/3d'))./Pe0; %Pyye=Pyye(nx1:nx2,ny1:ny2,nz1:nz2);
-%Pij_e{2,3} =h5read(fileID,strcat(T_1st,'/Tyz_e/p0/3d'))./Pe0; %Pyze=Pyze(nx1:nx2,ny1:ny2,nz1:nz2);
-Pij_e{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_e/p0/3d'))./Pe0; %Pzze=Pzze(nx1:nx2,ny1:ny2,nz1:nz2);
+Pij_e{1,1} =h5read(fileID,strcat(T_1st,'/Txx_e/p0/3d'))./Pe0; 
+%Pij_e{1,2} =h5read(fileID,strcat(T_1st,'/Txy_e/p0/3d'))./Pe0; 
+%Pij_e{1,3} =h5read(fileID,strcat(T_1st,'/Txz_e/p0/3d'))./Pe0; 
+Pij_e{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_e/p0/3d'))./Pe0; 
+%Pij_e{2,3} =h5read(fileID,strcat(T_1st,'/Tyz_e/p0/3d'))./Pe0; 
+Pij_e{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_e/p0/3d'))./Pe0; 
 
 energy_Pij_e = 0.5.*(Pij_e{1,1} + Pij_e{1,2} + Pij_e{1,3});
 clearvars Pij_e;
@@ -214,16 +212,16 @@ T_energy_terms{6,in} = energy_Pij_e_in;
 
 % This is over the subdomain!
 %------------------------------------------------------------------
-%
+%{
 %Magnetic energy density
-B{1,1} =h5read(fileID,strcat(B_1st,'/hx/p0/3d'),start,count)./B0; %Bx=Bx(nx1:nx2,ny1:ny2,nz1:nz2);
-B{1,2} =h5read(fileID,strcat(B_1st,'/hy/p0/3d'),start,count)./B0; %By=By(nx1:nx2,ny1:ny2,nz1:nz2);
-B{1,3} =h5read(fileID,strcat(B_1st,'/hz/p0/3d'),start,count)./B0; %Bz=Bz(nx1:nx2,ny1:ny2,nz1:nz2);
+B{1,1} =h5read(fileID,strcat(B_1st,'/hx/p0/3d'),start,count)./B0; 
+B{1,2} =h5read(fileID,strcat(B_1st,'/hy/p0/3d'),start,count)./B0; 
+B{1,3} =h5read(fileID,strcat(B_1st,'/hz/p0/3d'),start,count)./B0; 
 
 %Electric energy density
-E{1,1} =h5read(fileID,strcat(E_1st,'/ex/p0/3d'),start,count)./E0; %Ex=Ex(nx1:nx2,ny1:ny2,nz1:nz2);
-E{1,2} =h5read(fileID,strcat(E_1st,'/ey/p0/3d'),start,count)./E0; %Ey=Ey(nx1:nx2,ny1:ny2,nz1:nz2);
-E{1,3} =h5read(fileID,strcat(E_1st,'/ez/p0/3d'),start,count)./E0; %Ez=Ez(nx1:nx2,ny1:ny2,nz1:nz2);
+E{1,1} =h5read(fileID,strcat(E_1st,'/ex/p0/3d'),start,count)./E0; 
+E{1,2} =h5read(fileID,strcat(E_1st,'/ey/p0/3d'),start,count)./E0; 
+E{1,3} =h5read(fileID,strcat(E_1st,'/ez/p0/3d'),start,count)./E0; 
 
 energy_B = 0.5.*(B{1,1}.^2 + B{1,2}.^2 + B{1,3}.^2);
 energy_B_in=sum(energy_B,'all');
@@ -267,9 +265,9 @@ clearvars V_exb_x V_exb_y V_exb_z energy_V_exb_e energy_V_exb_i
 
 
 %Kinetic energy density ions
-vi{1,1} =h5read(fileID,strcat(V_1st,'/vx_i/p0/3d'),start,count)./VA2c; %vix=vix(nx1:nx2,ny1:ny2,nz1:nz2);
-vi{1,2} =h5read(fileID,strcat(V_1st,'/vy_i/p0/3d'),start,count)./VA2c; %viy=viy(nx1:nx2,ny1:ny2,nz1:nz2);
-vi{1,3} =h5read(fileID,strcat(V_1st,'/vz_i/p0/3d'),start,count)./VA2c; %viz=viz(nx1:nx2,ny1:ny2,nz1:nz2);
+vi{1,1} =h5read(fileID,strcat(V_1st,'/vx_i/p0/3d'),start,count)./VA2c; 
+vi{1,2} =h5read(fileID,strcat(V_1st,'/vy_i/p0/3d'),start,count)./VA2c; 
+vi{1,3} =h5read(fileID,strcat(V_1st,'/vz_i/p0/3d'),start,count)./VA2c; 
 
 %velocity
 vi_2 = (vi{1,1}.^2 + vi{1,2}.^2 + vi{1,3}.^2);
@@ -296,9 +294,9 @@ clearvars energy_vi E_2_2_nimivi_2 V_exb_2_2_vi_2;
 T_energy_terms_sub{3,in} = energy_vi_in; 
 
 %Kinetic energy density electrons
-ve{1,1} =h5read(fileID,strcat(V_1st,'/vx_e/p0/3d'),start,count)./VA2c; %vex=vex(nx1:nx2,ny1:ny2,nz1:nz2);
-ve{1,2} =h5read(fileID,strcat(V_1st,'/vy_e/p0/3d'),start,count)./VA2c; %vey=vey(nx1:nx2,ny1:ny2,nz1:nz2);
-ve{1,3} =h5read(fileID,strcat(V_1st,'/vz_e/p0/3d'),start,count)./VA2c; %vez=vez(nx1:nx2,ny1:ny2,nz1:nz2);
+ve{1,1} =h5read(fileID,strcat(V_1st,'/vx_e/p0/3d'),start,count)./VA2c; 
+ve{1,2} =h5read(fileID,strcat(V_1st,'/vy_e/p0/3d'),start,count)./VA2c;
+ve{1,3} =h5read(fileID,strcat(V_1st,'/vz_e/p0/3d'),start,count)./VA2c; 
 
 %velocity
 ve_2 = (ve{1,1}.^2 + ve{1,2}.^2 + ve{1,3}.^2);
@@ -324,9 +322,9 @@ clearvars energy_ve E_2_2_nemeve_2 V_exb_2_2_ve_2 E_2;
 T_energy_terms_sub{4,in} = energy_ve_in; 
 
 %Thermal energy density ions
-Pij_i{1,1} =h5read(fileID,strcat(T_1st,'/Txx_i/p0/3d'),start,count)./Pi0; %Pxxi=Pxxi(nx1:nx2,ny1:ny2,nz1:nz2);
-Pij_i{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_i/p0/3d'),start,count)./Pi0; %Pyyi=Pyyi(nx1:nx2,ny1:ny2,nz1:nz2);
-Pij_i{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_i/p0/3d'),start,count)./Pi0; %Pzzi=Pzzi(nx1:nx2,ny1:ny2,nz1:nz2);
+Pij_i{1,1} =h5read(fileID,strcat(T_1st,'/Txx_i/p0/3d'),start,count)./Pi0; 
+Pij_i{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_i/p0/3d'),start,count)./Pi0; 
+Pij_i{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_i/p0/3d'),start,count)./Pi0; 
 
 % This is to get the central momment pressure.
 %------------------------------------------------------------------
@@ -338,8 +336,6 @@ Pij_i = PPij_i;
 %------------------------------------------------------------------
 
 %------------------------------------------------------------------
-
-
 %Thermal velocity ions
 vth_i_2 = (2/(3.*mi.*ni{1,1}).*(Pij_i{1,1}+Pij_i{1,2}+Pij_i{1,3}));  
 
@@ -367,9 +363,9 @@ clearvars energy_Pij_i vth_i_2 vi_2 V_exb_2_2_vth_i_2 vth_i_2_2_vi_2;
 
 %Thermal energy density electrons
 %------------------------------------------------------------------
-Pij_e{1,1} =h5read(fileID,strcat(T_1st,'/Txx_e/p0/3d'),start,count)./Pi0; %Pxxe=Pxxe(nx1:nx2,ny1:ny2,nz1:nz2);
-Pij_e{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_e/p0/3d'),start,count)./Pi0; %Pyye=Pyye(nx1:nx2,ny1:ny2,nz1:nz2);
-Pij_e{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_e/p0/3d'),start,count)./Pi0; %Pzze=Pzze(nx1:nx2,ny1:ny2,nz1:nz2);
+Pij_e{1,1} =h5read(fileID,strcat(T_1st,'/Txx_e/p0/3d'),start,count)./Pi0; 
+Pij_e{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_e/p0/3d'),start,count)./Pi0; 
+Pij_e{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_e/p0/3d'),start,count)./Pi0; 
 
 PPij_e=cell(1,3);
 PPij_e{1,1} = Pij_e{1,1} - ne{1,1}.*me.*ve{1,1}.*ve{1,1};
@@ -401,13 +397,140 @@ T_energy_terms_sub{6,in} = energy_Pij_e_in;
 
 clearvars Pij_e; clearvars ve ne;
 clearvars energy_Pij_e vth_e_2 ve_2 V_exb_2_2_vth_e_2 vth_e_2_2_ve_2 V_exb_2;
+%}
 %-------------------------------------------------------------------------------------------
 
+
+% This is over the whole box reloaded deleting the cross velocities!
+%------------------------------------------------------------------
+%
+% for the whole box
+start = [1 1 1];
+count = [400 400 1000];
+
+%Magnetic energy density
+B{1,1} =h5read(fileID,strcat(B_1st,'/hx/p0/3d'),start,count)./B0; 
+B{1,2} =h5read(fileID,strcat(B_1st,'/hy/p0/3d'),start,count)./B0; 
+B{1,3} =h5read(fileID,strcat(B_1st,'/hz/p0/3d'),start,count)./B0; 
+
+energy_B = 0.5.*(B{1,1}.^2 + B{1,2}.^2 + B{1,3}.^2);
+energy_B_in=sum(energy_B,'all');
+T_energy_terms_sub{1,in} = energy_B_in;
+
+clearvars B energy_B 
+
+%Electric energy density
+E{1,1} =h5read(fileID,strcat(E_1st,'/ex/p0/3d'),start,count)./E0; 
+E{1,2} =h5read(fileID,strcat(E_1st,'/ey/p0/3d'),start,count)./E0; 
+E{1,3} =h5read(fileID,strcat(E_1st,'/ez/p0/3d'),start,count)./E0;  
+
+energy_E = 0.5.*(E{1,1}.^2 + E{1,2}.^2 + E{1,3}.^2);
+energy_E_in=sum(energy_E,'all');
+T_energy_terms_sub{2,in} = energy_E_in; 
+
+clearvars E energy_E  
+
+ni{1,1} = h5read(fileID,strcat(n_1st,'/n_i/p0/3d'),start,count); 
+
+%Kinetic energy density ions
+vi{1,1} =h5read(fileID,strcat(V_1st,'/vx_i/p0/3d'),start,count)./VA2c; 
+vi{1,2} =h5read(fileID,strcat(V_1st,'/vy_i/p0/3d'),start,count)./VA2c; 
+vi{1,3} =h5read(fileID,strcat(V_1st,'/vz_i/p0/3d'),start,count)./VA2c; 
+
+%energy
+energy_vi = 0.5.*mi.*(ni{1,1}).*(vi{1,1}.^2 + vi{1,2}.^2 + vi{1,3}.^2);
+energy_vi_in=sum(energy_vi,'all');
+T_energy_terms_sub{3,in} = energy_vi_in; 
+
+clearvars energy_vi;
+
+ne{1,1} = h5read(fileID,strcat(n_1st,'/n_e/p0/3d'),start,count); 
+
+%Kinetic energy density electrons
+ve{1,1} =h5read(fileID,strcat(V_1st,'/vx_e/p0/3d'),start,count)./VA2c; 
+ve{1,2} =h5read(fileID,strcat(V_1st,'/vy_e/p0/3d'),start,count)./VA2c;
+ve{1,3} =h5read(fileID,strcat(V_1st,'/vz_e/p0/3d'),start,count)./VA2c; 
+
+%energy
+energy_ve = 0.5.*me.*(ne{1,1}).*(ve{1,1}.^2 + ve{1,2}.^2 + ve{1,3}.^2);
+energy_ve_in=sum(energy_ve,'all');
+T_energy_terms_sub{4,in} = energy_ve_in; 
+
+clearvars energy_ve;
+
+%Thermal energy density ions
+Pij_i{1,1} =h5read(fileID,strcat(T_1st,'/Txx_i/p0/3d'),start,count)./Pi0; 
+Pij_i{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_i/p0/3d'),start,count)./Pi0; 
+Pij_i{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_i/p0/3d'),start,count)./Pi0; 
+
+% This is to get the central momment pressure.
+%------------------------------------------------------------------
+PPij_i=cell(1,3);
+PPij_i{1,1} = Pij_i{1,1} - ni{1,1}.*mi.*vi{1,1}.*vi{1,1};
+PPij_i{1,2} = Pij_i{1,2} - ni{1,1}.*mi.*vi{1,2}.*vi{1,2};
+PPij_i{1,3} = Pij_i{1,3} - ni{1,1}.*mi.*vi{1,3}.*vi{1,3};
+Pij_i = PPij_i;
+%------------------------------------------------------------------
+
+clearvars PPij_i; clearvars vi ni;
+
+%------------------------------------------------------------------
+%energy
+energy_Pij_i = 0.5.*(Pij_i{1,1} + Pij_i{1,2} + Pij_i{1,3});
+energy_Pij_i_in=sum(energy_Pij_i,'all');
+T_energy_terms_sub{5,in} = energy_Pij_i_in; 
+
+clearvars Pij_i; 
+clearvars energy_Pij_i;
+
+%Thermal energy density electrons
+%------------------------------------------------------------------
+Pij_e{1,1} =h5read(fileID,strcat(T_1st,'/Txx_e/p0/3d'),start,count)./Pi0; 
+Pij_e{1,2} =h5read(fileID,strcat(T_1st,'/Tyy_e/p0/3d'),start,count)./Pi0; 
+Pij_e{1,3} =h5read(fileID,strcat(T_1st,'/Tzz_e/p0/3d'),start,count)./Pi0; 
+
+PPij_e=cell(1,3);
+PPij_e{1,1} = Pij_e{1,1} - ne{1,1}.*me.*ve{1,1}.*ve{1,1};
+PPij_e{1,2} = Pij_e{1,2} - ne{1,1}.*me.*ve{1,2}.*ve{1,2};
+PPij_e{1,3} = Pij_e{1,3} - ne{1,1}.*me.*ve{1,3}.*ve{1,3};
+Pij_e = PPij_e;
+
+clearvars PPij_e; clearvars ve ne;
+
+%energy
+energy_Pij_e = 0.5.*(Pij_e{1,1} + Pij_e{1,2} + Pij_e{1,3});
+energy_Pij_e_in=sum(energy_Pij_e,'all');
+T_energy_terms_sub{6,in} = energy_Pij_e_in; 
+
+clearvars Pij_e; 
+clearvars energy_Pij_e;
+%}
 
 %------------------------------------------------------------------
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------------------------------------------------------
+%This is what is for the first half
+T_energy_terms_sub_1=T_energy_terms_sub;
+
+%This is what is next
+T_energy_terms_sub_2=T_energy_terms_sub;
+%------------------------------------------------------------------
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+
+save('T_energy_terms_sub_12.mat','T_energy_terms_sub_1','T_energy_terms_sub_2')
+%--------------------------------------------------------------------------
+% To load the data in the subbox
+%--------------------------------------------------------------------------
+cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
+load('T_energy_terms_sub_12.mat')
+%--------------------------------------------------------------------------
+
+
+
+
 
 % It is important to check the normalization 
 
@@ -433,6 +556,7 @@ ene_kin_i_sub = T_energy_terms_table_sub(:,3);
 ene_kin_e_sub = T_energy_terms_table_sub(:,4);
 ene_the_i_sub = T_energy_terms_table_sub(:,5);
 ene_the_e_sub = T_energy_terms_table_sub(:,6);
+
 ene_Vexb_e_sub = T_energy_terms_table_sub(:,7);
 ene_Vexb_i_sub = T_energy_terms_table_sub(:,8);
 ene_E_sub = T_energy_terms_table_sub(:,1);
@@ -819,6 +943,8 @@ xlim([18,456])
 hold off
 %--------------------------------------------------------------------------
 
+
+% It is important to run this part in order to get the time plots for xi
 % this is to compare with the other things
 %--------------------------------------------------------------------------
 cd '/Volumes/PSC_DiRAC_DATA/Energy_Budget_things'
@@ -1069,8 +1195,6 @@ xlim([0,456])
 hold off
 %--------------------------------------------------------------------------
 
-
-
 %--------------------------------------------------------------------------
 f215 = figure(215);
 semilogy(time(1:end-1),ene_BE(1:end-1)./VA2c1,'Color',colorblind(1,:), 'LineWidth', lw)
@@ -1092,13 +1216,20 @@ xlim([18,456])
 %ylim([-1.9, 1.9])
 %sgtitle('$$t = \ $$'+string(round(time_t,2)) + '$$ \ \omega_{i}^{-1}$$','Interpreter','latex','FontSize',20)
 hold off
+%--------------------------------------------------------------------------
 
 
 
+
+%--------------------------------------------------------------------------
 % This includes both, total and sub-domain integrated
 %--------------------------------------------------------------------------
-load('Energy_table_sub_Energy_full.mat')
+load('/Volumes/PSC_DiRAC_DATA/Energy_Budget_things/Energy_table_sub_Energy_full.mat')
 %T_energy_terms_table, T_energy_terms_table_sub
+
+
+cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
+load('colorblind_colormap.mat');
 
 c=1;
 VA2c = 0.1; B0 = VA2c; E0 = B0*VA2c;
@@ -1180,13 +1311,16 @@ hold off
 %--------------------------------------------------------------------------
 
 
+% This part loads the plots of the deltas of the energies
 %--------------------------------------------------------------------------
-load('energies_xi_3d_subbox_last_08052022.mat')
-load('Energy_table_sub_Energy_full.mat') % I need to keep both because 
-%there is something overwriting the energy_table_sub_box
+load('/Volumes/PSC_DiRAC_DATA/Energy_Budget_things/energies_xi_3d_subbox_last_08052022.mat')
+load('/Volumes/PSC_DiRAC_DATA/Energy_Budget_things/Energy_table_sub_Energy_full.mat') 
+% I need to keep both because there is something overwriting the energy_table_sub_box
 %--------------------------------------------------------------------------
 % get the plot of the power densities
 %--------------------------------------------------------------------------
+cd '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here'
+load('colorblind_colormap.mat');
 
 
 %--------------------------------------------------------------------------
@@ -1213,9 +1347,9 @@ delta_ene = abs(ene_total_sub(2:end-1) - ene_total_sub(1:end-2))./(time(2:end-1)
 semilogy(time(2:end-1),(delta_ene./(ene_total_sub(1:end-2))),'--','Color',colorblind(8,:), 'LineWidth', lw)
 hold off
 
-semilogy(time(2:end-1),(delta_ene./(ene_total(1:end-2))),'-','Color',colorblind(8,:), 'LineWidth', lw)
-delta_ene = (1/1).*abs(ene_total_sub(2:end-1) - ene_total_sub(1:end-2)./(time(2:end-1) -time(1:end-2))); 
-semilogy(time(2:end-1),(delta_ene./(ene_total_sub(1:end-2))),'--','Color',colorblind(8,:), 'LineWidth', lw)
+%semilogy(time(2:end-1),(delta_ene./(ene_total(1:end-2))),'-','Color',colorblind(8,:), 'LineWidth', lw)
+%delta_ene = (1/1).*abs(ene_total_sub(2:end-1) - ene_total_sub(1:end-2)./(time(2:end-1) -time(1:end-2))); 
+%semilogy(time(2:end-1),(delta_ene./(ene_total_sub(1:end-2))),'--','Color',colorblind(8,:), 'LineWidth', lw)
 
 
 %--------------------------------------------------------------------------
