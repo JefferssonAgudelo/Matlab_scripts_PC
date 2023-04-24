@@ -23,12 +23,14 @@
 %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_2';
 
 
+
+
 % This set shows the difference in terms of the onset.
 %----------------------------------------------------------------------------------------------------------------------
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';
 %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
 %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_du02'; %<-- this is in reality L=4.
 %-----------------------------------------------------------------------------------------------------------------------
 
@@ -52,7 +54,19 @@ path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
 
 
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
+
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1_res';
+
+
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_3_time';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_3_adios2';
+
+
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR';
+
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_lange';
+
 path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
 path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
 % To save the plots
@@ -160,11 +174,11 @@ Bz_y0_i = zeros(LZs,N_jn);
 % % %--------------------------------------------------------------------------
 %N =183 is the limit for the run to keep the same time steps.
 jn=220;
-for jn=1:N
+for jn=106:N
     in=jn;
     %for jn=2:floor(N/10)
     %    in=(jn-1)*jn;
-    %in=2 + floor(N*(jn-1)/10);
+% %     in=2 + floor(N*(jn-1)/10);
     %----------------------------------------------------------------------
     disp(strcat('Computing step ...',S(in).name))
     fileID =  S(in).name; %change the 1 per i
@@ -375,7 +389,7 @@ for jn=1:N
     sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
     %----------------------------------------------------------------------
     cd(path_rec_line_ByBzJx)
-    saveas(f57,strcat(num2str(time_t),'ByBzJx.png'));
+    saveas(f57,strcat(num2str(time_t),'ByBzJx_cont.png'));
     %----------------------------------------------------------------------
     cd(path)
     By_y0_i(:,jn) = By(length(yll)/2,:);
@@ -423,7 +437,7 @@ ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLa
 ax.FontSize=fs;
 ax.YLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
 ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(106) time_t_2_Omega(end)]);
 lgnd=legend([h1],'$\frac{B_{y}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
 hold off
 
@@ -450,7 +464,7 @@ ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLa
 ax.FontSize=fs;
 ax.YLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
 ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(106) time_t_2_Omega(end)]);
 lgnd=legend([h1],'$\frac{B_{x}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
 hold off
 
@@ -481,15 +495,15 @@ ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLa
 ax.FontSize=fs;
 ax.YLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
 ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(106) time_t_2_Omega(end)]);
 lgnd=legend([h1],'$\frac{B_{z}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
 hold off
 cd(path_rec_line)
 
 % %
-saveas(f35,strcat(num2str(time_t),'By_stack_long.png'));
-saveas(f36,strcat(num2str(time_t),'Bx_stack_long.png'));
-saveas(f37,strcat(num2str(time_t),'Bz_stack_long.png'));
+saveas(f35,strcat(num2str(time_t),'By_stack_long_cont.png'));
+saveas(f36,strcat(num2str(time_t),'Bx_stack_long_cont.png'));
+saveas(f37,strcat(num2str(time_t),'Bz_stack_long_cont.png'));
 % % %--------------------------------------------------------------------------
 %}
 % %--------------------------------------------------------------------------
@@ -750,6 +764,92 @@ for in=1:N
 end
 % %--------------------------------------------------------------------------
 % %--------------------------------------------------------------------------
+
+
+%checking tanh and sech2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+y=linspace(-10,10,200);
+z=linspace(-10,10,200);
+a=10/(2*pi);
+
+By=-(1-(cos(y./a).*(sin(z./a))./(y+z)));
+Bz= (1-(sin(y./a).*(cos(z./a))./(y+z)));
+%y4=(tanh(x./a)).^2;
+
+% Nonlinear time without fluctuations
+%--------------------------------------------------------------------------
+f45=figure(45);
+subplot(1,2,1)
+plot(y,By,'r',LineWidth=2)
+hold on
+plot(y,Bz,'b',LineWidth=2)
+legend('By', 'Bz')
+hold off
+subplot(1,2,2)
+plot(z,By,'r',LineWidth=2)
+hold on
+plot(z,Bz,'b',LineWidth=2)
+legend('By', 'Bz')
+hold off
+
+%--------------------------------------------------------------------------
+
+% In 2D
+%z=linspace(-40,40,200);
+%y=linspace(-40,40,200);
+[zz,yy]=meshgrid(z,y);
+Lz=10; Ly=10; % this has to be double to account for the -L to L
+a=Lz/(2*pi);
+
+% This is the central pinch
+yy1=-sin((2*pi/Lz).*(zz-0.5*Lz)).*cos(pi*yy./Ly);
+yy2=cos((2*pi/Lz).*(zz-0.5*Lz)).*sin(pi*yy./Ly);
+
+yy3=yy1.*yy2;
+
+f46=figure(46);
+subplot(1,3,1)
+hc=pcolor(zz,yy,yy1);
+hold on
+set(hc,'edgecolor','none'); colorbar
+hold off
+subplot(1,3,2)
+hc=pcolor(zz,yy,yy2);
+hold on
+set(hc,'edgecolor','none'); colorbar
+hold off
+subplot(1,3,3)
+hc=pcolor(zz,yy,yy3);
+hold on
+set(hc,'edgecolor','none'); colorbar
+hold off
+
+% this is the other 
+Byy=-(1-(cos(yy./a).*(sin(zz./a))./(yy+zz)));
+Bzz= (1-(sin(yy./a).*(cos(zz./a))./(yy+zz)));
+
+yy3=yy1.*yy2;
+
+f47=figure(47);
+subplot(1,3,1)
+hc=pcolor(zz,yy,Byy);
+hold on
+set(hc,'edgecolor','none'); colorbar
+hold off
+subplot(1,3,2)
+hc=pcolor(zz,yy,Bzz);
+hold on
+set(hc,'edgecolor','none'); colorbar
+hold off
+subplot(1,3,3)
+hc=pcolor(zz,yy,yy3);
+hold on
+set(hc,'edgecolor','none'); colorbar
+hold off
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

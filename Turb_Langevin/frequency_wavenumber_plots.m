@@ -35,9 +35,11 @@ cd(path)
 S = dir(fullfile(path,'pfd.*.h5'));
 N=numel(S); % number of files to use
 H=zeros(N);
-in=6;
 
-%for in=1:N
+%in=N;
+P2D2_i=cell(1,N);
+time_t_2=zeros(1,N);
+for in=1:N
 %----------------------------------------------------------------------
 disp(strcat('Computing step ...',S(in).name))
 fileID =  S(in).name; %change the 1 per i
@@ -91,8 +93,8 @@ yll=linspace(-Ly0,Ly0,size_X(1));
 %[ZLL, YLL] = meshgrid(zll,yll);
 
 ly=length(yll);
-Ly_2_0 = ly/2;
-Ly_2_1 = Ly_2_0 + 1*Ly_2_0/4;
+Ly_2_0 = 1;%ly/2;
+Ly_2_1 = ly;%Ly_2_0 + Ly_2_0/4;
 
 [ZLL,YLL] = meshgrid(zll,yll);
 dummy_f = YLL;
@@ -115,52 +117,64 @@ clearvars Bx By Bz
 % Compute the FFT of the fields Bx_1, By_1; Bz_1;
 %--------------------------------------------------------------------------
 [ff_x,ky,kz] = Four3D(Bx_1,Ly0,Lz0);
-[ff_y,ky,kz] = Four3D(By_1,Ly0,Lz0);
-[ff_z,ky,kz] = Four3D(Bz_1,Ly0,Lz0);
+%[ff_y,ky,kz] = Four3D(By_1,Ly0,Lz0);
+%[ff_z,ky,kz] = Four3D(Bz_1,Ly0,Lz0);
 
-ff=ff_x.^2+ff_y.^2+ff_z.^2;
+%ff=ff_x.^2+ff_y.^2+ff_z.^2;
+ff=ff_x.^2;
 
 N=size(Bx_1);
 P3D=ff./(N(1)*N(2)); 
-
-dy=resy;
-dz=resz;
-
-kp=ky;
-
-%--------------------------------------------------------------------------
-
-
-%--------------------------------------------------------------------------
-[kp2J, kpJ]=meshgrid(kz,ky);
-
 P2D2=P3D/max(max(P3D));
-fs=18;
-%----------------------------------------------------------------------
-f1=figure(1);
-[C,h]=contourf(kz,ky,log10(P2D2),'LevelStep',0.2);
-set(h,'LineColor','none')
-lim = caxis;
-caxis([-8 0]);
-colormap(jet)
-colorbar
-set(gca,'XScale','log','YScale','log','FontSize',fs)
-xlabel('$k_\| d_i$','Interpreter','latex')
-ylabel('$k_\perp d_i$','Interpreter','latex')
-hold on
-ylim([2*pi/Ly threshold])
-xlim([2*pi/Lz threshold])
-xticks([0.1 1 10]); yticks([0.1 1 10])
-xticklabels({'10^{-1}','10^{0}','10^{1}'}); yticklabels({'10^{-1}','10^{0}','10^{1}'})
-yline(10,'--k','LineWidth',1);
-xline(1,'--k','LineWidth',1);
-title('$\log_{10}{P^{\mathbf{B}}_{2D}} \ ; \ t = \ $'+string(round((time_t/omega_pe_Omega_ce),2)) + ...
-    '$$ \ \Omega_{ce}^{-1}$$','Interpreter','latex','FontSize',fs)
-hold off
 
-    
+P2D2_i{in} = P2D2;
+time_t_2(1,in)=time_t_2_Omega;
+
+end
+
+%dy=resy;dz=resz;kp=ky;
+%--------------------------------------------------------------------------
+
 
 %--------------------------------------------------------------------------
+% % [kp2J, kpJ]=meshgrid(kz,ky);
+% % 
+% % ff=ff_z.^2;
+% % N=size(Bx_1);
+% % P3D=ff./(N(1)*N(2));
+% % P2D2=P3D/max(max(P3D));
+% % fs=18;
+%----------------------------------------------------------------------
+% % f8=figure(8);
+% % [C,h]=contourf(kz,ky,log10(P2D2),'LevelStep',0.2);
+% % set(h,'LineColor','none')
+% % lim = caxis;
+% % caxis([-8 0]);
+% % colormap(jet)
+% % colorbar
+% % set(gca,'XScale','log','YScale','log','FontSize',fs)
+% % xlabel('$k_\| d_i$','Interpreter','latex')
+% % ylabel('$k_\perp d_i$','Interpreter','latex')
+% % hold on
+% % ylim([2*pi/Ly0 threshold])
+% % xlim([2*pi/Lz0 threshold])
+% % xticks([0.1 1 10]); yticks([0.1 1 10])
+% % xticklabels({'10^{-1}','10^{0}','10^{1}'}); yticklabels({'10^{-1}','10^{0}','10^{1}'})
+% % yline(10,'--k','LineWidth',1);
+% % xline(1,'--k','LineWidth',1);
+% % title('$\log_{10}{P^{\mathbf{B}}_{2D}} \ ; \ t = \ $'+string(round((time_t/omega_pe_Omega_ce),2)) + ...
+% %     '$$ \ \Omega_{ce}^{-1}$$','Interpreter','latex','FontSize',fs)
+% % hold off
+%--------------------------------------------------------------------------
+
+% I need to store the fft for each time and safe them so I can analyse them 
+% in time with the IF decomposition
+
+
+
+% For each pair kx ,ky we perform a IF decomposition and calculate average 
+% frequency and amplitude of each IMF
+
 
 
 %--------------------------------------------------------------------------

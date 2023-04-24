@@ -1,6 +1,7 @@
-% This is to consolidate the script to make the analisis.
 
-% In this scrpt I comapre different runs in terms of the reconnection rate 
+% In this script I compare different runs in terms of the reconnection rate.
+% Saving some of the results in files to load. Comparing, reconneciton
+% rate, reconnected flux and the maximum of each of the components. 
 
 
 N=220;
@@ -1166,7 +1167,10 @@ normi = B0*Vae_b*ones(1,length(A_max_min_dt) + 2);
 
 y = A_max_min_dt./(normi(1:end-2)); % now this is the normalization
 y = filter(b,a,y);
-plot(time_t_2(2:end-1),y,LineWidth=2,color=C{1})
+
+%plot(time_t_2(2:end-1),y,LineWidth=2,color=C{1})
+
+yline(mean(y),color=C{1});
 hold on
 for kn=2:N_kn
     %A_max_min_2 = A_max_min_To(:,kn)'; %<--- _o
@@ -1184,7 +1188,8 @@ for kn=2:N_kn
     y = A_max_min_dt./(normi(1:end-2));
     y = filter(b,a,y);
     %plot(time_t_2(1:end-1),y,LineWidth=2)
-    plot(time_t_2(2:end-1),y,LineWidth=2,color=C{kn})
+    %%plot(time_t_2(2:end-1),y,LineWidth=2,color=C{kn})
+    yline(mean(y),color=C{kn});
 end
 % % %--------------------------------------------------------------------------
 % % nb_n0 =0.2; Vae_b=Vae/sqrt(nb_n0);
@@ -1229,7 +1234,6 @@ ylim([-0.1 0.9]);
 xlim([0 350]);
 hold off
 
-
  cd(path_comp)
  saveas(f1,strcat(num2str(kn),'Reconnection_Rate_comp_ABCD.png'));
  %saveas(f1,strcat(num2str(kn),'Reconnection_Rate_comp_ABCDEABg02_2.png'));
@@ -1238,6 +1242,8 @@ hold off
  %saveas(f1,strcat(num2str(kn),'Reconnection_Rate_comp_EdBom_cp.png'));
 %--------------------------------------------------------------------------
 
+
+% Computing the average values to 
 
 
 %}
