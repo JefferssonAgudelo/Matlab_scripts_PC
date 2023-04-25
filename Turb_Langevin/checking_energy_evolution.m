@@ -1,9 +1,13 @@
 % This is to check the evolution of the energy terms
 
 %--------------------------------------------------------------------------
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
-%--------------------------------------------------------------------------
+path_1 = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
+%path_1 = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR/checkin_energy';
+%path_2 = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_lange/checkin_energy';
 
+
+%--------------------------------------------------------------------------
+path=path_1;
 %--------------------------------------------------------------------------
 % To save the plots
 cd(path)
@@ -131,7 +135,7 @@ time_t_2=zeros(1,N_jn);
 jn=220;
 jn=in;
 %106 <--
-for jn=1:N
+for jn=10:12
     in=jn;
     %for jn=2:floor(N/10)
     %    in=(jn-1)*jn;
@@ -527,6 +531,15 @@ for jn=1:N
     clearvars Pij_i Pij_i_ba Pij_i_up
     clearvars Pij_e Pij_e_ba Pij_e_up
 
+     cd(path)
+    save('energy_densities_base_pinch_over.mat',...
+        'Ui_th_up_mean','Ui_th_ba_mean','Ui_th_mean','Ue_th_up_mean','Ue_th_ba_mean','Ue_th_mean',...
+        'Ui_th_up_std','Ui_th_ba_std','Ui_th_std','Ue_th_up_std','Ue_th_ba_std','Ue_th_std',...
+        'Ui_k_up_mean','Ui_k_ba_mean','Ui_k_mean','Ue_k_up_mean','Ue_k_ba_mean','Ue_k_mean',...
+        'Ui_k_up_std','Ui_k_ba_std','Ui_k_std','Ue_k_up_std','Ue_k_ba_std','Ue_k_std',...
+        'U_em_mean','U_em_std',...        
+        'time_t_2')
+
 end
 
  cd(path)
@@ -538,11 +551,43 @@ end
         'U_em_mean','U_em_std',...        
         'time_t_2')
    
-    %load('energy_densities_base_pinch.mat');
+ 
+    cd(path_1)
+    ene=load('energy_densities_base_pinch.mat');
 
+    cd(path_2)
+    ene_lange=load('energy_densities_base_pinch_lange.mat');
+
+%--------------------------------------------------------------------------    
+
+% Loading files to compare
+%--------------------------------------------------------------------------
+    path_1 = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison/comparing_energies';
+    path=path_1;
+    cd(path_1)
+
+    ene1=load('psc_harris_yz_base_2_alone_large.mat');
+    ene2=load('psc_harris_yz_cpinch_sSR.mat');
+    ene3=load('psc_harris_yz_cpinch_sSR_lange.mat');
+    
+    ene4=load('psc_harris_yz_lange_many_Ax_large_L4di_Bg01.mat');
+
+    ene5=load('psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1.mat');
+    ene6=load('psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1.mat');
+    ene7=load('psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLd1.mat');
+    ene8=load('psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1.mat');    
+
+    ene9=load('psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1.mat'); %dB01
+    ene10=load('psc_harris_yz_lange_many_Ax_large_L4di_dB04_Omc1_kd1.mat');
+    ene11=load('psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1.mat');%dB08
+
+    %psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1 % this looks like E
+    %psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1 % this wavy in the e)
+
+%--------------------------------------------------------------------------
 
 % Making the ebergy plots
-%----------------------------------------------------------------------
+%--------------------------------------------------------------------------
 % from  https://yoshke.org/blog/colorblind-friendly-diagrams
 C = {[0/255, 0/255, 0/255],...
     [230/255, 159/255, 0/255],...
@@ -588,22 +633,23 @@ C = {[0/255, 0/255, 0/255],...
 
 % Plot without stds
 %--------------------------------------------------------------------------
-legends_comp = ['$$U_{T}$$' '$$U_{em}$$' '$$U_{k}$$' '$$U_{th}$$'];
 fs=18; x0=45;y0=54;xx1=810;yy1=710;
 f3=figure(3);
 set(gcf,'position',[x0,y0,1.3*xx1,yy1/2])
 %--------------------------------------------------------------------------
-dum_p2 = Ue_th_mean + Ui_th_mean + Ue_k_mean + Ui_k_mean + U_em_mean;
-semilogy(time_t_2,dum_p2,LineWidth=2,color=C{1})
+dump_s=ene8;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,LineWidth=2,color=C{1})
 hold on
-dum_p2 = U_em_mean;
-semilogy(time_t_2,dum_p2,LineWidth=2,color=C{2})
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,LineWidth=2,color=C{2})
 
-dum_p2 = Ue_k_mean + Ui_k_mean;
-semilogy(time_t_2,dum_p2,LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,LineWidth=2,color=C{3})
 
-dum_p2 = Ue_th_mean + Ui_th_mean;
-semilogy(time_t_2,dum_p2,LineWidth=2,color=C{4})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,LineWidth=2,color=C{4})
 
 legend('$$\varepsilon_{T}$$','$$\varepsilon_{em}$$',...
     '$$\varepsilon_{k}$$','$$\varepsilon_{th}$$','Interpreter','latex','FontSize',1.0*fs,'Location','southeast','NumColumns',1)
@@ -611,11 +657,247 @@ ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLa
 ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.YLabel.String = '$\langle \varepsilon \rangle$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
 ax.XLabel.String = '$t / \Omega_{ce}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-ylim([1e-6 1e-1]);
-%xlim([0 350]);
+%ylim([1e-6 1e-1]);
+xlim([0 350]);
 hold off
-%----------------------------------------------------------------------
+%--------------------------------------------------------------------------
 cd(path)
-saveas(f3,strcat(num2str(time_t),'Energy_density_pinch.png'));
-%----------------------------------------------------------------------
-%cd(path)
+saveas(f3,strcat(num2str(dump_s.time_t_2(end)),'Energy_density_pinch.png'));
+
+
+% Plot alone, base pinch, many Bg01
+%--------------------------------------------------------------------------
+fs=18; x0=45;y0=54;xx1=810;yy1=710;
+f32=figure(34);
+set(gcf,'position',[x0,y0,1.3*xx1,yy1/2])
+%--------------------------------------------------------------------------
+dump_s=ene1;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{1})
+hold on
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{4})
+
+dump_s=ene2;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{1})
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{4})
+
+dump_s=ene4;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{1})
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{4})
+
+legend('$$\varepsilon_{T}^{A}$$','$$\varepsilon_{em}^{A}$$',...
+    '$$\varepsilon_{k}^{A}$$','$$\varepsilon_{th}^{A}$$',...
+    '$$\varepsilon_{T}^{B}$$','$$\varepsilon_{em}^{B}$$',...
+    '$$\varepsilon_{k}^{B}$$','$$\varepsilon_{th}^{B}$$',...
+    '$$\varepsilon_{T}^{EBg01}$$','$$\varepsilon_{em}^{EBg01}$$',...
+    '$$\varepsilon_{k}^{EBg01}$$','$$\varepsilon_{th}^{EBg01}$$','Interpreter','latex',...
+    'FontSize',1.0*fs,'Location','southeast','NumColumns',3)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle \varepsilon \rangle$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{ce}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([1e-6 5]);
+xlim([0 350]);
+%sgtitle('$$ -- $$','Interpreter','latex','FontSize',fs)
+hold off
+%--------------------------------------------------------------------------
+saveas(f32,strcat(num2str(dump_s.time_t_2(end)),'Energy_density_ABCEBg.png'));
+%--------------------------------------------------------------------------
+
+% Plot dB0108
+%--------------------------------------------------------------------------
+fs=18; x0=45;y0=54;xx1=810;yy1=710;
+f33=figure(33);
+set(gcf,'position',[x0,y0,1.3*xx1,yy1/2])
+%--------------------------------------------------------------------------
+dump_s=ene9;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{1})
+hold on
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{4})
+
+dump_s=ene11;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{1})
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{4})
+
+legend('$$\varepsilon_{T}^{dB01}$$','$$\varepsilon_{em}^{dB01}$$',...
+    '$$\varepsilon_{k}^{dB01}$$','$$\varepsilon_{th}^{dB01}$$',...
+    '$$\varepsilon_{T}^{dB08}$$','$$\varepsilon_{em}^{dB08}$$',...
+    '$$\varepsilon_{k}^{dB08}$$','$$\varepsilon_{th}^{dB08}$$','Interpreter','latex',...
+    'FontSize',1.0*fs,'Location','southeast','NumColumns',2)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle \varepsilon \rangle$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{ce}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([1e-6 5]);
+xlim([0 350]);
+%sgtitle('$$ -- $$','Interpreter','latex','FontSize',fs)
+hold off
+%--------------------------------------------------------------------------
+saveas(f33,strcat(num2str(dump_s.time_t_2(end)),'Energy_density_dB01dB08.png'));
+%--------------------------------------------------------------------------
+
+
+% Plot dB010408
+%--------------------------------------------------------------------------
+fs=18; x0=45;y0=54;xx1=810;yy1=710;
+f34=figure(34);
+set(gcf,'position',[x0,y0,1.3*xx1,yy1/2])
+%--------------------------------------------------------------------------
+dump_s=ene9;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{1})
+hold on
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{4})
+
+dump_s=ene10;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{1})
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{4})
+
+dump_s=ene11;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{1})
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{4})
+
+legend('$$\varepsilon_{T}^{dB01}$$','$$\varepsilon_{em}^{dB01}$$',...
+    '$$\varepsilon_{k}^{dB01}$$','$$\varepsilon_{th}^{dB01}$$',...
+    '$$\varepsilon_{T}^{dB04}$$','$$\varepsilon_{em}^{dB04}$$',...
+    '$$\varepsilon_{k}^{dB04}$$','$$\varepsilon_{th}^{dB04}$$',...
+    '$$\varepsilon_{T}^{dB08}$$','$$\varepsilon_{em}^{dB08}$$',...
+    '$$\varepsilon_{k}^{dB08}$$','$$\varepsilon_{th}^{dB08}$$','Interpreter','latex',...
+    'FontSize',1.0*fs,'Location','southeast','NumColumns',3)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle \varepsilon \rangle$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{ce}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([1e-6 5]);
+xlim([0 350]);
+%sgtitle('$$ -- $$','Interpreter','latex','FontSize',fs)
+hold off
+%--------------------------------------------------------------------------
+saveas(f34,strcat(num2str(dump_s.time_t_2(end)),'Energy_density_dB0104dB08.png'));
+%--------------------------------------------------------------------------
+
+%plot de rho Omegas
+%--------------------------------------------------------------------------
+fs=18; x0=45;y0=54;xx1=810;yy1=710;
+f35=figure(35);
+set(gcf,'position',[x0,y0,1.3*xx1,yy1/2])
+%--------------------------------------------------------------------------
+dump_s=ene5;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{1})
+hold on
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-',LineWidth=2,color=C{4})
+
+dump_s=ene6;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{1})
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,':',LineWidth=2,color=C{4})
+
+dump_s=ene7;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{1})
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,'-.',LineWidth=2,color=C{4})
+
+dump_s=ene8;
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean + dump_s.Ue_k_mean + ...
+    dump_s.Ui_k_mean + dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'--',LineWidth=2,color=C{1})
+dum_p2 = dump_s.U_em_mean;
+semilogy(dump_s.time_t_2,dum_p2,'--',LineWidth=2,color=C{2})
+dum_p2 = dump_s.Ue_k_mean + dump_s.Ui_k_mean;
+semilogy(dump_s.time_t_2,dum_p2,'--',LineWidth=2,color=C{3})
+dum_p2 = dump_s.Ue_th_mean + dump_s.Ui_th_mean;
+semilogy(dump_s.time_t_2,dum_p2,'--',LineWidth=2,color=C{4})
+
+legend('$$\varepsilon_{T}^{\Omega_{c}d_{e}}$$','$$\varepsilon_{em}^{\Omega_{c}d_{e}}$$',...
+    '$$\varepsilon_{k}^{\Omega_{c}d_{e}}$$','$$\varepsilon_{th}^{\Omega_{c}d_{e}}$$',...
+    '$$\varepsilon_{T}^{\Omega_{c}\rho_{e}}$$','$$\varepsilon_{em}^{\Omega_{c}\rho_{e}}$$',...
+    '$$\varepsilon_{k}^{\Omega_{c}\rho_{e}}$$','$$\varepsilon_{th}^{\Omega_{c}\rho_{e}}$$',...
+    '$$\varepsilon_{T}^{\omega_{p}d_{e}}$$','$$\varepsilon_{em}^{\omega_{p}d_{e}}$$',...
+    '$$\varepsilon_{k}^{\omega_{p}d_{e}}$$','$$\varepsilon_{th}^{\omega_{p}d_{e}}$$',...
+    '$$\varepsilon_{T}^{\omega_{p}\rho_{e}}$$','$$\varepsilon_{em}^{\omega_{p}\rho_{e}}$$',...
+    '$$\varepsilon_{k}^{\omega_{p}\rho_{e}}$$','$$\varepsilon_{th}^{\omega_{p}\rho_{e}}$$','Interpreter','latex',...
+    'FontSize',1.0*fs,'Location','southeast','NumColumns',4)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle \varepsilon \rangle$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{ce}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([1e-6 5]);
+xlim([0 350]);
+%sgtitle('$$ -- $$','Interpreter','latex','FontSize',fs)
+hold off
+%--------------------------------------------------------------------------
+saveas(f35,strcat(num2str(dump_s.time_t_2(end)),'Energy_density_OcdOcropdopr.png'));
+%--------------------------------------------------------------------------
