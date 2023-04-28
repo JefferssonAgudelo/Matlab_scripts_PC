@@ -1,9 +1,156 @@
 % Aiming to get the 2D frequency and wavenumber plots to see the type of
 % waves and fluctuations that are presnt in the simulations 
 
-% %--------------------------------------------------------------------------
-% %--------------------------------------------------------------------------
+
+% This is to make those plots for the parameter space
+%--------------------------------------------------------------------------
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1';
+%--------------------------------------------------------------------------
+% Normalization parameters
+%--------------------------------------------------------------------------
+mime =1.;
+mi = 1.;
+eps0 = 1.;
+kb = 1.;
+mu0 = 1.;
+c = 1;
+q = 1;
+di=1;
+n0 = 1;
+omega_pe = 1;
+
+VA2c = 0.2; 
+Vai = 0.2;    
+Vae = 0.2;
+B0 = 0.2;
+beta0 = 0.2;
+
+rho_i = di*sqrt(beta0);
+me = 1. / mime; 
+
+%E = vB, as B0=0.1 and v in units of c, E0= B0*Vai/c
+E0 = 0.2;
+T0 = 0.02;
+J0 = Vae;
+
+omega_pe_Omega_ce = 5;
+%Omega_ce = omega_pe / omega_pe_Omega_ce;
+
+Omega_e = Vai*sqrt(mime)*omega_pi;
+Omega_i = Omega_e / mime;
+
+nb_n0 = 0.1;
+Vai_b = Vai/sqrt(nb_n0);
+Vae_b = Vae/sqrt(nb_n0);
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+cd(path)
+S = dir(fullfile(path,'pfd.*.h5'));
+N=numel(S); % number of files to use
+in=1;
+disp(strcat('Computing step ...',S(in).name))
+fileID =  S(in).name; %change the 1 per i
+%h5disp(fileID);
+info = h5info(fileID);
+EHJ_1st = info.Groups(16).Name;
+
+grid_ng = info.Groups(19).Attributes;
+Dx=grid_ng(10).Value(1);
+Dy=grid_ng(10).Value(2);
+Dz=grid_ng(10).Value(3);
+
+grid_length = info.Groups(17).Attributes;
+Lx0=grid_length(4).Value(1);% - grid_length(3).Value(1);
+Ly0=grid_length(4).Value(2);% - grid_length(3).Value(2);
+Lz0=grid_length(4).Value(3);% - grid_length(3).Value(3);
+
+resx=double(Lx0)/double(Dx);
+resy=double(Ly0)/double(Dy);
+resz=double(Lz0)/double(Dz); res=resy;
+
+threshold=pi/resy;
+
+grid_dt = info.Groups(20).Attributes;
+dt=double(grid_dt(15).Value);
+%--------------------------------------------------------------------------
+
+
+%--------------------------------------------------------------------------
+Lz = Lz0;
+kz = (2*pi/Lz);
+
+omega_max = pi/dt;
+k_max = threshold;
+
+omegas = omega_pe * [0.2, 0.2 ,1 ,1, ...
+    0.9*kz*VA2c ,0.9*kz*VA2c, 0.2, 0.2, 0.9*kz*VA2c];
+ksdi = di * kz * [Lz/rho_i, Lz/1, Lz/rho_i, 1*Lz, ...
+     Lz/4, Lz/8, Lz/4, Lz/4, 1]; 
+dB_B0 = [0.125,0.125,0.125,0.125,...
+    0.125,0.125,0.125,0.8, 0.2];
+%--------------------------------------------------------------------------
+
+% In frequency
+%--------------------------------------------------------------------------
+fs=18; %x0=45;y0=54;xx1=810;yy1=710;
+f1=figure(1);
+%set(gcf,'position',[x0,y0,1.3*xx1,yy1/2])
+%--------------------------------------------------------------------------
+%plot(omegas,ks,'+k',LineWidth=2)
+colormap(jet)                           
+scatter(omegas, ksdi, 80, dB_B0, 'filled')     
+colorbar; caxis([0 max(dB_B0)])
+hold on
+
+x1=linspace(0.2,omega_max,10);
+curve1 = 2*pi*ones(size(x1));
+curve2 = k_max*pi*ones(size(x1));
+x2 = [x1, fliplr(x1)];
+inBetween = [curve1, fliplr(curve2)];
+fill(x2, inBetween,'k','FaceAlpha',0.3);
+
+xline(0.2,'--k','LineWidth',1);
+%xline(1,'--k','LineWidth',1);
+yline(kz*Lz/4,'--r','LineWidth',1);
+%yline(1,'--k','LineWidth',1);
+
+x2=log10([0.21 1]); y2=x2 + 1.05;
+x3=log10([0.06 0.2]); y3=(3/2)*x3 + 1.4;
+%loglog(10.^x2,10.^y2,'--k','LineWidth',2)
+%loglog(10.^x3,10.^y3,'--k','LineWidth',2)
+
+%txt = '\bf{3/2 \rightarrow}';
+txt = '$k \Delta$';
+txt2 = '$\Omega_{ce}$';
+%text(0.2,0.5,txt,'FontSize',15)
+text(0.002,2,txt,'Interpreter','latex','FontSize',20)
+text(0.3,0.002,txt2,'Interpreter','latex','FontSize',20)
+
+ylim([1e-3 k_max]);
+xlim([1e-3 omega_max]);
+%legend('$$\varepsilon_{T}$$','Interpreter','latex','FontSize',1.0*fs,'Location','southeast','NumColumns',1)
+
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(gca,'XScale','log','YScale','log','FontSize',fs)
+ax.YLabel.String = '$kd_{i}$'; 
+ax.XLabel.String = '$\omega_{0}/\omega_{pi}$'; 
+
+hold off
+%--------------------------------------------------------------------------
+
+
+%--------------------------------------------------------------------------
+x1=linspace(10,30,10);
+curve1 = 2*pi*ones(size(x1));
+curve2 = 20*pi*ones(size(x1));
+x2 = [x1, fliplr(x1)];
+inBetween = [curve1, fliplr(curve2)];
+fill(x2, inBetween, 'g');
+
+
+
+
 
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
 
@@ -13,22 +160,7 @@ path_s_T  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts
 path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
 %-----------------------------------------------------------------------------------------------------------------------
 
-% Normalization parameters
-%--------------------------------------------------------------------------
-B0=0.2;
-n0=1;
-Vai=0.2;%0.2;
-Vae=0.2;%0.2;
-E0=0.2;%0.2; %??
-T0=0.02;%0.02;
-J0=Vae;
 
-mime =1.;
-omega_pe_Omega_ce=5;
-
-MFT0=1; % is this simply one in this normalization
-c=1; VA2c = 0.2;
-%--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 cd(path)
