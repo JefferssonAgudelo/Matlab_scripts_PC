@@ -5,6 +5,7 @@
 % This is to make those plots for the parameter space
 %--------------------------------------------------------------------------
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1';
+
 %--------------------------------------------------------------------------
 % Normalization parameters
 %--------------------------------------------------------------------------
@@ -18,6 +19,7 @@ q = 1;
 di=1;
 n0 = 1;
 omega_pe = 1;
+omega_pi = 1;
 
 VA2c = 0.2; 
 Vai = 0.2;    
@@ -110,6 +112,13 @@ x2 = [x1, fliplr(x1)];
 inBetween = [curve1, fliplr(curve2)];
 fill(x2, inBetween,'k','FaceAlpha',0.3);
 
+x12=linspace(0.2,omega_max,10);
+curve1 = 2*pi*ones(size(x12));
+curve2 = kz*Lz/4*ones(size(x12));
+x22 = [x12, fliplr(x12)];
+inBetween = [curve1, fliplr(curve2)];
+fill(x22, inBetween,'k','FaceAlpha',0.1);
+
 xline(0.2,'--k','LineWidth',1);
 %xline(1,'--k','LineWidth',1);
 yline(kz*Lz/4,'--r','LineWidth',1);
@@ -120,12 +129,17 @@ x3=log10([0.06 0.2]); y3=(3/2)*x3 + 1.4;
 %loglog(10.^x2,10.^y2,'--k','LineWidth',2)
 %loglog(10.^x3,10.^y3,'--k','LineWidth',2)
 
-%txt = '\bf{3/2 \rightarrow}';
-txt = '$k \Delta$';
+
+txt = '$k_{\perp} \Delta$';
 txt2 = '$\Omega_{ce}$';
 %text(0.2,0.5,txt,'FontSize',15)
-text(0.002,2,txt,'Interpreter','latex','FontSize',20)
+text(0.002,2.5,txt,'Interpreter','latex','FontSize',20)
 text(0.3,0.002,txt2,'Interpreter','latex','FontSize',20)
+
+txt3 = '$\delta B \sim 0.1B_{0}$';
+txt4 = '$\delta B \sim 0.8B_{0}$';
+text(2.5,20,txt3,'Interpreter','latex','FontSize',20)
+text(2.5,3,txt4,'Interpreter','latex','FontSize',20)
 
 ylim([1e-3 k_max]);
 xlim([1e-3 omega_max]);
@@ -133,20 +147,16 @@ xlim([1e-3 omega_max]);
 
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
 set(gca,'XScale','log','YScale','log','FontSize',fs)
-ax.YLabel.String = '$kd_{i}$'; 
-ax.XLabel.String = '$\omega_{0}/\omega_{pi}$'; 
+ax.YLabel.String = '$k_{\perp} d_{e}$'; 
+ax.XLabel.String = '$\omega_{0}/\omega_{pe}$'; 
 
 hold off
 %--------------------------------------------------------------------------
-
+path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
+cd(path_comp);
+saveas(f1,'Parameter_space.png');
 
 %--------------------------------------------------------------------------
-x1=linspace(10,30,10);
-curve1 = 2*pi*ones(size(x1));
-curve2 = 20*pi*ones(size(x1));
-x2 = [x1, fliplr(x1)];
-inBetween = [curve1, fliplr(curve2)];
-fill(x2, inBetween, 'g');
 
 
 

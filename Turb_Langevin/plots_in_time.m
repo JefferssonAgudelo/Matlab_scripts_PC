@@ -72,20 +72,29 @@ path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/
 
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_lange';
 
+
+% path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1';
+% path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1';
+% path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLd1';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
+
+
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
+
 path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
 path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
 % To save the plots
 path_rec_r = strcat(path,'/spectra/rec_r');
 path_rec_line = strcat(path,'/spectra/rec_line');
-path_rec_line_ByBzJx = strcat(path,'/spectra/rec_line/ByBzJx');
+path_rec_line_ByBzJx_zoom = strcat(path,'/spectra/rec_line/ByBzJx_zoom');
 if not(isfolder(path_rec_r))
     mkdir(path_rec_r)
 end
 if not(isfolder(path_rec_line))
     mkdir(path_rec_line)
 end
-if not(isfolder(path_rec_line_ByBzJx))
-    mkdir(path_rec_line_ByBzJx)
+if not(isfolder(path_rec_line_ByBzJx_zoom))
+    mkdir(path_rec_line_ByBzJx_zoom)
 end
 cd(path)
 %--------------------------------------------------------------------------
@@ -170,16 +179,19 @@ jn=N;
 in=jn;
 N_jn=N; %This is to store some but not all the time steps
 %N=61;N_jn=61; &lt;------------------------------- this is for the 3000
-Ex_rec_avg=zeros(1,N_jn);
+
+
 time_t_2=zeros(1,N_jn);
-Bx_y0_i = zeros(LZs,N_jn);
-By_y0_i = zeros(LZs,N_jn);
-Bz_y0_i = zeros(LZs,N_jn);
+
+% Ex_rec_avg=zeros(1,N_jn);
+% Bx_y0_i = zeros(LZs,N_jn);
+% By_y0_i = zeros(LZs,N_jn);
+% Bz_y0_i = zeros(LZs,N_jn);
 % % %--------------------------------------------------------------------------
 % % %--------------------------------------------------------------------------
 %N =183 is the limit for the run to keep the same time steps.
 jn=220;
-for jn=106:N
+for jn=121:170
     in=jn;
     %for jn=2:floor(N/10)
     %    in=(jn-1)*jn;
@@ -228,8 +240,8 @@ for jn=106:N
     % %     E{1,3}=h5read(fileID,strcat(EHJ_1st,'/ez_ec/p0/3d'));
     % %
     J{1,1}=h5read(fileID,strcat(EHJ_1st,'/jx_ec/p0/3d'));
-    J{1,2}=h5read(fileID,strcat(EHJ_1st,'/jy_ec/p0/3d'));
-    J{1,3}=h5read(fileID,strcat(EHJ_1st,'/jz_ec/p0/3d'));
+%     J{1,2}=h5read(fileID,strcat(EHJ_1st,'/jy_ec/p0/3d'));
+%     J{1,3}=h5read(fileID,strcat(EHJ_1st,'/jz_ec/p0/3d'));
     %From 3D to 2D (x,y,z) to (y,z)
     %----------------------------------------------------------------------
     %----------------------------------------------------------------------
@@ -257,8 +269,8 @@ for jn=106:N
     % %     Ey = E{1,2}; Ey = squeeze(Ey(sli_x,:,:));
     % %     Ez = E{1,3}; Ez = squeeze(Ez(sli_x,:,:));
     Jx = J{1,1}; Jx = squeeze(Jx(sli_x,:,:));
-    Jy = J{1,2}; Jy = squeeze(Jy(sli_x,:,:));
-    Jz = J{1,3}; Jz = squeeze(Jz(sli_x,:,:));
+%     Jy = J{1,2}; Jy = squeeze(Jy(sli_x,:,:));
+%     Jz = J{1,3}; Jz = squeeze(Jz(sli_x,:,:));
     %----------------------------------------------------------------------
     sss=size(Bx);
     size_X=sss;
@@ -293,13 +305,18 @@ for jn=106:N
     yticks_mine=[floor(-Ly*0.9) floor(-Ly/2) 0 floor(Ly/2) floor(Ly*0.9)];
     zticks_mine=[floor(-Lz*0.9) floor(-Lz/2) 0 floor(Lz/2) floor(Lz*0.9)];
     %----------------------------------------------------------------------
+    
+    % to plot closer
+    aa=1/4;
+     
     %To see the contours of the vector potential and the value of the
     %reconneting electric field.
     cd(path_s2)
     %----------------------------------------------------------------------
     fs=18;
     x0=45;y0=54;xx1=810;yy1=710;
-    f57=figure(57);
+    f57=figure();
+    set(gcf,'Visible', 'off'); 
     set(gcf,'position',[x0,y0,xx1,yy1])
     %----------------------------------------------------------------------
     h1=subplot(3,1,1);
@@ -324,8 +341,9 @@ for jn=106:N
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-    xlim([zll(1) zll(end)]);
-    ylim([yll(1) yll(end)]);
+    zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
+    xlim([zll(1 ) zll(end )]);
+    ylim([yll(1 + Dy) yll(end - Dy)]);
     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
     lgnd=legend([h1],'$\frac{B_{y}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
     %set(lgnd,'color','none');
@@ -354,8 +372,9 @@ for jn=106:N
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-    xlim([zll(1) zll(end)]); %
-    ylim([yll(1) yll(end)]);
+    zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
+    xlim([zll(1 ) zll(end )]);
+    ylim([yll(1 + Dy) yll(end - Dy)]);
     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
     lgnd=legend([h2],'$\frac{B_{z}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
     %set(lgnd,'color','none');
@@ -379,13 +398,16 @@ for jn=106:N
     colorbar; colormap(h3,BWR);
     hcb=colorbar; hcb.Location = 'eastoutside';
     hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
-    caxis([-0.3 0.3]); % lange_all
+    caxis([-1.0 1.0]); % lange_all
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-    xlim([zll(1) zll(end)]);
-    ylim([yll(1) yll(end)]);
+    
+    zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
+    xlim([zll(1 ) zll(end )]);
+    ylim([yll(1 + Dy) yll(end - Dy)]);
+
     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
     lgnd=legend([h3],'$\frac{J_{x}}{J_{0}} $','Interpreter','latex','FontSize',1.3*fs);
     %set(lgnd,'color','none');
@@ -393,15 +415,16 @@ for jn=106:N
     %----------------------------------------------------------------------
     sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
     %----------------------------------------------------------------------
-    cd(path_rec_line_ByBzJx)
-    saveas(f57,strcat(num2str(time_t),'ByBzJx_cont.png'));
+    cd(path_rec_line_ByBzJx_zoom)
+    saveas(f57,strcat(num2str(time_t),'ByBzJx_zoom.png'));
     %----------------------------------------------------------------------
     cd(path)
-    By_y0_i(:,jn) = By(length(yll)/2,:);
-    Bx_y0_i(:,jn) = Bx(length(yll)/2,:);
-    Bz_y0_i(:,jn) = Bz(length(yll)/2,:);
+    %By_y0_i(:,jn) = By(length(yll)/2,:); %For the stack plots I'm taking the y=0 so it doesnt consider the oscillation 
+    %Bx_y0_i(:,jn) = Bx(length(yll)/2,:);
+    %Bz_y0_i(:,jn) = Bz(length(yll)/2,:);
 
 end
+
 %}
 % % %--------------------------------------------------------------------------
 % % %--------------------------------------------------------------------------

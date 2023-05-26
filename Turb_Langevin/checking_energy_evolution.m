@@ -210,7 +210,7 @@ for jn=10:12
     clearvars B E B2 E2 U_em
     %----------------------------------------------------------------------
     
-    % Loading the darta for the bulk speed of the particles
+    % Loading the data for the bulk speed of the particles
     %----------------------------------------------------------------------    
     p_e_up{1,1}=h5read(fileID2,strcat(moments_1st,'/px_e_UP/p0/3d')); 
     p_e_up{1,2}=h5read(fileID2,strcat(moments_1st,'/py_e_UP/p0/3d'));

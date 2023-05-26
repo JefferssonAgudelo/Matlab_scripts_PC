@@ -118,23 +118,24 @@ for kn=1:4
 % %         path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1';
 
     %  Cyclotron frequency runs and short wave lengths 
-% %     %----------------------------------------------------------------------------------------------------------------------
-% %     if(kn==1)
-% %         path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1';
-% %     elseif(kn==2)
-% %         path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1';
-% %     elseif(kn==3)
-% %         path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1';
-% %     elseif(kn==4)
-% %         path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1';
-% %     elseif(kn==5)
-% %         path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_Omc1_kd1';
-% % 
-% %     end
-% %     legends_comp={'Oc1dB01','Oc1dB08','Oc1dkd1B01','Oc1dkd1B08','Oc1dkd1B04'};
-% %     %-----------------------------------------------------------------------------------------------------------------------
+    %----------------------------------------------------------------------------------------------------------------------
+    if(kn==1)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1';
+    elseif(kn==2)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1';
+    elseif(kn==3)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1';
+    elseif(kn==4)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1';
+    elseif(kn==5)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_Omc1_kd1';
+
+    end
+    legends_comp={'Oc1dB01','Oc1dB08','Oc1dkd1B01','Oc1dkd1B08','Oc1dkd1B04'};
+    %-----------------------------------------------------------------------------------------------------------------------
 
     %  plasma, cyclotron frequency, di, rho 
+    kn=1;
     %----------------------------------------------------------------------------------------------------------------------
     if(kn==1)
         path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1';
@@ -350,12 +351,12 @@ end
     %--------------------------------------------------------------------------
 
     cd(path)
-
     % This now seems to work ok to compute the reconnection rate taking the
     % maximum and minimum
     % %--------------------------------------------------------------------------
     % %--------------------------------------------------------------------------
-    jn=N;
+    jn=2;
+    jn=100;
     time_t_2=zeros(1,N);
     A_max_min_T=zeros(1,N);
     %Ax_y_T=cell(1,N);
@@ -430,9 +431,68 @@ end
             Iapprox(i,:) = Iapprox_i;
         end
 
-        Ax_y=Iapprox; %<------- This is the correct Ax
-        Ax_y=-Ax_y;
+        Ax_y = Iapprox; %<------- This is the correct Ax
+        Ax_y = -Ax_y;
         %----------------------------------------------------------------------
+
+        %----------------------------------------------------------------------
+        % At a given time
+        % Apply the condition of along Bz=0; %<------------ I still need to
+        % include the correct normalization of the reconnection rate
+        %----------------------------------------------------------------------
+
+        ll=1;
+        %for lln=1:N
+        %Ax_y=Ax_y_T{1,lln};
+
+        %----------------------------------------------------------------------
+        % Here is where I take the Bz min and not Bz(y=0). This removes
+        % the issue of the oscillation but the current is modified
+        %----------------------------------------------------------------------
+
+        nbi=2.5; %To try to remove the noise
+
+        ss=size(Ax_y);
+        A_cond=zeros(ss);
+        for ln=1:length(zll)
+            bz_min = min(abs(Bz(:,ln)));
+            A_cond(:,ln) = abs(Bz(:,ln))<= abs(nbi*bz_min); % this runs for each z
+        end
+
+%         % This is one way to compute the Amax - Amin. (the one I used for the plots in the paper)
+%         %------------------------------------------------------------------
+%         Ax_y_bz0=A_cond.*Ax_y; % find the value of Ax where Bz=0
+%         Ax_y_bz0=Ax_y_bz0(Ax_y_bz0~=0); % remove zeros
+%         [N_bins,edges] = histcounts(Ax_y_bz0,80); %Create bins to find the values max and min Ax
+% 
+%         edges_c = edges(2:end).*N_bins(1:end); %Multiply to get rid of the zero counts
+%         edges_c2 = edges(2:end).*(edges_c~=0);
+%         edges_c2 = edges_c2(edges_c2~=0); %remove the zero counts
+% 
+%         A_min = min(edges_c2); % get the actual min and max
+%         A_max = max(edges_c2);
+%         %Safe the value of the diference
+%         A_max_min = A_max - A_min;
+%         %disp(A_max_min)
+%         A_max_min_T(1,in) = A_max_min;
+%         %end
+%         %------------------------------------------------------------------
+
+
+        % This is second way to compute the Amax - Amin.
+        %------------------------------------------------------------------
+        Ax_y_bz0=double(A_cond.*Ax_y); % find the value of Ax where Bz=0
+        Ax_y_bz0(Ax_y_bz0 == false) = NaN;
+
+        A_min = min(min(Ax_y_bz0)); 
+        A_max = max(max(Ax_y_bz0));
+        %Safe the value of the diference
+        A_max_min = A_max - A_min;
+        %disp(A_max_min)
+        A_max_min_T(1,in) = A_max_min;
+        %end
+        %------------------------------------------------------------------
+
 
         %--------------------------------------------------------------------------
         str = string(S(in).name);
@@ -442,42 +502,63 @@ end
         time_t_2_Omega=time_t./omega_pe_Omega_ce;
         time_t_2(1,in)=time_t_2_Omega;
         %----------------------------------------------------------------------
-
-        % At a given time
-        % Apply the condition of along Bz=0; %<------------ I still need to
-        % include the correct normalization of the reconnection rate
+        %--------------------------------------------------------------------------
+        yticks_mine=[floor(-Ly*0.9) floor(-Ly/2) 0 floor(Ly/2) floor(Ly*0.9)];
+        zticks_mine=[floor(-Lz*0.9) floor(-Lz/2) 0 floor(Lz/2) floor(Lz*0.9)];
         %----------------------------------------------------------------------
-
-        ll=1;
-        %for lln=1:N
-        %Ax_y=Ax_y_T{1,lln};
-        ss=size(Ax_y);
-        A_cond=zeros(ss);
-        for ln=1:length(zll)
-            bz_min = min(abs(Bz(:,ln)));
-            A_cond(:,ln) = abs(Bz(:,ln))<= 1*bz_min; % this runs for each Bz
-        end
-
-        Ax_y_bz0=A_cond.*Ax_y; % find the value of Ax where Bz=0
-        Ax_y_bz0=Ax_y_bz0(Ax_y_bz0~=0); % remove zeros
-        [N_bins,edges] = histcounts(Ax_y_bz0,80); %Create bins to find the values max and min Ax
-
-        edges_c = edges(2:end).*N_bins(1:end); %Multiply to get rid of the zero counts
-        edges_c2 = edges(2:end).*(edges_c~=0);
-        edges_c2 = edges_c2(edges_c2~=0); %remove the zero counts
-
-        A_min = min(edges_c2); % get the actual min and max
-        A_max = max(edges_c2);
-        %Safe the value of the diference
-        A_max_min = A_max - A_min;
-        %disp(A_max_min)
-        A_max_min_T(1,in) = A_max_min;
-        %end
+        %To see the contours of the vector potential and the value of the
+        %reconneting electric field.
+        cd(path_s2)
+        %----------------------------------------------------------------------
+        L=4;
+        A0 = B0 * Ly; %(this is the 2 Ly in the simulation. Ly=56 but from -56 to 56 )
+        fs=18;
+        f57=figure(57);
+        h1=subplot(1,1,1);
+        %dum_p=Ax_y/A0;
+        cond_plt1=double(abs(Bz) <= abs(nbi*bz_min));
+        cond_plt1(cond_plt1 == false) = NaN;
+        dum_p=Ax_y.*cond_plt1; %this is where the Bz=0 are
+        %dum_p=dum_p/A_max_min; 
+        lim_yp=max(max(max(abs(dum_p))));
+        %dum_p=dum_p/lim_yp;
+        hc1=pcolor(ZLL,YLL,dum_p);
+        %[C,h]=contourf(ZLL,YLL,dum_p,'LevelStep',0.1); %This level step is related to the value of the field and the number of contours
+        %set(h,'LineColor','black','LineWidth',1)
+        colormap(h1,'hsv');
+        set(hc1,'edgecolor','none')
+        colorbar
+        caxis([5.5 6.5])
+        hcb=colorbar; hcb.Location = 'eastoutside';
+        hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+        ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+        ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+        ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+        ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+        xlim([zll(1) zll(end)]); ylim([yll(456) yll(568)]);
+        lgnd=legend([h1],'$A_{x}$','Interpreter','latex','FontSize',1.3*fs);
+%        lgnd=legend([h1],'$\frac{A_{x}}{A^{max}_{x,min}} $','Interpreter','latex','FontSize',1.3*fs);
+        %set(lgnd,'color','none');
+        hold off
+        %----------------------------------------------------------------------
+        sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+        %----------------------------------------------------------------------
+        %----------------------------------------------------------------------
+        cd(path_rec_line)
+        saveas(f57,strcat(num2str(time_t_2_Omega),'Axmax_min_cond.png'));
+        %----------------------------------------------------------------------
 
         %----------------------------------------------------------------------
         %Ax_y_T{1,in} = Ax_y; % This is to store the whole data of Ax if
         %needed it
+        cd(path)
     end
+
+
+    
+
+    f1=figure(1);
+    plot(A_max_min_T)
 
 % %     %now safe the reconnection rate array
 % %     A_max_min_To(:,kn) = A_max_min_T; 
@@ -1070,12 +1151,12 @@ set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(1,1,1)
 %y=A_max_min_To_o;
 y=A_max_min_To{1}; time_t_2 = time_t_2_T{1};
-y = filter(b,a,y);
+%y = filter(b,a,y); % first filter
 plot(time_t_2,y,LineWidth=2,color=C{1})
 hold on
 for kn=2:N_kn
     y = A_max_min_To{kn}; time_t_2 = time_t_2_T{kn};
-    y = filter(b,a,y);
+    %y = filter(b,a,y); % first filter
     plot(time_t_2,y,LineWidth=2,color=C{kn})
 end
 % % %--------------------------------------------------------------------------
@@ -1105,6 +1186,8 @@ cd(path_comp)
 %saveas(f12,strcat(num2str(kn),'Reconnected_flux_comp_ABCDEABg02_Omc1dB01_kd1_nofilter.png'));
 saveas(f12,strcat(num2str(kn),'Reconnected_flux_comp_Bg02_Ocop1dB01_kdr1_nofilter.png'));
 
+% This is the dB08 that doesn't reconnect but has a large Amax -Amin value  
+/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1
 
 Vae=0.2;
 %--------------------------------------------------------------------------
