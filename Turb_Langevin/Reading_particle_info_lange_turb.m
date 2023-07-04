@@ -184,14 +184,14 @@ i=N;
     % Now lets compute the averages to get the parallel and perpendicular
 
     % remove the NaNs
-    Bxout(isnan(Bxout)) = []; Byout(isnan(Byout)) = [];  Bzout(isnan(Bzout)) = [];
-    Bxout_av = mean(Bxout,'all'); Byout_av = mean(Byout,'all'); Bzout_av = mean(Bzout,'all');
-    Bout_m_av = sqrt(Bxout_av.^2 + Byout_av.^2 + Bzout_av.^2);
-
-    % remove the NaNs
     Bxin(isnan(Bxin)) = []; Byin(isnan(Byin)) = [];  Bzin(isnan(Bzin)) = [];
     Bxin_av = mean(Bxin,'all'); Byin_av = mean(Byin,'all'); Bzin_av = mean(Bzin,'all');
     Bin_m_av = sqrt(Bxin_av.^2 + Byin_av.^2 + Bzin_av.^2);
+    
+    % remove the NaNs
+    Bxout(isnan(Bxout)) = []; Byout(isnan(Byout)) = [];  Bzout(isnan(Bzout)) = [];
+    Bxout_av = mean(Bxout,'all'); Byout_av = mean(Byout,'all'); Bzout_av = mean(Bzout,'all');
+    Bout_m_av = sqrt(Bxout_av.^2 + Byout_av.^2 + Bzout_av.^2);
 
     %----------------------------------------------------------------------
     % Define the initial coordinates
@@ -199,40 +199,56 @@ i=N;
     yy = [0; 1; 0]; % Example y-coordinate
     zz = [0; 0; 1]; % Example z-coordinate
 
+    % this only uses the in vector and not the out. I need to repeat this
+    % because the magnetic field vector is different.
     % Define the magnetic field vector
-    B = [Bxin_av; Byin_av; Bzin_av]; % Example magnetic field vector
+
+    B_in = [Bxin_av; Byin_av; Bzin_av]; % Example magnetic field vector 
+    B_out = [Bxout_av; Byout_av; Bzout_av]; % Example magnetic field vector 
 
     % Normalize the magnetic field vector
-    B_normalized = B / norm(B);
+    B_normalized_in = B_in / norm(B_in);
+    B_normalized_out = B_out / norm(B_out);    
 
     % Calculate the rotation axis
-    R = cross(B_normalized, [1; 0; 0]); % Cross product with x-axis
+    R_in = cross(B_normalized_in, [1; 0; 0]); % Cross product with x-axis
+    R_out = cross(B_normalized_out, [1; 0; 0]); % Cross product with x-axis
 
     % Calculate the rotation angle
-    theta = acos(dot(B_normalized, [1; 0; 0])); % Dot product with x-axis
+    theta_in = acos(dot(B_normalized_in, [1; 0; 0])); % Dot product with x-axis
+    theta_out = acos(dot(B_normalized_out, [1; 0; 0])); % Dot product with x-axis
 
     % Create the rotation matrix
-    K = [0 -R(3) R(2); R(3) 0 -R(1); -R(2) R(1) 0]; % Skew-symmetric matrix
-    R_matrix = eye(3) + sin(theta) * K + (1 - cos(theta)) * K^2; % Rodrigues' rotation formula
+    K_in = [0 -R_in(3) R_in(2); R_in(3) 0 -R_in(1); -R_in(2) R_in(1) 0]; % Skew-symmetric matrix
+    R_matrix_in = eye(3) + sin(theta_in) * K_in + (1 - cos(theta_in)) * K_in^2; % Rodrigues' rotation formula
+
+    K_out = [0 -R_out(3) R_out(2); R_out(3) 0 -R_out(1); -R_out(2) R_out(1) 0]; % Skew-symmetric matrix
+    R_matrix_out = eye(3) + sin(theta_out) * K_out + (1 - cos(theta_out)) * K_out^2; % Rodrigues' rotation formula    
 
     % Perform the coordinate transformation
-    transformed_coords = R_matrix * [xx'; yy'; zz'];
+    transformed_coords_in = R_matrix_in * [xx'; yy'; zz'];
+    transformed_coords_out = R_matrix_out * [xx'; yy'; zz'];
 
     % Extract the transformed coordinates
-    x_prime = transformed_coords(1, :)';
-    y_prime = transformed_coords(2, :)';
-    z_prime = transformed_coords(3, :)';
+    x_prime_in = transformed_coords_in(1, :)';
+    y_prime_in = transformed_coords_in(2, :)';
+    z_prime_in = transformed_coords_in(3, :)';
+
+    % Extract the transformed coordinates
+    x_prime_out = transformed_coords_out(1, :)';
+    y_prime_out = transformed_coords_out(2, :)';
+    z_prime_out = transformed_coords_out(3, :)';
 
     % Define the vector in the initial reference frame
     v_initial_1 = [pxi_sub1, pyi_sub1, pzi_sub1]'; % Example vector in the initial reference frame
     v_initial_2 = [pxi_sub2, pyi_sub2, pzi_sub2]'; % Example vector in the initial reference frame
 
     % Calculate the inverse of the rotation matrix
-    R_inverse = inv(R_matrix); % Inverse of the rotation matrix A\b
+    %R_inverse = inv(R_matrix_in); % Inverse of the rotation matrix A\b
 
     % Express the vector in the new reference frame
-    v_new_1 = R_matrix \ v_initial_1;
-    v_new_2 = R_matrix \ v_initial_2;
+    v_new_1 = R_matrix_out \ v_initial_1;
+    v_new_2 = R_matrix_in \ v_initial_2;
 
     v_new_par_1 = v_new_1(1,:);
     v_new_per_1 = sqrt(v_new_1(2,:).^2 + v_new_1(3,:).^2);
