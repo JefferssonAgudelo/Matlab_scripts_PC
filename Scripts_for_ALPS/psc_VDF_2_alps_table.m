@@ -1,0 +1,268 @@
+% this script is to read the particle info from the simulations and to
+% store it in an ASCII tabla so it can be used as input for ALPS
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_prt';
+
+path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
+path_s = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+cd(path)
+mime =1.;
+omega_pe_Omega_ce=5;
+S = dir(fullfile(path,'prt.*'));
+N=numel(S); % number of files to use
+H=zeros(N);
+i=1;
+
+% This is the loop to calculate the VDF of the particles
+%
+for i=1:N
+%i=N;
+    disp(strcat('Computing step ...',S(i).name)) 
+    fileID =  S(i).name; %change the 1 per i
+    %h5disp(fileID); %this is the command to show the information in the file 
+    info = h5info(fileID);    
+    %info = h5info(fileID,'TextEncoding','UTF-8');
+    
+    prt = info.Groups(1).Name;
+    %read the information from the fields of the struct
+    prtfields=h5read(fileID,strcat(prt,'/p0/1d'));
+    %x = prtfields.x;
+    y = prtfields.y;
+    z = prtfields.z;
+    px = prtfields.px;
+    py = prtfields.py;
+    pz = prtfields.pz;
+    q = prtfields.q;
+    %m = prtfields.m;
+    %w = prtfields.w;
+
+    %separate the popullations
+    
+    % ions
+    q_i_index = find(q==1);
+    %Coordinates of ions
+    pxi=px(q_i_index); pyi=py(q_i_index); pzi=pz(q_i_index);
+    qi=q(q_i_index);
+
+    yi=y(q_i_index); zi=z(q_i_index); 
+
+%     q_e_index = find(q==-1);
+%     %Coordinates of electrons
+%     %xe=x(q_e_index); ye=y(q_e_index); ze=z(q_e_index);
+%     pxe=px(q_e_index); pye=py(q_e_index); pze=pz(q_e_index);
+%     qe=q(q_e_index);
+  
+    clearvars px py pz q
+
+    % To get the particle info in a sub-region
+
+    % for the limits inside island central pinch
+    %----------------------------------------------------------------------    
+    yii1 = 10; yii2 = 20; zii1=30; zii2=50; % 1 is out 
+    %----------------------------------------------------------------------
+    
+    % for the case of dB04_kd4
+    %----------------------------------------------------------------------
+    cond_y1 = find((yi>yii1) & (yii2>yi) & (zi>zii1) & (zii2>zi) );  % out   
+    %----------------------------------------------------------------------
+
+    pxi_sub1=pxi(cond_y1); 
+    pyi_sub1=pyi(cond_y1); 
+    pzi_sub1=pzi(cond_y1);    
+
+    clearvars pxi pyi pzi
+
+
+    %To make the coordinate transformation 
+    %----------------------------------------------------------------------
+    Sf = dir(fullfile(path,'pfd.*.h5'));
+    Nf=numel(Sf); % number of files to use
+    H=zeros(Nf);   
+    in = Nf;
+    disp(strcat('Computing step ...',Sf(in).name))
+    fileID =  Sf(in).name; %change the 1 per i
+    %h5disp(fileID);
+    info = h5info(fileID);
+    EHJ_1st = info.Groups(16).Name;
+    %--------------------------------------------------------------------------
+    grid_dt = info.Groups(20).Attributes;
+    dt=double(grid_dt(15).Value);
+    grid_ng = info.Groups(19).Attributes;
+    dx=grid_ng(10).Value(1);
+    dy=grid_ng(10).Value(2);
+    dz=grid_ng(10).Value(3);
+    grid_length = info.Groups(17).Attributes;
+    Lx=grid_length(4).Value(1);% - grid_length(3).Value(1);
+    Ly=grid_length(4).Value(2);% - grid_length(3).Value(2);
+    Lz=grid_length(4).Value(3);% - grid_length(3).Value(3);
+    resx=double(Lx)/double(dx);
+    resy=double(Ly)/double(dy);
+    resz=double(Lz)/double(dz); res=resy;
+    threshold=pi/resy;
+    %--------------------------------------------------------------------------
+    Bx=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+    By=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'));
+    Bz=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d')); 
+    %----------------------------------------------------------------------
+    sli_x = 1;
+    Bx = squeeze(Bx(sli_x,:,:));
+    By = squeeze(By(sli_x,:,:));
+    Bz = squeeze(Bz(sli_x,:,:));
+    %----------------------------------------------------------------------
+    sss=size(Bx);
+    size_X=sss;
+    zll=linspace(-Lz,Lz,size_X(2)); %Jeff flag it works with (1,size_x(2))
+    yll=linspace(-Ly,Ly,size_X(1));
+    [ZLL, YLL] = meshgrid(zll,yll);
+    %----------------------------------------------------------------------    
+    % out
+    cond_ii = (YLL>yii1).*(YLL<yii2).*(ZLL>zii1).*(ZLL<zii2);
+    Bxout = Bx.*cond_ii; Bxout(Bxout==0)=NaN; 
+    Byout = By.*cond_ii; Byout(Byout==0)=NaN;
+    Bzout = Bz.*cond_ii; Bzout(Bzout==0)=NaN;
+    %----------------------------------------------------------------------
+
+    % get the densities to compute the local alfven speed
+    %----------------------------------------------------------------------
+    %--------------------------------------------------------------------------
+    S2 = dir(fullfile(path,'pfd_moments.*.h5'));
+    N2=numel(S2); % number of files to use
+    H2=zeros(N2);
+    in=6;
+
+    %----------------------------------------------------------------------
+    disp(strcat('Computing step ...',S2(in).name))    
+    fileID2 =  S2(in).name; %change the 1 per i
+    %h5disp(fileID2);
+    info2 = h5info(fileID2);
+    moments_1st = info2.Groups(1).Name;
+    %----------------------------------------------------------------------
+    
+    % densities
+    %----------------------------------------------------------------------
+    cd(path)
+    n_e_up{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_e_UP/p0/3d'));
+    n_i_up{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_i_UP/p0/3d'));
+    n_e_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_e_BA/p0/3d'));
+    n_i_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_i_BA/p0/3d'));
+    n_e{1,1}=(n_e_up{1,1} + n_e_ba{1,1})./1;
+    n_i{1,1}=(n_i_up{1,1} + n_i_ba{1,1})./1;
+    
+    n_e_up{1,1}=-1.*n_e_up{1,1};
+    n_e_ba{1,1}=-1.*n_e_ba{1,1};
+    n_e{1,1}=-1.*n_e{1,1};
+
+    clearvars n_e_ba n_e_up n_i_ba n_i_up
+    %----------------------------------------------------------------------
+    n_i= n_i{1,1}; n_i = squeeze(n_i(sli_x,:,:));
+    n_e= n_e{1,1}; n_e = squeeze(n_e(sli_x,:,:));
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
+
+    % Now lets compute the averages to get the parallel and perpendicular
+    %----------------------------------------------------------------------
+    % remove the NaNs
+    Bxout(isnan(Bxout)) = []; Byout(isnan(Byout)) = [];  Bzout(isnan(Bzout)) = [];
+    Bxout_av = mean(Bxout,'all'); Byout_av = mean(Byout,'all'); Bzout_av = mean(Bzout,'all');
+    Bout_m_av = sqrt(Bxout_av.^2 + Byout_av.^2 + Bzout_av.^2);
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
+    % Define the initial coordinates
+    xx = [1; 0; 0]; % Example x-coordinate
+    yy = [0; 1; 0]; % Example y-coordinate
+    zz = [0; 0; 1]; % Example z-coordinate
+
+    % Define the magnetic field vector
+    B = [Bxin_av; Byin_av; Bzin_av]; % Example magnetic field vector
+
+    % Normalize the magnetic field vector
+    B_normalized = B / norm(B);
+
+    % Calculate the rotation axis
+    R = cross(B_normalized, [1; 0; 0]); % Cross product with x-axis
+
+    % Calculate the rotation angle
+    theta = acos(dot(B_normalized, [1; 0; 0])); % Dot product with x-axis
+
+    % Create the rotation matrix
+    K = [0 -R(3) R(2); R(3) 0 -R(1); -R(2) R(1) 0]; % Skew-symmetric matrix
+    R_matrix = eye(3) + sin(theta) * K + (1 - cos(theta)) * K^2; % Rodrigues' rotation formula
+
+    % Perform the coordinate transformation
+    transformed_coords = R_matrix * [xx'; yy'; zz'];
+
+    % Extract the transformed coordinates
+    x_prime = transformed_coords(1, :)';
+    y_prime = transformed_coords(2, :)';
+    z_prime = transformed_coords(3, :)';
+
+    % Define the vector in the initial reference frame
+    v_initial_1 = [pxi_sub1, pyi_sub1, pzi_sub1]'; % Example vector in the initial reference frame
+
+    % Calculate the inverse of the rotation matrix
+    R_inverse = inv(R_matrix); % Inverse of the rotation matrix A\b
+
+    % Express the vector in the new reference frame
+    v_new_1 = R_matrix \ v_initial_1;
+
+    % parallel and perpendicular wave numbers out
+    v_new_par_1 = v_new_1(1,:);
+    v_new_per_1 = sqrt(v_new_1(2,:).^2 + v_new_1(3,:).^2);
+    %----------------------------------------------------------------------
+
+    % Now let's normalised to m_{1}V_{i,A} using a local alfven speed
+    %----------------------------------------------------------------------
+    
+    %----------------------------------------------------------------------
+    str = string(S(i).name);
+    newStr = extractBetween(str,"prt.","_p000000.h5");
+    N_steps = str2double(newStr);
+    dt = 0.0653;% <--- This has to come from the field data because this do not store the time resolution
+    time_t = dt*N_steps;
+    time_t_2_Omega=time_t./omega_pe_Omega_ce;
+    %----------------------------------------------------------------------
+    
+    %----------------------------------------------------------------------
+    xspace_par = [-1.0, -0.5, 0, 0.5, 1.0];
+    yspace_per = [0, 0.5, 1.0];
+    xlims = [-1.0, 1.0];
+    ylims = [0.0, 1.0];
+    Xedges2D = linspace(-1.0,1.0);
+    Yedges2D = linspace(0.0,1.0);
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
+    % Noise level
+    no_le=1;
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
+    dum1 = v_new_par_1; dum2 = v_new_per_1;    
+    [Ni,Xedgesi,Redgesi] = histcounts2(dum1,dum2,Xedges2D,Yedges2D);
+    Ni=Ni(1:99,1:99)';    Xedges2i=Xedgesi(2:100)'; Redges2i=Redgesi(2:100)';
+    %c_lim = (max(max(Ni)));
+    c_lim=0.5*10^6;
+    Xedges2i=Xedges2i-(Xedges2i(2)-Xedges2i(1))/2;    
+    Redges2i=Redges2i-(Redges2i(2)-Redges2i(1))/2;
+    Ni(Ni<=no_le)=NaN;
+    [Ci,Di]=meshgrid(Xedges2i,Redges2i);
+    hc=pcolor(Xedges2i,Redges2i, Ni./Di);
+    %----------------------------------------------------------------------
+    
+
+end
+
+
+
+
+
+   
+    
+
+    

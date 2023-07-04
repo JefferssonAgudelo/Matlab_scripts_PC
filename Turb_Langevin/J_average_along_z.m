@@ -1,4 +1,6 @@
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_dum'; % this has a high beta=0.8 and is L4, 32 waves.guide 0.2
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8'; % this is L8, beta02, n01, dB02 
 
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
 %--------------------------------------------------------------------------
@@ -245,6 +247,7 @@ for kn=1:8
         time_t_2(1,in)=time_t_2_Omega;
         %----------------------------------------------------------------------
         Jx_avg(:,in) = mean(Jx,2);
+        cd(path)
 
         %----------------------------------------------------------------------
         disp(strcat('Computing step ...',S2(in).name))
@@ -311,7 +314,6 @@ for kn=1:8
     end
 
 
-    
     %----------------------------------------------------------------------
     % Stack plots
     %----------------------------------------------------------------------

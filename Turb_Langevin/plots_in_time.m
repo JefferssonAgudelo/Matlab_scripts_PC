@@ -70,6 +70,7 @@ path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/
 
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR';
 
+
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_lange';
 
 
@@ -81,8 +82,61 @@ path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/
 
 path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
 
+
+
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB001_omp1_kLd1';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
+%path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';%A
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_du02';%E %<-- this is in reality L=4.
+
+%--------------------------------------------------------------------------
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_klong/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_klong';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1';
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR/particle_late';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_lange/particle_late';
+path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
+%--------------------------------------------------------------------------
+
+
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01_cp';
+% This is the localised region for the anomalous resistivity
+%--------------------------------------------------------------------------
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1_local';
+%--------------------------------------------------------------------------
+
+% check what is actually this because is really messy
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_Omc1_kd1';
+
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01';
+
+% These are the paths for the runs to compare 
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1';
+
+
+
+%--------------------------------------------------------------------------
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB02_olong_kLd2';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_olong_kLd4';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_olong_kLd8';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_olong_kLd16';
+%--------------------------------------------------------------------------
+
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_prt';
+
+
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_2';
+
+%--------------------------------------------------------------------------
+path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
 path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
 path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+%--------------------------------------------------------------------------
+
 % To save the plots
 path_rec_r = strcat(path,'/spectra/rec_r');
 path_rec_line = strcat(path,'/spectra/rec_line');
@@ -191,11 +245,19 @@ time_t_2=zeros(1,N_jn);
 % % %--------------------------------------------------------------------------
 %N =183 is the limit for the run to keep the same time steps.
 jn=220;
-for jn=121:170
+jn=1;
+
+
+jn=135; %135 is the file number for 174.95
+
+jn=N-1; % for dB2kd2
+jn=N; % for prt central pinch
+
+for jn=10:N
     in=jn;
-    %for jn=2:floor(N/10)
-    %    in=(jn-1)*jn;
-% %     in=2 + floor(N*(jn-1)/10);
+%for jn=2:N%floor(N/20)
+    %in=(jn-1)*jn;
+    %in=2 + floor(N*(jn-1)/20);
     %----------------------------------------------------------------------
     disp(strcat('Computing step ...',S(in).name))
     fileID =  S(in).name; %change the 1 per i
@@ -309,18 +371,89 @@ for jn=121:170
     % to plot closer
     aa=1/4;
      
-    %To see the contours of the vector potential and the value of the
-    %reconneting electric field.
+    %This plot shows the close-up with the squares to show the particle
+    %info regions
     cd(path_s2)
     %----------------------------------------------------------------------
     fs=18;
+    x0=45;y0=54;xx1=810;yy1=173;
+    %----------------------------------------------------------------------
+%     f1=figure(1);
+%     set(gcf,'position',[x0,y0,xx1,yy1])
+%     h3=subplot(1,1,1);
+%     %dum_p2=Jx/J0;
+%     dum_p2=Jx/max(max(Jx));
+%     lim_yp2=max(max(max(abs(dum_p2))));
+%     %dum_p2=dum_p2/lim_yp2;
+%     hc=pcolor(ZLL,YLL,dum_p2);
+%     set(hc,'edgecolor','none')
+%     hold on
+%     %----------------------------------------------------------------------
+%     dum_p=Ax_y;
+%     lim_yp=max(max(max(abs(dum_p))));
+%     dum_p=dum_p/lim_yp;
+%     [C,h]=contour(ZLL,YLL,dum_p,'LevelStep',0.1);
+%     set(h,'LineColor','black','LineWidth',1)
+%     %----------------------------------------------------------------------
+%     colorbar; colormap(h3,BWR);
+%     hcb=colorbar; hcb.Location = 'eastoutside';
+%     hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+%     % lange_all
+%     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+%     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+%     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+%     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%     
+%     zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
+%     xlim([zll(1 ) zll(end )]);
+%     ylim([yll(1 + Dy) yll(end - Dy)]);
+% 
+%     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
+%     lgnd=legend([h3],'$\frac{J_{x}}{J_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+%     %set(lgnd,'color','none');
+%     %rectangle('Position',[-10 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
+%     %rectangle('Position',[-10 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
+%     %caxis([-1.0 1.0]); 
+%     %%rectangle('Position',[-60 10 20 10],'EdgeColor','b','LineWidth',2) %lange disrupt
+%     %%rectangle('Position',[-60 -5 20 10],'EdgeColor','r','LineWidth',2) %lange disrupt
+%     %%caxis([-1.0 1.0]);
+%     
+%     %%rectangle('Position',[0 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
+%     %%rectangle('Position',[0 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
+%     
+%     % central pinch island
+%     %rectangle('Position',[30 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
+%     %rectangle('Position',[30 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
+% 
+%     % dB02kd2 island
+%     rectangle('Position',[-70 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
+%     rectangle('Position',[-70 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
+% 
+%     caxis([-1.0 1.0]);
+%     hold off
+%     %----------------------------------------------------------------------
+%     sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+%     %----------------------------------------------------------------------
+%     %cd(path_comp)
+%     cd(path)
+% 
+%     saveas(f1,strcat(num2str(time_t),'Jx_zoom_squares_dB02kd2_mag_inside.png'));
+%     %saveas(f1,strcat(num2str(time_t),'Jx_zoom_squares_src.png'));
+%     %saveas(f1,strcat(num2str(time_t),'Jx_zoom_squares_src_lange.png'));
+%     %----------------------------------------------------------------------
+    %----------------------------------------------------------------------
+
+
+    cd(path_s2)
+    %----------------------------------------------------------------------
     x0=45;y0=54;xx1=810;yy1=710;
     f57=figure();
-    set(gcf,'Visible', 'off'); 
+    %set(gcf,'Visible', 'off'); 
     set(gcf,'position',[x0,y0,xx1,yy1])
     %----------------------------------------------------------------------
     h1=subplot(3,1,1);
     dum_p2=By/B0;
+    %dum_p2=By/max(max(abs(By)));
     lim_yp2=max(max(max(abs(dum_p2))));
     %dum_p2=dum_p2/lim_yp2;
     hc=pcolor(ZLL,YLL,dum_p2);
@@ -352,6 +485,7 @@ for jn=121:170
     %----------------------------------------------------------------------
     h2=subplot(3,1,2);
     dum_p2=Bz/B0;
+    %dum_p2=Bz/max(max(abs(Bz)));
     lim_yp2=max(max(max(abs(dum_p2))));
     %dum_p2=dum_p2/lim_yp2;
     hc=pcolor(ZLL,YLL,dum_p2);
@@ -382,7 +516,10 @@ for jn=121:170
     %----------------------------------------------------------------------
     %----------------------------------------------------------------------
     h3=subplot(3,1,3);
+    %f1=figure(1)
+    %h3=subplot(1,1,1);
     dum_p2=Jx/J0;
+    %dum_p2=Jx/max(max(abs(Jx)));
     lim_yp2=max(max(max(abs(dum_p2))));
     %dum_p2=dum_p2/lim_yp2;
     hc=pcolor(ZLL,YLL,dum_p2);
@@ -411,17 +548,30 @@ for jn=121:170
     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
     lgnd=legend([h3],'$\frac{J_{x}}{J_{0}} $','Interpreter','latex','FontSize',1.3*fs);
     %set(lgnd,'color','none');
+    %rectangle('Position',[-10 10 20 20],'EdgeColor','b','LineWidth',2)
+    %rectangle('Position',[-10 -5 20 5],'EdgeColor','r','LineWidth',2)
     hold off
     %----------------------------------------------------------------------
     sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+    
     %----------------------------------------------------------------------
     cd(path_rec_line_ByBzJx_zoom)
     saveas(f57,strcat(num2str(time_t),'ByBzJx_zoom.png'));
+    close(f57);
+    delete(f57);
     %----------------------------------------------------------------------
     cd(path)
     %By_y0_i(:,jn) = By(length(yll)/2,:); %For the stack plots I'm taking the y=0 so it doesnt consider the oscillation 
     %Bx_y0_i(:,jn) = Bx(length(yll)/2,:);
     %Bz_y0_i(:,jn) = Bz(length(yll)/2,:);
+
+
+    % This block is to make plotss that better show the initial
+    % fluctuations and their effect
+    %----------------------------------------------------------------------
+    
+
+    %----------------------------------------------------------------------
 
 end
 
@@ -432,7 +582,8 @@ end
 
 % % %--------------------------------------------------------------------------
 % % %This is to make the stsack plot of By Bx Bz
-% % %--------------------------------------------------------------------------
+% %
+% %--------------------------------------------------------------------------
 %
 %time_t_2_Omega=time_t_2./omega_pe_Omega_ce;
 

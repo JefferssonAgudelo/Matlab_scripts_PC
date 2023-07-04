@@ -150,6 +150,8 @@ for kn=1:4
     %-----------------------------------------------------------------------------------------------------------------------
 
 
+    path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_Bg01_below';
+
     path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison'; 
 
     %-----------------------------------------------------------------------------------------------------------------------
@@ -502,51 +504,51 @@ end
         time_t_2_Omega=time_t./omega_pe_Omega_ce;
         time_t_2(1,in)=time_t_2_Omega;
         %----------------------------------------------------------------------
-        %--------------------------------------------------------------------------
-        yticks_mine=[floor(-Ly*0.9) floor(-Ly/2) 0 floor(Ly/2) floor(Ly*0.9)];
-        zticks_mine=[floor(-Lz*0.9) floor(-Lz/2) 0 floor(Lz/2) floor(Lz*0.9)];
-        %----------------------------------------------------------------------
-        %To see the contours of the vector potential and the value of the
-        %reconneting electric field.
-        cd(path_s2)
-        %----------------------------------------------------------------------
-        L=4;
-        A0 = B0 * Ly; %(this is the 2 Ly in the simulation. Ly=56 but from -56 to 56 )
-        fs=18;
-        f57=figure(57);
-        h1=subplot(1,1,1);
-        %dum_p=Ax_y/A0;
-        cond_plt1=double(abs(Bz) <= abs(nbi*bz_min));
-        cond_plt1(cond_plt1 == false) = NaN;
-        dum_p=Ax_y.*cond_plt1; %this is where the Bz=0 are
-        %dum_p=dum_p/A_max_min; 
-        lim_yp=max(max(max(abs(dum_p))));
-        %dum_p=dum_p/lim_yp;
-        hc1=pcolor(ZLL,YLL,dum_p);
-        %[C,h]=contourf(ZLL,YLL,dum_p,'LevelStep',0.1); %This level step is related to the value of the field and the number of contours
-        %set(h,'LineColor','black','LineWidth',1)
-        colormap(h1,'hsv');
-        set(hc1,'edgecolor','none')
-        colorbar
-        caxis([5.5 6.5])
-        hcb=colorbar; hcb.Location = 'eastoutside';
-        hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
-        ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-        ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-        ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
-        ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-        xlim([zll(1) zll(end)]); ylim([yll(456) yll(568)]);
-        lgnd=legend([h1],'$A_{x}$','Interpreter','latex','FontSize',1.3*fs);
-%        lgnd=legend([h1],'$\frac{A_{x}}{A^{max}_{x,min}} $','Interpreter','latex','FontSize',1.3*fs);
-        %set(lgnd,'color','none');
-        hold off
-        %----------------------------------------------------------------------
-        sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
-        %----------------------------------------------------------------------
-        %----------------------------------------------------------------------
-        cd(path_rec_line)
-        saveas(f57,strcat(num2str(time_t_2_Omega),'Axmax_min_cond.png'));
-        %----------------------------------------------------------------------
+% %         %--------------------------------------------------------------------------
+% %         yticks_mine=[floor(-Ly*0.9) floor(-Ly/2) 0 floor(Ly/2) floor(Ly*0.9)];
+% %         zticks_mine=[floor(-Lz*0.9) floor(-Lz/2) 0 floor(Lz/2) floor(Lz*0.9)];
+% %         %----------------------------------------------------------------------
+% %         %To see the contours of the vector potential and the value of the
+% %         %reconneting electric field.
+% %         cd(path_s2)
+% %         %----------------------------------------------------------------------
+% %         L=4;
+% %         A0 = B0 * Ly; %(this is the 2 Ly in the simulation. Ly=56 but from -56 to 56 )
+% %         fs=18;
+% %         f57=figure(57);
+% %         h1=subplot(1,1,1);
+% %         %dum_p=Ax_y/A0;
+% %         cond_plt1=double(abs(Bz) <= abs(nbi*bz_min));
+% %         cond_plt1(cond_plt1 == false) = NaN;
+% %         dum_p=Ax_y.*cond_plt1; %this is where the Bz=0 are
+% %         %dum_p=dum_p/A_max_min; 
+% %         lim_yp=max(max(max(abs(dum_p))));
+% %         %dum_p=dum_p/lim_yp;
+% %         hc1=pcolor(ZLL,YLL,dum_p);
+% %         %[C,h]=contourf(ZLL,YLL,dum_p,'LevelStep',0.1); %This level step is related to the value of the field and the number of contours
+% %         %set(h,'LineColor','black','LineWidth',1)
+% %         colormap(h1,'hsv');
+% %         set(hc1,'edgecolor','none')
+% %         colorbar
+% %         caxis([5.5 6.5])
+% %         hcb=colorbar; hcb.Location = 'eastoutside';
+% %         hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+% %         ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+% %         ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+% %         ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+% %         ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+% %         xlim([zll(1) zll(end)]); ylim([yll(456) yll(568)]);
+% %         lgnd=legend([h1],'$A_{x}$','Interpreter','latex','FontSize',1.3*fs);
+% % %        lgnd=legend([h1],'$\frac{A_{x}}{A^{max}_{x,min}} $','Interpreter','latex','FontSize',1.3*fs);
+% %         %set(lgnd,'color','none');
+% %         hold off
+% %         %----------------------------------------------------------------------
+% %         sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+% %         %----------------------------------------------------------------------
+% %         %----------------------------------------------------------------------
+% %         cd(path_rec_line)
+% %         saveas(f57,strcat(num2str(time_t_2_Omega),'Axmax_min_cond.png'));
+% %         %----------------------------------------------------------------------
 
         %----------------------------------------------------------------------
         %Ax_y_T{1,in} = Ax_y; % This is to store the whole data of Ax if
@@ -761,7 +763,7 @@ end
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 % For a single file at the time
-%{
+%
 %--------------------------------------------------------------------------
 % This is the plot of the reconnection rate
 
