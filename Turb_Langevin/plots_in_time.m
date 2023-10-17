@@ -1,135 +1,200 @@
 
 
-%With the guide field and 4di thickness
+%%%
+for d=1
+    % % % %With the guide field and 4di thickness
+    % % %
+    % % % %path =
+    % % % %'/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';%A
+    % % % %path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large_2';%A
+    % % % %path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';%B
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';%C
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';%D
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_dum';%E
+    % % %
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_8';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large_L8di';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large_noini_L8di';
+    % % %
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_pinch';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_slow_fre';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_high_fre';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_high_fre_long';
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_deb';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_2';
+    % % %
+    % % %
+    % % %
+    % % %
+    % % % % This set shows the difference in terms of the onset.
+    % % % %----------------------------------------------------------------------------------------------------------------------
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large'; %A
+    % % % %path =
+    % % % %'/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large'; %B
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';%C
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';%D
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_du02';%E %<-- this is in reality L=4.
+    % % % %-----------------------------------------------------------------------------------------------------------------------
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_Bg01'
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large_Bg02';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_Bg01_below';
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_Bg01_below';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01_cp';
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_Omc1_kd1';
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLd1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
+    % % %
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1_res';
+    % % %
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_3_time';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_3_adios2';
+    % % %
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR';
+    % % %
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_lange';
+    % % %
+    % % %
+    % % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1';
+    % % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1';
+    % % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLd1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
+    % % %
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
+    % % %
+    % % %
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB001_omp1_kLd1';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
+    % % % %path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';%A
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_du02';%E %<-- this is in reality L=4.
+    % % %
+    % % % %--------------------------------------------------------------------------
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_klong/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_klong';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1';
+    % % % %--------------------------------------------------------------------------
+    % % %
+    % % % %--------------------------------------------------------------------------
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR/particle_late';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_lange/particle_late';
+    % % % path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
+    % % % %--------------------------------------------------------------------------
+    % % %
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01_cp';
+    % % % % This is the localised region for the anomalous resistivity
+    % % % %--------------------------------------------------------------------------
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1_local';
+    % % % %--------------------------------------------------------------------------
+    % % %
+    % % % % check what is actually this because is really messy
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_Omc1_kd1';
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01';
+    % % %
+    % % % % These are the paths for the runs to compare
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1';
+    % % %
+    % % %
+    % % %
+    % % % %--------------------------------------------------------------------------
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB02_olong_kLd2';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_olong_kLd4';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_olong_kLd8';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_olong_kLd16';
+    % % % %--------------------------------------------------------------------------
+    % % %
+    % % %
+    % % %
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_2';
+    % % %
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_3';
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB02_olong_kLd2';
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1_mime25';
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_mime25';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1_mime25';
+    % % %
+    % % %
+    % % %
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB02_olong_kLd2';
+    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1';
+    % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_prt';
+    % % %
+    % % %
+    % % % path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_2_alone_large_ppc1000';
+    % % %
+    % % % path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_3';
+    % % %
+    % % % %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_mime25';
+    % % %
+    % % % %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_off';
+    % % %
+    % % % %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLrho1_local_mime25';
+    % % %
+    % % %
+    % % % path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_3';
+    % % %
+    % % % path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_3_conf2';
+    % % %
+    % % % path = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/psc_harris_yz_base_2_alone_large';
+    % % %
+    % % %
+    % % % path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_3_conf3';
+    % % % %--------------------------------------------------------------------------
+end
+%%%
 
-%path =
-%'/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';%A
-%path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large_2';%A
-%path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';%B
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';%C
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';%D
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_dum';%E
-
-
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_8';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large_L8di';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large_noini_L8di';
-
-
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_pinch';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_slow_fre';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_high_fre';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_high_fre_long';
-
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_deb';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_2';
-
-
-
-
-% This set shows the difference in terms of the onset.
-%----------------------------------------------------------------------------------------------------------------------
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large'; %A
-%path =
-%'/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large'; %B
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';%C
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';%D
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_du02';%E %<-- this is in reality L=4.
-%-----------------------------------------------------------------------------------------------------------------------
-
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_Bg01'
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large_Bg02';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_Bg01_below';
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_Bg01_below';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01_cp';
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_Omc1_kd1';
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLd1';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
-
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1_res';
-
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_3_time';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_3_adios2';
-
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR';
-
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_lange';
-
-
-% path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1';
-% path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1';
-% path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLd1';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
-
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
-
-
-
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB001_omp1_kLd1';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
-%path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';%A
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_du02';%E %<-- this is in reality L=4.
 
 %--------------------------------------------------------------------------
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_klong/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_klong';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di/';
+path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di_CP/';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di_lange_local/';
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR/particle_late';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_lange/particle_late';
-path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L1di';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L1di';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L1di';
 %--------------------------------------------------------------------------
 
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01_cp';
-% This is the localised region for the anomalous resistivity
 %--------------------------------------------------------------------------
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1_local';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L4di';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L4di';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L4di';
 %--------------------------------------------------------------------------
 
-% check what is actually this because is really messy
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_Omc1_kd1';
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01';
-
-% These are the paths for the runs to compare 
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1';
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1';
-
-
-
 %--------------------------------------------------------------------------
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB02_olong_kLd2';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_olong_kLd4';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_olong_kLd8';
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_olong_kLd16';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local/';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local_asi/';
 %--------------------------------------------------------------------------
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_prt';
-
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_2';
 
 %--------------------------------------------------------------------------
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
@@ -219,7 +284,7 @@ TOmega_e=1/Omega_e;
 TOmega_i=1/Omega_i;
 %--------------------------------------------------------------------------
 jn=1;
-in=1;
+in=N;
 fileID =  S(in).name; %change the 1 per i
 %h5disp(fileID);
 info = h5info(fileID);
@@ -238,22 +303,28 @@ N_jn=N; %This is to store some but not all the time steps
 time_t_2=zeros(1,N_jn);
 
 % Ex_rec_avg=zeros(1,N_jn);
-% Bx_y0_i = zeros(LZs,N_jn);
-% By_y0_i = zeros(LZs,N_jn);
-% Bz_y0_i = zeros(LZs,N_jn);
+Bx_y0_i = zeros(LZs,N_jn);
+By_y0_i = zeros(LZs,N_jn);
+Bz_y0_i = zeros(LZs,N_jn);
 % % %--------------------------------------------------------------------------
 % % %--------------------------------------------------------------------------
 %N =183 is the limit for the run to keep the same time steps.
 jn=220;
-jn=1;
+jn=N;
 
 
-jn=135; %135 is the file number for 174.95
+%jn=135; %135 is the file number for 174.95
 
-jn=N-1; % for dB2kd2
-jn=N; % for prt central pinch
 
-for jn=10:N
+%jn=N-1; % for dB2kd2
+%jn=N; % for prt central pinch
+
+%--------------------------------------------------------------------------
+%jn = 126 % this is the 25000 for the local_3 time 326 Omega
+%jn = 176 % this is the 35000 for the local_3 time 456 Omega
+%--------------------------------------------------------------------------
+
+for jn=1:N
     in=jn;
 %for jn=2:N%floor(N/20)
     %in=(jn-1)*jn;
@@ -297,9 +368,9 @@ for jn=10:N
     B{1,1}=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
     B{1,2}=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'));
     B{1,3}=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'));
-    % %     E{1,1}=h5read(fileID,strcat(EHJ_1st,'/ex_ec/p0/3d'));
-    % %     E{1,2}=h5read(fileID,strcat(EHJ_1st,'/ey_ec/p0/3d'));
-    % %     E{1,3}=h5read(fileID,strcat(EHJ_1st,'/ez_ec/p0/3d'));
+    E{1,1}=h5read(fileID,strcat(EHJ_1st,'/ex_ec/p0/3d'));
+    E{1,2}=h5read(fileID,strcat(EHJ_1st,'/ey_ec/p0/3d'));
+    E{1,3}=h5read(fileID,strcat(EHJ_1st,'/ez_ec/p0/3d'));
     % %
     J{1,1}=h5read(fileID,strcat(EHJ_1st,'/jx_ec/p0/3d'));
 %     J{1,2}=h5read(fileID,strcat(EHJ_1st,'/jy_ec/p0/3d'));
@@ -327,9 +398,9 @@ for jn=10:N
     Bx = B{1,1}; Bx = squeeze(Bx(sli_x,:,:));
     By = B{1,2}; By = squeeze(By(sli_x,:,:));
     Bz = B{1,3}; Bz = squeeze(Bz(sli_x,:,:));
-    % %     Ex = E{1,1}; Ex = squeeze(Ex(sli_x,:,:));
-    % %     Ey = E{1,2}; Ey = squeeze(Ey(sli_x,:,:));
-    % %     Ez = E{1,3}; Ez = squeeze(Ez(sli_x,:,:));
+    Ex = E{1,1}; Ex = squeeze(Ex(sli_x,:,:));
+    Ey = E{1,2}; Ey = squeeze(Ey(sli_x,:,:));
+    Ez = E{1,3}; Ez = squeeze(Ez(sli_x,:,:));
     Jx = J{1,1}; Jx = squeeze(Jx(sli_x,:,:));
 %     Jy = J{1,2}; Jy = squeeze(Jy(sli_x,:,:));
 %     Jz = J{1,3}; Jz = squeeze(Jz(sli_x,:,:));
@@ -369,82 +440,98 @@ for jn=10:N
     %----------------------------------------------------------------------
     
     % to plot closer
-    aa=1/4;
+    aa=1/8; %(it was 1/4)
      
-    %This plot shows the close-up with the squares to show the particle
-    %info regions
+% %     %This plot shows the close-up with the squares to show the particle
+% %     %info regions
+% %     cd(path_s2)
+% %     %----------------------------------------------------------------------
+% %     fs=18;
+% %     x0=45;y0=54;xx1=810;yy1=173;
+% %     %----------------------------------------------------------------------
+% %     f1=figure(1);
+% %     set(gcf,'position',[x0,y0,xx1,yy1])
+% %     h3=subplot(1,1,1);
+% %     %dum_p2=Jx/J0;
+% %     dum_p2=Jx/max(max(Jx));
+% %     lim_yp2=max(max(max(abs(dum_p2))));
+% %     %dum_p2=dum_p2/lim_yp2;
+% %     hc=pcolor(ZLL,YLL,dum_p2);
+% %     set(hc,'edgecolor','none')
+% %     hold on
+% %     %----------------------------------------------------------------------
+% %     dum_p=Ax_y;
+% %     lim_yp=max(max(max(abs(dum_p))));
+% %     dum_p=dum_p/lim_yp;
+% %     [C,h]=contour(ZLL,YLL,dum_p,'LevelStep',0.1);
+% %     set(h,'LineColor','black','LineWidth',1)
+% %     %----------------------------------------------------------------------
+% %     colorbar; colormap(h3,BWR);
+% %     hcb=colorbar; hcb.Location = 'eastoutside';
+% %     hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+% %     % lange_all
+% %     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+% %     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+% %     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+% %     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+% %     
+% %     zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
+% %     xlim([zll(1 ) zll(end )]);
+% %     ylim([yll(1 + Dy) yll(end - Dy)]);
+% % 
+% %     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
+% %     lgnd=legend([h3],'$\frac{J_{x}}{J_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+% %     %set(lgnd,'color','none');
+% %     %rectangle('Position',[-10 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
+% %     %rectangle('Position',[-10 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
+% %     %caxis([-1.0 1.0]); 
+% %     %%rectangle('Position',[-60 10 20 10],'EdgeColor','b','LineWidth',2) %lange disrupt
+% %     %%rectangle('Position',[-60 -5 20 10],'EdgeColor','r','LineWidth',2) %lange disrupt
+% %     %%caxis([-1.0 1.0]);
+% %     
+% %     %%rectangle('Position',[0 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
+% %     %%rectangle('Position',[0 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
+% %     
+% %     % central pinch island
+% %     %rectangle('Position',[30 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
+% %     %rectangle('Position',[30 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
+% % 
+% %     % dB02kd2 island
+% % %     rectangle('Position',[-50 -5 20 10],'EdgeColor','k','LineWidth',1.8) %R1
+% % %     rectangle('Position',[-70 -5 20 10],'EdgeColor','r','LineWidth',1.8) %R2
+% % %     rectangle('Position',[-70 10 20 10],'EdgeColor','b','LineWidth',1.8) %R3
+% % %     rectangle('Position',[-50 20 20 10],'EdgeColor','m','LineWidth',1.8) %R4
+% % 
+% %     % dB01kd1 island
+% % %     rectangle('Position',[-60 -5 20 10],'EdgeColor','k','LineWidth',1.8) %R1
+% % %     rectangle('Position',[-40 -5 20 10],'EdgeColor','r','LineWidth',1.8) %R2
+% % %     rectangle('Position',[-40 10 20 10],'EdgeColor','b','LineWidth',1.8) %R3
+% % %     rectangle('Position',[-60 20 20 10],'EdgeColor','m','LineWidth',1.8) %R4
+% % 
+% %     % central pinch
+% %     rectangle('Position',[-10 -5 20 10],'EdgeColor','k','LineWidth',1.8) %R1
+% %     rectangle('Position',[30 -5 20 10],'EdgeColor','r','LineWidth',1.8) %R2
+% %     rectangle('Position',[30 10 20 10],'EdgeColor','b','LineWidth',1.8) %R3
+% %     rectangle('Position',[-10 20 20 10],'EdgeColor','m','LineWidth',1.8) %R4
+% % 
+% %     caxis([-1.0 1.0]);
+% %     hold off
+% %     %----------------------------------------------------------------------
+% %     sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+% %     %----------------------------------------------------------------------
+% %     %cd(path_comp)
+% %     cd(path)
+% % 
+% %     %saveas(f1,strcat(num2str(time_t),'Jx_zoom_squaresR4_dB02kd2_mag_inside.png'));
+% %     saveas(f1,strcat(num2str(time_t),'Jx_zoom_squares_src.png'));
+% %     %saveas(f1,strcat(num2str(time_t),'Jx_zoom_squaresR4_dB01kd1_mag_inside.png'));
+% %     %----------------------------------------------------------------------
+% %     %----------------------------------------------------------------------
+
+    B0=0.2;
+    J0=0.2;
     cd(path_s2)
-    %----------------------------------------------------------------------
     fs=18;
-    x0=45;y0=54;xx1=810;yy1=173;
-    %----------------------------------------------------------------------
-%     f1=figure(1);
-%     set(gcf,'position',[x0,y0,xx1,yy1])
-%     h3=subplot(1,1,1);
-%     %dum_p2=Jx/J0;
-%     dum_p2=Jx/max(max(Jx));
-%     lim_yp2=max(max(max(abs(dum_p2))));
-%     %dum_p2=dum_p2/lim_yp2;
-%     hc=pcolor(ZLL,YLL,dum_p2);
-%     set(hc,'edgecolor','none')
-%     hold on
-%     %----------------------------------------------------------------------
-%     dum_p=Ax_y;
-%     lim_yp=max(max(max(abs(dum_p))));
-%     dum_p=dum_p/lim_yp;
-%     [C,h]=contour(ZLL,YLL,dum_p,'LevelStep',0.1);
-%     set(h,'LineColor','black','LineWidth',1)
-%     %----------------------------------------------------------------------
-%     colorbar; colormap(h3,BWR);
-%     hcb=colorbar; hcb.Location = 'eastoutside';
-%     hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
-%     % lange_all
-%     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-%     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
-%     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-%     
-%     zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
-%     xlim([zll(1 ) zll(end )]);
-%     ylim([yll(1 + Dy) yll(end - Dy)]);
-% 
-%     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
-%     lgnd=legend([h3],'$\frac{J_{x}}{J_{0}} $','Interpreter','latex','FontSize',1.3*fs);
-%     %set(lgnd,'color','none');
-%     %rectangle('Position',[-10 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
-%     %rectangle('Position',[-10 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
-%     %caxis([-1.0 1.0]); 
-%     %%rectangle('Position',[-60 10 20 10],'EdgeColor','b','LineWidth',2) %lange disrupt
-%     %%rectangle('Position',[-60 -5 20 10],'EdgeColor','r','LineWidth',2) %lange disrupt
-%     %%caxis([-1.0 1.0]);
-%     
-%     %%rectangle('Position',[0 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
-%     %%rectangle('Position',[0 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
-%     
-%     % central pinch island
-%     %rectangle('Position',[30 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
-%     %rectangle('Position',[30 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
-% 
-%     % dB02kd2 island
-%     rectangle('Position',[-70 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
-%     rectangle('Position',[-70 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
-% 
-%     caxis([-1.0 1.0]);
-%     hold off
-%     %----------------------------------------------------------------------
-%     sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
-%     %----------------------------------------------------------------------
-%     %cd(path_comp)
-%     cd(path)
-% 
-%     saveas(f1,strcat(num2str(time_t),'Jx_zoom_squares_dB02kd2_mag_inside.png'));
-%     %saveas(f1,strcat(num2str(time_t),'Jx_zoom_squares_src.png'));
-%     %saveas(f1,strcat(num2str(time_t),'Jx_zoom_squares_src_lange.png'));
-%     %----------------------------------------------------------------------
-    %----------------------------------------------------------------------
-
-
-    cd(path_s2)
     %----------------------------------------------------------------------
     x0=45;y0=54;xx1=810;yy1=710;
     f57=figure();
@@ -540,7 +627,7 @@ for jn=10:N
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-    
+
     zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
     xlim([zll(1 ) zll(end )]);
     ylim([yll(1 + Dy) yll(end - Dy)]);
@@ -553,7 +640,10 @@ for jn=10:N
     hold off
     %----------------------------------------------------------------------
     sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
-    
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
+
     %----------------------------------------------------------------------
     cd(path_rec_line_ByBzJx_zoom)
     saveas(f57,strcat(num2str(time_t),'ByBzJx_zoom.png'));
@@ -561,9 +651,9 @@ for jn=10:N
     delete(f57);
     %----------------------------------------------------------------------
     cd(path)
-    %By_y0_i(:,jn) = By(length(yll)/2,:); %For the stack plots I'm taking the y=0 so it doesnt consider the oscillation 
-    %Bx_y0_i(:,jn) = Bx(length(yll)/2,:);
-    %Bz_y0_i(:,jn) = Bz(length(yll)/2,:);
+    By_y0_i(:,jn) = By(length(yll)/2,:); %For the stack plots I'm taking the y=0 so it doesnt consider the oscillation 
+    Bx_y0_i(:,jn) = Bx(length(yll)/2,:);
+    Bz_y0_i(:,jn) = Bz(length(yll)/2,:);
 
 
     % This block is to make plotss that better show the initial
@@ -616,7 +706,7 @@ ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLa
 ax.FontSize=fs;
 ax.YLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
 ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(106) time_t_2_Omega(end)]);
+xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(1) time_t_2_Omega(end)]);
 lgnd=legend([h1],'$\frac{B_{y}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
 hold off
 
@@ -643,7 +733,7 @@ ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLa
 ax.FontSize=fs;
 ax.YLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
 ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(106) time_t_2_Omega(end)]);
+xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(1) time_t_2_Omega(end)]);
 lgnd=legend([h1],'$\frac{B_{x}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
 hold off
 
@@ -674,7 +764,7 @@ ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLa
 ax.FontSize=fs;
 ax.YLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
 ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(106) time_t_2_Omega(end)]);
+xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(1) time_t_2_Omega(end)]);
 lgnd=legend([h1],'$\frac{B_{z}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
 hold off
 cd(path_rec_line)

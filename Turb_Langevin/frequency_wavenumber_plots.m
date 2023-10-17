@@ -144,6 +144,14 @@ hold off
 %--------------------------------------------------------------------------
 
 
+% the possible equation considering critical balance is 
+% K_per = (omega/Omega)^(3/2)*D
+omega2 = linspace(0.001,1);
+k_per2 =  (omega2/Omega_i).^(3/2);
+
+k_per21 = 10*k_per2;  %choosing a random value of C=10 
+
+
 % The plot
 %--------------------------------------------------------------------------
 fs=18; %x0=45;y0=54;xx1=810;yy1=710;
@@ -156,6 +164,8 @@ scatter(omegas_u, ksdi_u, 140, dB_B0_u,"square",LineWidth=2)
 hold on
 scatter(omegas_s, ksdi_s, 60, dB_B0_s, "filled","d")  
 
+plot(omega2,k_per2,'k',LineWidth=1.5)
+plot(omega2,k_per21,'b',LineWidth=1.5)
 % x1=linspace(0.2,omega_max,10);
 % curve1 = 2*pi*ones(size(x1));
 % curve2 = k_max*pi*ones(size(x1));
@@ -230,16 +240,21 @@ hold off
 
 
 
+
+
 % Now looking at the magnetic field dependence 
 %--------------------------------------------------------------------------
 f3=figure(3);
 loglog(ksdi_s,dB_B0_s,"b*")
 hold on
+loglog(ksdi_u,dB_B0_u,"r*")
 %loglog(ksdi_u,dB_B0_u,"k*")
 x2=log10([0.0021 10]); y2=-x2/3 - 0.7;
 loglog(10.^x2,10.^y2,'--k','LineWidth',2)
-x2=log10([0.0021 10]); y2=-x2*2/3 - 0.7;
+x2=log10([0.0021 10]); y2=-x2*4/3 - 0.7;
 loglog(10.^x2,10.^y2,'--r','LineWidth',2)
+x2=log10([0.0021 10]); y2=-x2*1 - 0.7;
+loglog(10.^x2,10.^y2,'--b','LineWidth',2)
 xlim([1e-2 100]);
 ylim([1e-2 100]);
 hold off

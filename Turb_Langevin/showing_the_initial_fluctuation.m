@@ -1,8 +1,13 @@
 % this script is to keep a simple file to make plots showing the initial
-% fluctuations 
+% fluctuations for the ANOMALOUS RESISTIVITY runs. 
 
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1_local';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1_local';
 %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_2';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_3';
+
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_mime25';
+
+path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_mime25';
 
 %--------------------------------------------------------------------------
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
@@ -13,15 +18,15 @@ path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_h
 % To save the plots
 path_rec_r = strcat(path,'/spectra/rec_r');
 path_rec_line = strcat(path,'/spectra/rec_line');
-path_rec_line_ByBzJx_zoom = strcat(path,'/spectra/rec_line/ByBzJx_zoom');
+path_rec_line_DeltaByBzJx_zoom = strcat(path,'/spectra/rec_line/DeltaByBzJx_zoom');
 if not(isfolder(path_rec_r))
     mkdir(path_rec_r)
 end
 if not(isfolder(path_rec_line))
     mkdir(path_rec_line)
 end
-if not(isfolder(path_rec_line_ByBzJx_zoom))
-    mkdir(path_rec_line_ByBzJx_zoom)
+if not(isfolder(path_rec_line_DeltaByBzJx_zoom))
+    mkdir(path_rec_line_DeltaByBzJx_zoom)
 end
 cd(path)
 %--------------------------------------------------------------------------
@@ -112,6 +117,7 @@ time_t_2=zeros(1,N_jn);
 
 jn=N-1; % for prt central pinch
 
+%jn=125:N-1;
 for jn=1:N-1
     in=jn;
     %----------------------------------------------------------------------
@@ -326,13 +332,12 @@ for jn=1:N-1
     sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
     
     %----------------------------------------------------------------------
-    cd(path_rec_line_ByBzJx_zoom)
+    cd(path_rec_line_DeltaByBzJx_zoom)
     saveas(f57,strcat(num2str(time_t),'DeltaByBzJx_zoom.png'));
     close(f57);
     delete(f57);
     %----------------------------------------------------------------------
     cd(path)
-
 
 end
 

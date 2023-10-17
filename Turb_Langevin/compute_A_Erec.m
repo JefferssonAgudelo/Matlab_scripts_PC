@@ -29,6 +29,29 @@ path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/
 
 %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_dummy_2';
 
+%--------------------------------------------------------------------------
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di/';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di_CP/';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di_lange_local/';
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L1di';
+path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L1di';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L1di';
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L4di';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L4di';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L4di';
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local/';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local_asi/';
+%--------------------------------------------------------------------------
+
 % For the scripts
 path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
 path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
@@ -126,6 +149,7 @@ TOmega_e=1/Omega_e;
 TOmega_i=1/Omega_i;
 %--------------------------------------------------------------------------
 jn=1;
+jn=N
 
 N_jn=N; %This is to store some but not all the time steps
 Ex_rec_avg=zeros(1,N_jn);
@@ -137,7 +161,7 @@ Ax_min_a=zeros(1,jn);
 J_mag_max=zeros(1,N_jn);
 %--------------------------------------------------------------------------
 
-for jn=1:N
+%for jn=1:N
     %in=2 + floor(N*(jn-1)/10);
     in=jn;
     %----------------------------------------------------------------------

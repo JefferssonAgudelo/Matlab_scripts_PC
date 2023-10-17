@@ -1,5 +1,7 @@
 % For the alfven modes 3D
 %--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+%{
 % Define the parameters of your simulation
 grid_size = [100, 100, 100];  % Size of the simulation grid
 dx = 0.06;  % Spatial resolution (grid spacing)
@@ -44,26 +46,28 @@ for i = 1:length(amplitude)
     vx = By;
     vy = -Bx;
 end
-
-
+%}
 %--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
 
 
 % For the alfven modes and different times to extract the frequencies
 %--------------------------------------------------------------------------
 % Define the parameters of your simulation
-grid_size = [100, 100];  % Size of the simulation grid
-dx = 0.06;  % Spatial resolution (grid spacing)
-dt = 0.06;  % Temporal resolution (time step)
+fs=14;
+fst=10;
+dx = 1/fs;  % Spatial resolution (grid spacing)
+dt = 1/fst;  % Temporal resolution (time step)
 
 % Number of waves;
-nw=3;
+nw=10;
 
 % Define the wave parameters for each mode
 amplitude = ones(1, nw);  % Wave amplitudes for each mode
-kx = 2*pi*rand(1, nw) ./ (dx);  % Wave vectors in x-direction for each mode (randomly generated)
-ky = 2*pi*rand(1, nw) ./ (dx);  % Wave vectors in y-direction for each mode (randomly generated)
-omega = 2*pi*rand(1, nw) ./ dt;  % Angular frequencies for each mode (randomly generated)
+kx = 2*pi*10*rand(1, nw) ;  % Wave vectors in x-direction for each mode (randomly generated)
+ky = 2*pi*10*rand(1, nw) ;  % Wave vectors in y-direction for each mode (randomly generated)
+omega = 2*pi*10*rand(1, nw) ;  % Angular frequencies for each mode (randomly generated)
 phase = 2*pi*rand(1, nw); % Random phase for each mode
 
 kx0=kx; ky0=ky; omega0=omega;
@@ -71,29 +75,41 @@ kx0=kx; ky0=ky; omega0=omega;
 k0 = sqrt(kx0.^2 + ky0.^2);
 
 % Create a grid of coordinates
-x = dx * (-grid_size(2)/2:grid_size(2)/2-1);
-y = dx * (-grid_size(1)/2:grid_size(1)/2-1);
+
+t = 0:(1/fst):(10-1/fst);
+x = 0:(1/fs):(10-1/fs);
+y = 0:(1/fs):(10-1/fs);
+
+grid_size= [length(x),length(y),length(t)];
+
+%x = dx * (-grid_size(2)/2:grid_size(2)/2-1);
+%y = dx * (-grid_size(1)/2:grid_size(1)/2-1);
 [X, Y] = meshgrid(x, y);
 
 % Initialize arrays for magnetic field components
-Bx = zeros(grid_size);
-By = zeros(grid_size);
+Bx = zeros(length(x),length(y));
+By = zeros(length(x),length(y));
 
-Bx_i = zeros(100,100,100);
-By_i = zeros(100,100,100);
-Bz_i = zeros(100,100,100);
+Bx_i = zeros(grid_size);
+By_i = zeros(grid_size);
+Bz_i = zeros(grid_size);
 
-vx_i = zeros(100,100,100);
-vy_i = zeros(100,100,100);
+vx_i = zeros(grid_size);
+vy_i = zeros(grid_size);
 
 B0=1;
-wnoise= rand(1)*B0*X;
 
 % Superposition of the modes
-for dt_i = 1:100
+for dt_i = 1:length(t)
     for i = 1:length(amplitude)
-        Bx = Bx + amplitude(i) * cos(kx(i)*X + ky(i)*Y - omega(i)*dt_i*dt + phase(i)) ;%+ wnoise/nw;
-        By = By + amplitude(i) * sin(kx(i)*X + ky(i)*Y - omega(i)*dt_i*dt + phase(i)) ;%+ wnoise/nw;
+        rand0= rand(1);
+        if (rand0 > 0.5)  
+            wnoise = rand0*0.1*B0.*ones(size(Bx));
+        elseif (rand0 <= 0.5)
+            wnoise = -rand0*0.1*B0.*ones(size(Bx));
+        end
+        Bx = Bx + amplitude(i) * cos(kx(i)*X + ky(i)*Y*1 - omega(i)*dt_i*dt + phase(i)) + wnoise/nw; % I removed Bx = Bx + ...
+        By = By + amplitude(i) * sin(kx(i)*X + ky(i)*Y*1 - omega(i)*dt_i*dt + phase(i)) + wnoise/nw; % I removed By = By + ...
         % Compute the velocity field components
         vx = By;
         vy = -Bx;
@@ -106,23 +122,136 @@ for dt_i = 1:100
     end
 end
 
+Bx=Bx_i(:,:,:);
+By=By_i(:,:,:);
+Bz=Bz_i(:,:,:);
 %--------------------------------------------------------------------------
-Bx=Bx_i; % this comes from the other previous for loop with the data
+%Bx=Bx_i; % this comes from the other previous for loop with the data
 
 %--------------------------------------------------------------------------
 % Let's visualise the waves
-time=(1:100)*dt;
-t=1;
-for t=1:100
+time=(1:length(t))*dt;
+dt_i=1;
+for dt_i=1:length(t)
     f1=figure(1);
-    imagesc(Bx(:,:,t))
+    imagesc(Bx_i(:,:,dt_i))
     hold on
-    colorbar; caxis([-30 30]);
+    colorbar; 
+    caxis([-5 5]);
     colormap('parula')
-    title('time='+string(time(t)))
+    title('time='+string(time(dt_i)))
     hold off
 end
 %--------------------------------------------------------------------------
+
+
+%--------------------------------------------------------------------------
+var1 = Bx;
+var2 = By;
+N=size(var1);
+Lx = N(1)*dx;
+Ly = N(2)*dx;
+Lt = N(3)*dt;
+
+f1=abs(fftn(var1))*sqrt(N(1)*N(2)*N(3)); %Take abs value and normalise
+f2=abs(fftn(var2))*sqrt(N(1)*N(2)*N(3));
+
+ft1=fftshift(f1); %Shift ft to centre wavenumber
+ft2=fftshift(f2);
+
+kx=((0:N(1)-1)-N(1)/2).*2*pi/Lx; %Includes negative wavenumbers
+ky=((0:N(2)-1)-N(2)/2).*2*pi/Ly;
+om=((0:N(3)-1)-N(3)/2).*2*pi/Lt;
+
+ff = ft1 ;%+ ft2;
+P3D=ff./(N(1)*N(2)*N(3)); 
+
+for j=1:size(ff,2)
+    for i=1:size(ff,1) 
+        %--------------------------------------------------------------------------
+        kp(i,j)=sqrt(ky(j).^2+kx(i).^2); %Calculate kperp array with negative wavenumbers
+        %--------------------------------------------------------------------------
+    end
+end
+
+for k=1:size(ff,3)
+    kp2(k)=abs(om(k)); %Calculate kpar vector with negative wavenumbers
+end
+
+%Calculate kpar and kperp for 2D spectrum:
+dkpar=om(2)-om(1);
+nkpar=fix(max(max(om)/dkpar))+1;
+kpar=(0:nkpar-1).*dkpar;
+
+dkper=ky(2)-ky(1);
+nkper=fix(max(max(kp)/dkper))+1;
+kper=(0:nkper-1).*dkper;
+%Initialise arrays:
+Ptemp=zeros(size(ff,3),nkper); %old kper vs. new kper
+P2D=zeros(nkpar,nkper); %kpar vs. kper
+
+Nkper=zeros(size(ff,3),nkper);
+
+i1=fix(kp/dkper); %Index linking kp with each kper value. Index of the cells
+i2=i1+1; % indexes of next cells
+i3=fix(kp2/dkpar); %Index linking kp2 with each kpar value
+
+k2=kp/dkper-i1; % this is calculating basically the residuo. kp is a matrix
+k1=1-k2;
+for k= 1:size(P3D,3) %For each value of kpar, integrate over rings of kper
+    P1=k1.*P3D(:,:,k); %For interpolation
+    P2=k2.*P3D(:,:,k);
+    for j=1:size(P3D,2) %Cycle through every grid point in x-y plane
+        for i=1:size(P3D,1)
+            if(i2(i,j) < nkper)
+                %Use linear interpolation to sum up power to surrounding
+                %rings of kper:
+                Ptemp(k,i2(i,j)+1)=Ptemp(k,i2(i,j)+1)+P2(i,j); %Interpolate power to next ring
+                Ptemp(k,i1(i,j)+1)=Ptemp(k,i1(i,j)+1)+P1(i,j); %Interpolate power to previous ring
+                
+                %Update number of points interpolated for each ring:
+                Nkper(i2(i,j)+1)=Nkper(i2(i,j)+1)+k2(i,j); 
+                Nkper(i1(i,j)+1)=Nkper(i1(i,j)+1)+k1(i,j);                
+             end
+        end
+    end
+    if i3(k)<nkpar
+        P2D(i3(k)+1,:)=P2D(i3(k)+1,:)+Ptemp(k,:); %Fill array with kper values for each kpar
+    end
+end
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+f91=figure(91);
+[C,h]=contourf(kper,kpar,P2D,'LevelStep',0.5);
+set(h,'LineColor','none')
+set(gca,'XScale','lin','YScale','lin','FontSize',18)
+set(gca,'ColorScale','log')
+%imagesc(kper, kpar, log10(P2D))
+lim = caxis;
+%caxis([1e-4 1]);
+colormap(jet)
+colorbar
+xlabel('$k_\perp d_i$','Interpreter','latex')
+ylabel('$\omega/\Omega_{ce}$','Interpreter','latex')
+title('$P_{\mathbf{B}_{x}}(k_{\perp},\omega)$','Interpreter','latex')
+hold on
+ylim([0 5])
+xlim([0 5])
+%yline(1,'--k','LineWidth',1);
+%xline(1,'--k','LineWidth',1);
+hold off
+
+saveas(f91,strcat(num2str(1),'Bx_power_spect_kper_omega_dummy.png'));
+%--------------------------------------------------------------------------
+
+
+
+
+
+
+
 
 
 %Bx1=Bx_i(:,:,19); By1=By_i(:,:,19);  
@@ -130,95 +259,249 @@ end
 %Bx=Bx1; By=By1; 
 %--------------------------------------------------------------------------
 
+
 %--------------------------------------------------------------------------
-Bx=Bx_i(:,:,:);
-By=By_i(:,:,:);
-Bz=Bz_i(:,:,:);
-
-% Parameters for FFT and Iterative Filtering
-fs = 1; % Sampling frequency (modify according to your data)
-
-% Perform 3D FFT on the Bz component
-Bx_fft = fftn(Bx);
-By_fft = fftn(By);
-Bz_fft = fftn(Bz);
-
-%shift the fourier transform
-Bx_fft = fftshift(Bx_fft);
-By_fft = fftshift(By_fft);
-Bz_fft = fftshift(Bz_fft);
-
-Bx_power_spectrum = abs(Bx_fft).^2;
-By_power_spectrum = abs(By_fft).^2;
-Bz_power_spectrum = abs(Bz_fft).^2;
-
-BT_power_spectrum = Bx_power_spectrum + By_power_spectrum + Bz_power_spectrum;
-
-
-% Reduce as integrated circles in a single kx ky plane
-%--------------------------------------------------------------------------
-% Get the size of the Bz_fft array
-[nx, ny, nt] = size(Bz_fft);
-
-% Create grids for kx and ky
-kx=((0:nx-1)-nx/2).*2*pi/(nx * (1*dx)); %Includes negative wavenumbers
-ky=((0:ny-1)-ny/2).*2*pi/(ny * (1*dx));
-om=((0:ny-1)-nt/2).*2*pi/(nt * (1*dt));
-
-[Kx, Ky] = meshgrid(kx, ky);
-
-k_max = 2*pi/(dx);
-k_per = linspace(0,k_max,100);
-n_k_per = length(k_per);
-
-Bz_ps_s= zeros(1,n_k_per);
-for i=2:n_k_per
-    k_index =(k_per(i-1) < sqrt(Kx.^2  + Ky.^2)) & (sqrt(kx.^2  + ky.^2)< k_per(i));
-    Bz_ps_s(1,i) =sum(BT_power_spectrum(:,:,1).*k_index, 'all');
-end
-
-f1=figure(1)
-plot(k_per,Bz_ps_s)
+% The idea is to replicate an analysis as the one by pappini et al 
+%Fast Iterative Filtering (FIF) is designed to decompose a nonstationary nonlinear 
+% signal into a set of intrinsic mode components (IMCs) oscillating around 
+% zero but with varying amplitude and frequency
 %--------------------------------------------------------------------------
 
 
+% % Parameters for FFT and Fast Iterative Filtering
+% %fs = 1; % Sampling frequency (modify according to your data)
+% %--------------------------------------------------------------------------
+% % Perform 3D FFT on the Bz component
+% Bx_fft = fftn(Bx);
+% By_fft = fftn(By);
+% Bz_fft = fftn(Bz);
+% 
+% %shift the fourier transform
+% Bx_fft = fftshift(Bx_fft);
+% By_fft = fftshift(By_fft);
+% Bz_fft = fftshift(Bz_fft);
+% 
+% Bx_power_spectrum_r = real(Bx_fft).^2;
+% By_power_spectrum_r = real(By_fft).^2;
+% Bz_power_spectrum_r = real(Bz_fft).^2;
+% 
+% Bx_power_spectrum_i = imag(Bx_fft).^2;
+% By_power_spectrum_i = imag(By_fft).^2;
+% Bz_power_spectrum_i = imag(Bz_fft).^2;
+% 
+% Bx_power_spectrum = abs(Bx_fft).^2;
+% By_power_spectrum = abs(By_fft).^2;
+% Bz_power_spectrum = abs(Bz_fft).^2;
+% %--------------------------------------------------------------------------
+% 
+% %--------------------------------------------------------------------------
+% % This seems to be equivalent to what I was doing.
+% % %shift the fourier transform by parts first in the k space and the in the
+% % omega
+% % for t=1:nt
+% %     Bx_fft_t(:,:,t) = fftshift(Bx_fft(:,:,t));
+% %     By_fft_t(:,:,t) = fftshift(By_fft(:,:,t));
+% %     Bz_fft_t(:,:,t) = fftshift(Bz_fft(:,:,t));
+% %     Bx_power_spectrum_t = abs(Bx_fft_t(:,:,t)).^2;
+% %     By_power_spectrum_t = abs(By_fft_t(:,:,t)).^2;
+% %     Bz_power_spectrum_t = abs(Bz_fft_t(:,:,t)).^2;
+% % end
+% %--------------------------------------------------------------------------
+% 
+% %--------------------------------------------------------------------------
+% % Bx_fft_t = fftshift(Bx_fft_t,3);
+% % By_fft_t = fftshift(By_fft_t,3);
+% % Bz_fft_t = fftshift(Bz_fft_t,3);
+% % 
+% % Bx_power_spectrum_t_o = real(Bx_fft_t).^2;
+% % By_power_spectrum_t_o = real(By_fft_t).^2;
+% % Bz_power_spectrum_t_o = real(Bz_fft_t).^2;
+% %--------------------------------------------------------------------------
+% 
+% % Get the size of the Bz_fft array
+% [nx, ny, nt] = size(Bz_fft);
+% 
+% BT_power_spectrum = (Bx_power_spectrum + By_power_spectrum + Bz_power_spectrum)/nx;
+% BT_power_spectrum_r = (Bx_power_spectrum_r + By_power_spectrum_r + Bz_power_spectrum_r)/nx;
+% BT_power_spectrum_i = (Bx_power_spectrum + By_power_spectrum_i + Bz_power_spectrum_i)/nx;
+% %--------------------------------------------------------------------------
+% 
+% %--------------------------------------------------------------------------
+% % Create grids for kx and ky
+% % kx=((0:nx-1)-nx/2).*2*pi/(nx * (2*dx)); %Includes negative wavenumbers
+% % ky=((0:ny-1)-ny/2).*2*pi/(ny * (2*dx));
+% % om=((0:ny-1)-nt/2).*2*pi/(nt * (2*dt));
+% 
+% % Create grids for kx and ky
+% kx =(-nx/2:nx/2-1)*(fs/nx);
+% ky =(-ny/2:ny/2-1)*(fs/ny);
+% om =(-nt/2:nt/2-1)*(fs/nt);
+% 
+% [Kx, Ky] = meshgrid(kx, ky);
+% [Kxo, Omo] =meshgrid(kx,om);
+% %--------------------------------------------------------------------------
 
-% Reduce as integrated circles for multiple kx ky planes to make the plot
-% with the frequency
+% % %--------------------------------------------------------------------------
+% % for jj=1:100
+% %     f20=figure(20);
+% %     hc=pcolor(Kxo, Omo, log(squeeze(BT_power_spectrum(:,jj,:))));
+% %     hold on
+% %     set(hc,'edgecolor','none');
+% %     xlabel('k')
+% %     ylabel('omega')
+% %     %xlim([-4 max(max(4))]);
+% %     %ylim([0 max(max(Om))]);
+% %     colorbar
+% %     hold off
+% % end
+% % %--------------------------------------------------------------------------
+
+% This is to see how the real, imaginary and the abs value of the fourier
+% transfor change in in the third direction.
 %--------------------------------------------------------------------------
-% Get the size of the Bz_fft array
-[nx, ny, nt] = size(Bz_fft);
+% dt_i=nt/2;
+% for dt_i=1:nt
+%     f2=figure(2)
+%     %--------------------------------------------------------------------------
+%     subplot(1,3,1)
+%     hc=pcolor(kx, ky, log(BT_power_spectrum(:,:,dt_i)))
+%     hold on
+%     set(hc,'edgecolor','none');
+%     xlabel('kx')
+%     ylabel('ky')
+%     colorbar
+%     hold off
+%     %--------------------------------------------------------------------------
+%     subplot(1,3,2)
+%     hc=pcolor(kx, ky, log(BT_power_spectrum_r(:,:,dt_i)))
+%     hold on
+%     set(hc,'edgecolor','none');
+%     xlabel('kx')
+%     ylabel('ky')
+%     colorbar
+%     hold off
+%     %--------------------------------------------------------------------------
+%     subplot(1,3,3)
+%     hc=pcolor(kx, ky, log(BT_power_spectrum_i(:,:,dt_i)))
+%     hold on
+%     set(hc,'edgecolor','none');
+%     xlabel('kx')
+%     ylabel('ky')
+%     colorbar
+%     hold off
+%     %--------------------------------------------------------------------------
+% end
 
-% Create grids for kx and ky
-kx=((0:nx-1)-nx/2).*2*pi/(nx * (1*dx)); %Includes negative wavenumbers
-ky=((0:ny-1)-ny/2).*2*pi/(ny * (1*dx));
-om=((0:ny-1)-nt/2).*2*pi/(nt * (1*dt));
+% %Checking the real and imaginary part of the transforms.
+% % Reduce as integrated circles in a single kx ky plane
+% %--------------------------------------------------------------------------
+% % Get the size of the Bz_fft array
+% [nx, ny, nt] = size(Bz_fft);
+% 
+% % Create grids for kx and ky
+% kx=((0:nx-1)-nx/2).*2*pi/(nx * (1*dx)); %Includes negative wavenumbers
+% ky=((0:ny-1)-ny/2).*2*pi/(ny * (1*dx));
+% om=((0:ny-1)-nt/2).*2*pi/(nt * (1*dt));
+% 
+% [Kx, Ky] = meshgrid(kx, ky);
+% 
+% k_max = 2*pi/(dx);
+% k_per = linspace(0,k_max,100);
+% n_k_per = length(k_per);
+% 
+% Bz_ps_s= zeros(n_k_per,nt);
+% Bz_ps_s_r= zeros(n_k_per,nt);
+% Bz_ps_s_i= zeros(n_k_per,nt);
+% 
+% for t=1:nt
+%     for i=2:n_k_per
+%         k_index =(k_per(i-1) < sqrt(Kx.^2  + Ky.^2)) & (sqrt(kx.^2  + ky.^2)< k_per(i));
+%         Bz_ps_s(i,t) =sum(BT_power_spectrum(:,:,t).*k_index, 'all');
+%         Bz_ps_s_r(i,t) =sum(BT_power_spectrum_r(:,:,t).*k_index, 'all');
+%         Bz_ps_s_i(i,t) =sum(BT_power_spectrum_i(:,:,t).*k_index, 'all');
+%     end
+% end
+% %--------------------------------------------------------------------------
 
-[Kx, Ky] = meshgrid(kx, ky);
 
-k_max = 2*pi/(dx);
-k_per = linspace(0,k_max,100);
-n_k_per = length(k_per);
+% % Reduce as integrated circles for multiple kx ky planes to make the plot
+% % with the frequency
+% %--------------------------------------------------------------------------
+% k_max = max(max(sqrt(kx.^2 + ky.^2)));% 2*pi/(2*dx);
+% k_per = linspace(0,k_max,length(x));
+% n_k_per = length(k_per);
+% 
+% Bz_ps_s= zeros(1,n_k_per);
+% Bz_ps_s_r= zeros(1,n_k_per);
+% Bz_ps_s_i= zeros(1,n_k_per);
+% 
+% Bz_ps_2Ds= zeros(n_k_per,nt);
+% Bz_ps_2Ds_r= zeros(n_k_per,nt);
+% Bz_ps_2Ds_i= zeros(n_k_per,nt);
+% 
+% for dt_i=1:nt
+%     for i=2:n_k_per
+%         k_index =(k_per(i-1) < sqrt(Kx.^2  + Ky.^2)) & (sqrt(kx.^2  + ky.^2) < k_per(i));
+%         Bz_ps_s(1,i) = sum(BT_power_spectrum(:,:,dt_i).*k_index, 'all');
+%         Bz_ps_s_r(1,i) =sum(BT_power_spectrum_r(:,:,dt_i).*k_index, 'all');
+%         Bz_ps_s_i(1,i) =sum(BT_power_spectrum_i(:,:,dt_i).*k_index, 'all');
+%     end
+%     Bz_ps_2Ds(:,dt_i) = Bz_ps_s;
+%     Bz_ps_2Ds_r(:,dt_i) = Bz_ps_s_r;
+%     Bz_ps_2Ds_i(:,dt_i) = Bz_ps_s_i;
+% end
+% %--------------------------------------------------------------------------
 
-Bz_ps_2Ds= zeros(n_k_per,100);
-for t=1:100
-    for i=2:n_k_per
-        k_index =(k_per(i-1) < sqrt(Kx.^2  + Ky.^2)) & (sqrt(kx.^2  + ky.^2)< k_per(i));
-        Bz_ps_s(1,i) = sum(BT_power_spectrum(:,:,t).*k_index, 'all');
-    end
-    Bz_ps_2Ds(:,t) = Bz_ps_s;
-end
 
-[K_per, Om] = meshgrid(k_per, om)
 
-f2=figure(2)
-%hc=pcolor(Kxo, Om, Bz_ps_2Ds)
+
+
+
+
+%--------------------------------------------------------------------------
+[K_per, Om] = meshgrid(k_per, om);
+
+f21=figure(21)
+%hc=pcolor(kx, kx, log(Bz_ps_2Ds));
 hc=pcolor(K_per, Om, log(Bz_ps_2Ds))
 hold on
 set(hc,'edgecolor','none');
+xlabel('k')
+ylabel('omega')
+%xlim([-4 max(max(4))]);
+%ylim([0 max(max(Om))]);
 colorbar
 hold off
+
+f4=figure(4);
+imagesc(om, sqrt(Kx.^2 + Ky.^2), abs(x_fft)); % Heatmap plot
+colorbar;
+xlabel('Angular Frequency (\omega)');
+ylabel('Wavenumber (|k|)');
+title('2D Wavenumber-Angular Frequency Spectrum');
 %--------------------------------------------------------------------------
+
+
+% trying 1D
+%--------------------------------------------------------------------------
+fs = 100;               % sampling frequency
+t = 0:(1/fs):(10-1/fs); % time vector
+S = cos(2*pi*15*t); % freq=15
+n = length(S);
+X = fft(S);
+f = (0:n-1)*(fs/n);     %frequency range
+power = abs(X).^2/n;    %power
+f1=figure(1)
+plot(f,power)
+
+Y = fftshift(X);
+fshift = (-n/2:n/2-1)*(fs/n); % zero-centered frequency range
+powershift = abs(Y).^2/n;     % zero-centered power
+f2=figure(2)
+plot(fshift,powershift)
+%--------------------------------------------------------------------------
+
+
 
 
 % this is for the case where it is not shifted

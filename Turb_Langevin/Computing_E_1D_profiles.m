@@ -296,9 +296,11 @@ for jn=1:N
     v_i_bay = v_i_ba{1,2}; v_i_bay = squeeze(v_i_bay(sli_x,:,:));
     v_i_baz = v_i_ba{1,3}; v_i_baz = squeeze(v_i_baz(sli_x,:,:));
 
-    %clearvars v_i v_e v_i_up v_e_up v_i_ba v_e_ba 
+    clearvars v_i v_e v_i_up v_e_up v_i_ba v_e_ba 
     %---------------------------------------------------------------------
 
+
+    % to get the vector potential
     %----------------------------------------------------------------------
     sss=size(Bx);
     size_X=sss;
@@ -331,7 +333,7 @@ for jn=1:N
 
     Ax_y_short_i(1,in) = abs(mean(Ax_y(ay_a:ay_b,az_a:az_b),"all"));
     ve_x_short_i(1,in) = abs(mean(v_ex(ay_a:ay_b,az_a:az_b),"all"));
-   %----------------------------------------------------------------------
+   %-----------------------------------------------------------------------
 
    f1=figure(1)
    plot(Ax_y_short_i/100,'r')
@@ -339,6 +341,7 @@ for jn=1:N
    plot(ve_x_short_i,'b')
    xlim([0 110])
    hold off
+   %-----------------------------------------------------------------------  
 
 
 % %    %----------------------------------------------------------------------   
@@ -576,7 +579,7 @@ for jn=1:N
 % % %     v_z_up = (n_i_up .* v_i_upz + n_e_up .* v_e_upz)./(n_i_up+n_e_up);
 % %     %---------------------------------------------------------------------- 
 % % 
-% %     % Save the data for teh time average
+% %     % Save the data for the time average
 % %     %----------------------------------------------------------------------
 % %     inn=(jn - j_a +1);
 % % 
