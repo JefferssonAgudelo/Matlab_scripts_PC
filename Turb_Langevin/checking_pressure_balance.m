@@ -18,7 +18,9 @@
 
 %path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L1di';
 %path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L1di';
-path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L1di';
+%path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L1di';
+
+path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L4di_lange_local/';
 
 %Maybe I can reduce the
 
@@ -132,7 +134,7 @@ n_v_in = cell(3,j_a_b);
 for jn=1:N
     %----------------------------------------------------------------------
     % for the fields
-    jn=N;
+    %jn=N;
     in=jn;
     jjn=jn;
 
@@ -312,7 +314,7 @@ for jn=1:N
 
     n_e{1,1}=(n_e_up{1,1} + n_e_ba{1,1})./1;
     n_i{1,1}=(n_i_up{1,1} + n_i_ba{1,1})./1;
-    n_e{1,1}=-1.*n_e{1,1};
+    n_e{1,1}=1.*n_e{1,1}; %there was a minus here.
     %----------------------------------------------------------------------
 
     %----------------------------------------------------------------------
@@ -730,7 +732,8 @@ DUM = 0.*E_in{1,1};
 %----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
-nu_av=N; % this is for the average
+nu_av=1;
+%nu_av=N; % this is for the average
 %nu_av=3; % this is for the average
 %----------------------------------------------------------------------
 

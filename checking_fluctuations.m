@@ -1,0 +1,1340 @@
+%--------------------------------------------------------------------------
+path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
+path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
+path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+%--------------------------------------------------------------------------
+
+%path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L1di';
+path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L1di';
+%path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L1di';
+
+%path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L4di_lange_local/';
+
+%Maybe I can reduce the
+
+%--------------------------------------------------------------------------
+path=path_1;
+%--------------------------------------------------------------------------
+% To save the plots
+cd(path)
+%--------------------------------------------------------------------------
+S = dir(fullfile(path,'pfd.*.h5'));
+N=numel(S); % number of files to use
+H=zeros(N);
+%--------------------------------------------------------------------------
+S2 = dir(fullfile(path,'pfd_moments.*.h5'));
+N2=numel(S2); % number of files to use
+H2=zeros(N2);
+%%N=1;N2=1;
+%N=N2;
+%--------------------------------------------------------------------------
+%in=10;
+%--------------------------------------------------------------------------
+% Change this accordingly
+%--------------------------------------------------------------------------
+% This file still requires to check the normalization
+%--------------------------------------------------------------------------
+% Normalization
+%B are normalized to the background magnetic field
+B0=0.2;
+%n is normalise to the proton density n0=1
+n0=1;
+%Vi normalised to the proton alfven speed V_a=0.1c The alfven speed of
+%electrons is Vae=10Vai
+Vai=0.2;%0.2;
+Vae=0.2;%0.2;
+%E = vB, as B0=0.1 and v in units of c, E0= B0*Vai/c
+E0=0.2;%0.2; %??
+%T=(beta/2)B^2, Thus, as beta=1
+T0=0.02;%0.02;
+%The current density J0=1?
+J0=Vae;
+mime =1.;
+omega_pe_Omega_ce=5;
+MFT0=1; % is this simply one in this normalization
+nb_n0 =0.1;
+Vai_b=Vai/sqrt(nb_n0);
+Vae_b=Vae/sqrt(nb_n0);
+%Normalising only when making plots
+c=1; VA2c = 0.2;
+%B0 = VA2c; E0 = B0*VA2c;
+%Pi0 = mi*VA2c*VA2c; Pe0 = me*VA2c*VA2c;
+%DeltaEpsilon0=VA2c*Pi0;
+%DeltaEpsilon0=Pi0;
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+nb_n0 =0.1;
+Vai_b=Vai/sqrt(nb_n0);
+Vae_b=Vae/sqrt(nb_n0);
+%Normalising only when making plots
+%c=1; VA2c = 0.2;
+%B0 = VA2c; E0 = B0*VA2c;
+%Pi0 = mi*VA2c*VA2c; Pe0 = me*VA2c*VA2c;
+%DeltaEpsilon0=VA2c*Pi0;
+%DeltaEpsilon0=Pi0;
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+kb = 1.;
+mu0 =1.;
+c=1;
+q = 1;
+%mime =1.;
+mi = 1.;
+me = 1. / mime; eps0=1.;
+omega_pi=1;
+Omega_e=Vai*sqrt(mime)*omega_pi;
+Omega_i=Omega_e / mime;
+TOmega_e=1/Omega_e;
+TOmega_i=1/Omega_i;
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+in=1;
+fileID =  S(in).name; %change the 1 per i
+%h5disp(fileID);
+info = h5info(fileID);
+EHJ_1st = info.Groups(16).Name;
+B=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+ss=size(B);
+LYs=ss(2);
+LZs=ss(3);
+clearvars B
+N_jn=N; %This is to store some but not all the time steps
+%--------------------------------------------------------------------------
+
+j_a_b = N_jn;
+
+%--------------------------------------------------------------------------
+    E_x_1Dy = zeros(LYs,N_jn);
+    E_y_1Dy = zeros(LYs,N_jn);
+    E_z_1Dy = zeros(LYs,N_jn);
+
+    B_x_1Dy = zeros(LYs,N_jn);
+    B_y_1Dy = zeros(LYs,N_jn);
+    B_z_1Dy = zeros(LYs,N_jn);
+
+    J_x_1Dy = zeros(LYs,N_jn);
+    J_y_1Dy = zeros(LYs,N_jn);
+    J_z_1Dy = zeros(LYs,N_jn);
+
+    v_ix_1Dy = zeros(LYs,N_jn);
+    v_iy_1Dy = zeros(LYs,N_jn);
+    v_iz_1Dy = zeros(LYs,N_jn);
+
+    v_ex_1Dy = zeros(LYs,N_jn);
+    v_ey_1Dy = zeros(LYs,N_jn);
+    v_ez_1Dy = zeros(LYs,N_jn);
+
+    n_i_1Dy = zeros(LYs,N_jn);
+    n_e_1Dy = zeros(LYs,N_jn);
+    
+    time_t_2 = zeros(1,N_jn);
+%--------------------------------------------------------------------------
+
+for jn=1:N
+    %----------------------------------------------------------------------
+    % for the fields
+    %jn=N;
+    in=jn;
+    jjn=jn;
+
+    %for the momments
+    %jjn=jn-j_a+1;
+    %----------------------------------------------------------------------
+    %for jn=2:floor(N/10)
+    %    in=(jn-1)*jn;
+    % %     in=2 + floor(N*(jn-1)/10);
+    %----------------------------------------------------------------------
+    disp(strcat('Computing step ...',S(in).name))
+    fileID =  S(in).name; %change the 1 per i
+    %h5disp(fileID);
+    info = h5info(fileID);
+    EHJ_1st = info.Groups(16).Name;
+    %----------------------------------------------------------------------
+    grid_dt = info.Groups(20).Attributes;
+    dt=double(grid_dt(15).Value);
+    grid_ng = info.Groups(19).Attributes;
+    dx=grid_ng(10).Value(1);
+    dy=grid_ng(10).Value(2);
+    dz=grid_ng(10).Value(3);
+    grid_length = info.Groups(17).Attributes;
+    Lx=grid_length(4).Value(1);% - grid_length(3).Value(1);
+    Ly=grid_length(4).Value(2);% - grid_length(3).Value(2);
+    Lz=grid_length(4).Value(3);% - grid_length(3).Value(3);
+    resx=double(Lx)/double(dx);
+    resy=double(Ly)/double(dy);
+    resz=double(Lz)/double(dz); res=resy;
+    threshold=pi/resy;
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
+    str = string(S(in).name);
+    newStr = extractBetween(str,"pfd.","_p000000.h5");
+    N_steps = str2double(newStr);
+    time_t = dt*N_steps;
+    time_t_2_Omega=time_t./omega_pe_Omega_ce;
+    time_t_2(1,in)=time_t_2_Omega;
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
+    disp(strcat('Computing step ...',S2(jjn).name))
+    fileID2 =  S2(jjn).name; %change the 1 per i
+    %h5disp(fileID2);
+    info2 = h5info(fileID2);
+    moments_1st = info2.Groups(1).Name;
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
+    B{1,1}=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+    B{1,2}=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'));
+    B{1,3}=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'));
+
+    E{1,1}=h5read(fileID,strcat(EHJ_1st,'/ex_ec/p0/3d'));
+    E{1,2}=h5read(fileID,strcat(EHJ_1st,'/ey_ec/p0/3d'));
+    E{1,3}=h5read(fileID,strcat(EHJ_1st,'/ez_ec/p0/3d'));
+
+    n_e_up{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_e_UP/p0/3d'));
+    n_i_up{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_i_UP/p0/3d'));
+    n_e_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_e_BA/p0/3d'));
+    n_i_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_i_BA/p0/3d'));
+    n_e_up{1,1}=-1.*n_e_up{1,1};
+    n_e_ba{1,1}=-1.*n_e_ba{1,1};
+
+    % This needs to be changed including the background
+    J_up{1,1}=h5read(fileID2,strcat(moments_1st,'/jx_e_UP/p0/3d'));
+    J_up{1,2}=h5read(fileID2,strcat(moments_1st,'/jy_e_UP/p0/3d'));
+    J_up{1,3}=h5read(fileID2,strcat(moments_1st,'/jz_e_UP/p0/3d'));
+    J_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/jx_e_BA/p0/3d'));
+    J_ba{1,2}=h5read(fileID2,strcat(moments_1st,'/jy_e_BA/p0/3d'));
+    J_ba{1,3}=h5read(fileID2,strcat(moments_1st,'/jz_e_BA/p0/3d'));
+
+    J{1,1}=(J_up{1,1}+J_ba{1,1})./1;
+    J{1,2}=(J_up{1,2}+J_ba{1,2})./1;
+    J{1,3}=(J_up{1,3}+J_ba{1,3})./1;
+    %clearvars J_ba J_up
+    %----------------------------------------------------------------------
+
+    ssz=size(B{1,1});
+    sli_x = 1; %floor(4+ssz(1)/2);%1;
+    sli_z = 1024;
+
+
+    %----------------------------------------------------------------------
+    Ex = E{1,1}; Ex = squeeze(Ex(sli_x,:,:));
+    Ey = E{1,2}; Ey = squeeze(Ey(sli_x,:,:));
+    Ez = E{1,3}; Ez = squeeze(Ez(sli_x,:,:));
+
+    Bx = B{1,1}; Bx = squeeze(Bx(sli_x,:,:));
+    By = B{1,2}; By = squeeze(By(sli_x,:,:));
+    Bz = B{1,3}; Bz = squeeze(Bz(sli_x,:,:));
+
+    Jx = J{1,1}; Jx = squeeze(Jx(sli_x,:,:));
+    Jy = J{1,2}; Jy = squeeze(Jy(sli_x,:,:));
+    Jz = J{1,3}; Jz = squeeze(Jz(sli_x,:,:));
+
+    clearvars E B J
+    %---------------------------------------------------------------------
+
+    % Loading the data for the bulk speed of the particles
+    %----------------------------------------------------------------------
+    p_e_up{1,1}=h5read(fileID2,strcat(moments_1st,'/px_e_UP/p0/3d'));
+    p_e_up{1,2}=h5read(fileID2,strcat(moments_1st,'/py_e_UP/p0/3d'));
+    p_e_up{1,3}=h5read(fileID2,strcat(moments_1st,'/pz_e_UP/p0/3d'));
+
+    p_i_up{1,1}=h5read(fileID2,strcat(moments_1st,'/px_i_UP/p0/3d'));
+    p_i_up{1,2}=h5read(fileID2,strcat(moments_1st,'/py_i_UP/p0/3d'));
+    p_i_up{1,3}=h5read(fileID2,strcat(moments_1st,'/pz_i_UP/p0/3d'));
+
+    p_e_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/px_e_BA/p0/3d'));
+    p_e_ba{1,2}=h5read(fileID2,strcat(moments_1st,'/py_e_BA/p0/3d'));
+    p_e_ba{1,3}=h5read(fileID2,strcat(moments_1st,'/pz_e_BA/p0/3d'));
+
+    p_i_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/px_i_BA/p0/3d'));
+    p_i_ba{1,2}=h5read(fileID2,strcat(moments_1st,'/py_i_BA/p0/3d'));
+    p_i_ba{1,3}=h5read(fileID2,strcat(moments_1st,'/pz_i_BA/p0/3d'));
+
+    p_e{1,1}=(p_e_up{1,1}.*n_e_up{1,1} + p_e_ba{1,1}.*n_e_ba{1,1})./(n_e_up{1,1}+n_e_ba{1,1});
+    p_e{1,2}=(p_e_up{1,2}.*n_e_up{1,1} + p_e_ba{1,2}.*n_e_ba{1,1})./(n_e_up{1,1}+n_e_ba{1,1});
+    p_e{1,3}=(p_e_up{1,3}.*n_e_up{1,1} + p_e_ba{1,3}.*n_e_ba{1,1})./(n_e_up{1,1}+n_e_ba{1,1});
+
+    p_i{1,1}=(p_i_up{1,1}.*n_i_up{1,1} + p_i_ba{1,1}.*n_i_ba{1,1})./(n_i_up{1,1}+n_i_ba{1,1});
+    p_i{1,2}=(p_i_up{1,2}.*n_i_up{1,1} + p_i_ba{1,2}.*n_i_ba{1,1})./(n_i_up{1,1}+n_i_ba{1,1});
+    p_i{1,3}=(p_i_up{1,3}.*n_i_up{1,1} + p_i_ba{1,3}.*n_i_ba{1,1})./(n_i_up{1,1}+n_i_ba{1,1});
+
+    %clearvars p_i_up p_e_up p_i_ba p_e_ba
+    %----------------------------------------------------------------------
+
+    % computing the velocities in units of c
+    %----------------------------------------------------------------------
+    v_e=cell(1,3);
+    v_i=cell(1,3);
+    v_e_ba=cell(1,3);
+    v_i_ba=cell(1,3);
+    v_e_up=cell(1,3);
+    v_i_up=cell(1,3);
+
+    for i=1:3
+        v_e{1,i} = p_e{1,i} * c ./ sqrt(c^2 * me^2 + p_e{1,i}.^2);
+        v_i{1,i} = p_i{1,i} * c ./ sqrt(c^2 * mi^2 + p_i{1,i}.^2);
+        v_e_up{1,i} = p_e_up{1,i} * c ./ sqrt(c^2 * me^2 + p_e_up{1,i}.^2);
+        v_i_up{1,i} = p_i_up{1,i} * c ./ sqrt(c^2 * mi^2 + p_i_up{1,i}.^2);
+        v_e_ba{1,i} = p_e_ba{1,i} * c ./ sqrt(c^2 * me^2 + p_e_ba{1,i}.^2);
+        v_i_ba{1,i} = p_i_ba{1,i} * c ./ sqrt(c^2 * mi^2 + p_i_ba{1,i}.^2);
+    end
+
+    clearvars p_i p_e p_i_up p_e_up p_i_ba p_e_ba
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
+    v_ex = v_e{1,1}; v_ex = squeeze(v_ex(sli_x,:,:));
+    v_ey = v_e{1,2}; v_ey = squeeze(v_ey(sli_x,:,:));
+    v_ez = v_e{1,3}; v_ez = squeeze(v_ez(sli_x,:,:));
+
+    v_ix = v_i{1,1}; v_ix = squeeze(v_ix(sli_x,:,:));
+    v_iy = v_i{1,2}; v_iy = squeeze(v_iy(sli_x,:,:));
+    v_iz = v_i{1,3}; v_iz = squeeze(v_iz(sli_x,:,:));
+
+    % v_e_upx = v_e_up{1,1}; v_e_upx = squeeze(v_e_upx(sli_x,:,:));
+    % v_e_upy = v_e_up{1,2}; v_e_upy = squeeze(v_e_upy(sli_x,:,:));
+    % v_e_upz = v_e_up{1,3}; v_e_upz = squeeze(v_e_upz(sli_x,:,:));
+    % 
+    % v_e_bax = v_e_ba{1,1}; v_e_bax = squeeze(v_e_bax(sli_x,:,:));
+    % v_e_bay = v_e_ba{1,2}; v_e_bay = squeeze(v_e_bay(sli_x,:,:));
+    % v_e_baz = v_e_ba{1,3}; v_e_baz = squeeze(v_e_baz(sli_x,:,:));
+    % 
+    % v_i_upx = v_i_up{1,1}; v_i_upx = squeeze(v_i_upx(sli_x,:,:));
+    % v_i_upy = v_i_up{1,2}; v_i_upy = squeeze(v_i_upy(sli_x,:,:));
+    % v_i_upz = v_i_up{1,3}; v_i_upz = squeeze(v_i_upz(sli_x,:,:));
+    % v_i_bax = v_i_ba{1,1}; v_i_bax = squeeze(v_i_bax(sli_x,:,:));
+    % v_i_bay = v_i_ba{1,2}; v_i_bay = squeeze(v_i_bay(sli_x,:,:));
+    % v_i_baz = v_i_ba{1,3}; v_i_baz = squeeze(v_i_baz(sli_x,:,:));
+
+    clearvars v_i_up v_e_up v_i_ba v_e_ba %<----
+    %---------------------------------------------------------------------
+
+    % densities
+    %----------------------------------------------------------------------
+    n_e=(n_e_up{1,1} + n_e_ba{1,1})./1;
+    n_i=(n_i_up{1,1} + n_i_ba{1,1})./1;
+
+    n_e = squeeze(n_e(sli_x,:,:));
+    n_i = squeeze(n_i(sli_x,:,:));
+    %----------------------------------------------------------------------
+    %now
+
+    % Now let's get the 1D profiles just as a cut
+    %----------------------------------------------------------------------
+    % E_x_1Dy(:,jn) = squeeze(Ex(:,sli_z));
+    % E_y_1Dy(:,jn) = squeeze(Ey(:,sli_z));
+    % E_z_1Dy(:,jn) = squeeze(Ez(:,sli_z));
+    % 
+    % B_x_1Dy(:,jn) = squeeze(Bx(:,sli_z));
+    % B_y_1Dy(:,jn) = squeeze(By(:,sli_z));
+    % B_z_1Dy(:,jn) = squeeze(Bz(:,sli_z));
+    % 
+    % J_x_1Dy(:,jn) = squeeze(Jx(:,sli_z));
+    % J_y_1Dy(:,jn) = squeeze(Jy(:,sli_z));
+    % J_z_1Dy(:,jn) = squeeze(Jz(:,sli_z));
+    % 
+    % v_ix_1Dy(:,jn) = squeeze(v_ix(:,sli_z));
+    % v_iy_1Dy(:,jn) = squeeze(v_iy(:,sli_z));
+    % v_iz_1Dy(:,jn) = squeeze(v_iz(:,sli_z));
+    % 
+    % v_ex_1Dy(:,jn) = squeeze(v_ex(:,sli_z));
+    % v_ey_1Dy(:,jn) = squeeze(v_ey(:,sli_z));
+    % v_ez_1Dy(:,jn) = squeeze(v_ez(:,sli_z));
+    % 
+    % n_i_1Dy(:,jn) = squeeze(n_i(:,sli_z));
+    % n_e_1Dy(:,jn) = squeeze(n_e(:,sli_z));
+
+
+    %dum_1=v_e{1,1}; dum_1=squeeze(dum_1(sli_x,:,:));
+    %dum_1_av = mean(dum_1,2);
+    % Now let's get the 1D profiles taking the average
+    %----------------------------------------------------------------------
+    E_x_1Dy(:,jn) = mean(Ex,2);
+    E_y_1Dy(:,jn) = mean(Ey,2);
+    E_z_1Dy(:,jn) = mean(Ez,2);
+
+    B_x_1Dy(:,jn) = mean(Bx,2);
+    B_y_1Dy(:,jn) = mean(By,2);
+    B_z_1Dy(:,jn) = mean(Bz,2);
+
+    J_x_1Dy(:,jn) = mean(Jx,2);
+    J_y_1Dy(:,jn) = mean(Jy,2);
+    J_z_1Dy(:,jn) = mean(Jz,2);
+
+    v_ix_1Dy(:,jn) = mean(v_ix,2);
+    v_iy_1Dy(:,jn) = mean(v_iy,2);
+    v_iz_1Dy(:,jn) = mean(v_iz,2);
+
+    v_ex_1Dy(:,jn) = mean(v_ex,2);
+    v_ey_1Dy(:,jn) = mean(v_ey,2);
+    v_ez_1Dy(:,jn) = mean(v_ez,2);
+
+    n_i_1Dy(:,jn) = mean(n_i,2);
+    n_e_1Dy(:,jn) = mean(n_e,2);
+
+    clearvars Ex Ey Ez...
+        Bx By Bz...
+        Jx Jy Jz...
+        v_ix    v_iy   v_iz...
+        v_ex   v_ey    v_ez...
+        n_i     n_e
+
+end
+
+
+%making the stack plot Ex
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+sss=size(v_i{1,1});
+size_X=sss;
+zll=linspace(-Lz,Lz,size_X(3)); %Jeff flag it works with (1,size_x(2))
+yll=linspace(-Ly,Ly,size_X(2));
+
+time_t_2_Omega=time_t_2;
+fs=18; % 
+%[YLT,OMT]=meshgrid(yll,time_t_2_Omega);
+[OMT, YLT]=meshgrid(time_t_2_Omega,yll);
+
+cd(path_s2)
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
+
+%--------------------------------------------------------------------------
+x0=45;y0=54;xx1=810;yy1=710;
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+f35=figure(35)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=E_x_1Dy/E0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{E_{x}}{E_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=E_y_1Dy/E0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{E_{y}}{E_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=E_z_1Dy/E0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{E_{z}}{E_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f36=figure(36)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=B_x_1Dy/B0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{B_{x}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=B_y_1Dy/B0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{B_{y}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=B_z_1Dy/B0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{B_{z}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f37=figure(37)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=v_ix_1Dy/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{v_{ix}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=v_iy_1Dy/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{v_{iy}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=v_iz_1Dy/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{v_{iz}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f38=figure(38)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=v_ex_1Dy/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{v_{ex}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=v_ey_1Dy/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{v_{ey}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=v_ez_1Dy/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{v_{ez}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f39=figure(39)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=n_i_1Dy/n0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{n_{i}}{n_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=n_e_1Dy/n0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{n_{e}}{n_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f40=figure(40)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=J_x_1Dy/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{J_{x}}{qn_{0}v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=J_y_1Dy/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{J_{y}}{qn_{0}v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=J_z_1Dy/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{J_{z}}{qn_{0}v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+
+
+
+% now let's check the difference to see if that shows the waves better
+%--------------------------------------------------------------------------
+n_e_1Dy_d=zeros(LYs,N);
+n_i_1Dy_d=zeros(LYs,N);
+
+v_ex_1Dy_d=zeros(LYs,N);
+v_ey_1Dy_d=zeros(LYs,N);
+v_ez_1Dy_d=zeros(LYs,N);
+
+v_ix_1Dy_d=zeros(LYs,N);
+v_iy_1Dy_d=zeros(LYs,N);
+v_iz_1Dy_d=zeros(LYs,N);
+
+E_x_1Dy_d=zeros(LYs,N);
+E_y_1Dy_d=zeros(LYs,N);
+E_z_1Dy_d=zeros(LYs,N);
+
+B_x_1Dy_d=zeros(LYs,N);
+B_y_1Dy_d=zeros(LYs,N);
+B_z_1Dy_d=zeros(LYs,N);
+
+J_x_1Dy_d=zeros(LYs,N);
+J_y_1Dy_d=zeros(LYs,N);
+J_z_1Dy_d=zeros(LYs,N);
+
+
+%--------------------------------------------------------------------------
+for i=2:N
+    n_e_1Dy_d(:,i) = n_e_1Dy(:,i) - n_e_1Dy(:,i-1);
+    n_i_1Dy_d(:,i) = n_i_1Dy(:,i) - n_i_1Dy(:,i-1);
+
+    v_ex_1Dy_d(:,i) = v_ex_1Dy(:,i) - v_ex_1Dy(:,i-1);
+    v_ey_1Dy_d(:,i) = v_ey_1Dy(:,i) - v_ey_1Dy(:,i-1);
+    v_ez_1Dy_d(:,i) = v_ez_1Dy(:,i) - v_ez_1Dy(:,i-1);
+
+    v_ix_1Dy_d(:,i) = v_ix_1Dy(:,i) - v_ix_1Dy(:,i-1);
+    v_iy_1Dy_d(:,i) = v_iy_1Dy(:,i) - v_iy_1Dy(:,i-1);
+    v_iz_1Dy_d(:,i) = v_iz_1Dy(:,i) - v_iz_1Dy(:,i-1);
+
+    E_x_1Dy_d(:,i) = E_x_1Dy(:,i) - E_x_1Dy(:,i-1);
+    E_y_1Dy_d(:,i) = E_y_1Dy(:,i) - E_y_1Dy(:,i-1);
+    E_z_1Dy_d(:,i) = E_z_1Dy(:,i) - E_z_1Dy(:,i-1);
+
+    B_x_1Dy_d(:,i) = B_x_1Dy(:,i) - B_x_1Dy(:,i-1);
+    B_y_1Dy_d(:,i) = B_y_1Dy(:,i) - B_y_1Dy(:,i-1);
+    B_z_1Dy_d(:,i) = B_z_1Dy(:,i) - B_z_1Dy(:,i-1);
+
+    J_x_1Dy_d(:,i) = J_x_1Dy(:,i) - J_x_1Dy(:,i-1);
+    J_y_1Dy_d(:,i) = J_y_1Dy(:,i) - J_y_1Dy(:,i-1);
+    J_z_1Dy_d(:,i) = J_z_1Dy(:,i) - J_z_1Dy(:,i-1);
+
+end    
+%--------------------------------------------------------------------------
+
+
+%--------------------------------------------------------------------------
+f351=figure(351)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=E_x_1Dy_d/E0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta E_{x}}{E_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=E_y_1Dy_d/E0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta E_{y}}{E_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=E_z_1Dy_d/E0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta E_{z}}{E_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f361=figure(361)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=B_x_1Dy_d/B0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta B_{x}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=B_y_1Dy_d/B0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta B_{y}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=B_z_1Dy_d/B0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta B_{z}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f371=figure(371)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=v_ix_1Dy_d/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta v_{ix}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=v_iy_1Dy_d/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta v_{iy}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=v_iz_1Dy_d/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta v_{iz}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f381=figure(381)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=v_ex_1Dy_d/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta v_{ex}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=v_ey_1Dy_d/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta v_{ey}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=v_ez_1Dy_d/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta v_{ez}}{v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f391=figure(391)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=n_i_1Dy_d/n0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta n_{i}}{n_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=n_e_1Dy_d/n0;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta n_{e}}{n_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+f401=figure(401)
+set(gcf,'position',[x0,y0,xx1,yy1])
+h1=subplot(1,3,1);
+dum_p=J_x_1Dy_d/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta J_{x}}{qn_{0}v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,2);
+dum_p=J_y_1Dy_d/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta J_{y}}{qn_{0}v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+
+h1=subplot(1,3,3);
+dum_p=J_z_1Dy_d/Vai;
+hc = pcolor(OMT,YLT,dum_p);
+hold on
+set(hc,'edgecolor','none')
+colorbar; colormap(h1,BWR)
+lim_yp=0.7*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+hcb=colorbar; hcb.Location = 'eastoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+lgnd=legend([h1],'$\frac{\Delta J_{z}}{qn_{0}v_{A}} $','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+
+
+
+% checking the onset
+%--------------------------------------------------------------------------
+f43=figure(43)
+plot(time_t_2_Omega,E_x_1Dy(512,:)/max(abs(E_x_1Dy(512,:))),'b','LineWidth',3);
+hold on
+plot(time_t_2_Omega,n_e_1Dy_d(512,:)/max(abs(n_e_1Dy_d(512,:))),'k','LineWidth',3);
+%plot(time_t_2_Omega,mean(v_ey_1Dy_d,1)/max(abs(mean(v_ey_1Dy_d,1))),'r','LineWidth',3);
+plot(time_t_2_Omega,v_ey_1Dy_d(512,:)/max(abs(v_ey_1Dy_d(512,:))),'r','LineWidth',3);
+plot(time_t_2_Omega,v_ez_1Dy_d(512,:)/max(abs(v_ez_1Dy_d(512,:))),'g','LineWidth',3);
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+%ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+legend('$E_{x}$','$\Delta n_{e}$','$v_{ey}$','$v_{ez}$','Interpreter','latex','FontSize',1.3*fs);
+hold off
+cd(path_1)
+saveas(f43,strcat(num2str(time_t),'Ex_deln_vy_vz.png'));
+%--------------------------------------------------------------------------
+
+
+
+
+% checking the waves.
+%Waves in time
+%--------------------------------------------------------------------------
+f41=figure(41)
+subplot(2,1,1)
+dum=E_x_1Dy(512,:);
+plot(time_t_2_Omega,(dum-mean(dum))/max(abs(dum)),'b','LineWidth',3);
+hold on
+dum=n_e_1Dy(512,:);
+plot(time_t_2_Omega,(dum-mean(dum))/max(abs(dum)),'k','LineWidth',3);
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+%ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+legend('$E_{x} - \langle E_{x} \rangle$','$n_{e} - \langle n_{e} \rangle$','Interpreter','latex','FontSize',1.3*fs);
+hold off
+subplot(2,1,2)
+dum=v_ey_1Dy_d(512,:);
+plot(time_t_2_Omega,(dum-mean(dum))/max(abs(dum)),'r','LineWidth',3);
+hold on
+dum=B_y_1Dy_d(512,:);
+plot(time_t_2_Omega,(dum-mean(dum))/max(abs(dum)),'g','LineWidth',3);
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+%ax.YLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+legend('$v_{ey} - \langle v_{ey} \rangle$','$B_{y} - \langle B_{y} \rangle$','Interpreter','latex','FontSize',1.3*fs);
+hold off
+%--------------------------------------------------------------------------
+
+%Waves at a single time and in y direction
+%--------------------------------------------------------------------------
+f42=figure(42)
+subplot(2,1,1)
+dum=E_x_1Dy(:,10);
+plot(yll,(dum-mean(dum))/max(abs(dum)),'b','LineWidth',3);
+hold on
+dum=n_e_1Dy(:,10);
+plot(yll,(dum-mean(dum))/max(abs((dum))),'k','LineWidth',3);
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+%ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+legend('$E_{x} - \langle E_{x} \rangle$','$n_{e} - \langle n_{e} \rangle$','Interpreter','latex','FontSize',1.3*fs);
+title(num2str(time_t_2_Omega(10)))
+hold off
+%--------------------------------------------------------------------------
+subplot(2,1,2)
+dum=v_ey_1Dy_d(:,10);
+plot(yll,(dum-mean(dum))/max(abs(dum)),'r','LineWidth',3);
+hold on
+dum=B_y_1Dy_d(:,10);
+plot(yll,(dum-mean(dum))/max(abs(dum)),'g','LineWidth',3);
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+%ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$y / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+legend('$v_{ey} - \langle v_{ey} \rangle$','$B_{y} - \langle B_{y} \rangle$','Interpreter','latex','FontSize',1.3*fs);
+%title(num2str(time_t_2_Omega(10)))
+hold off
+%--------------------------------------------------------------------------
+
+
+
+
+% Extracting the frequencies of the waves
+%--------------------------------------------------------------------------
+% f_Om_min = pi/time_t_2_Omega(end);
+% f_Om_max = pi/(time_t_2_Omega(end)-time_t_2_Omega(end-1));
+% f_lin = linspace(f_Om_min,f_Om_max,51);
+% f_lin = linspace(-f_Om_max,f_Om_max,51);
+%--------------------------------------------------------------------------
+
+
+
+% It is importnat to compute over the delta of the quantity
+%Time domain
+%--------------------------------------------------------------------------
+L=length(time_t_2_Omega);
+Dtt=200*dt/omega_pe_Omega_ce; %The real frequency sampling depends of the output frequency 
+Fs = 1/Dtt;            % Sampling frequency                    
+Om = 2*pi*Fs;
+T = 1/Fs;             % Sampling period       
+t = (0:L-1)*T; 
+
+f_lin=Om/L*(0:L-1);
+f_lin_shift=Om/L*(-L/2:L/2-1);
+
+dum=v_ey_1Dy(512,:);
+dum=dum-mean(dum);
+Y=fft(dum);
+Y_shift=fftshift(Y);
+
+omegam = max(f_lin_shift(abs(Y_shift)==max(abs(Y_shift))));
+
+%--------------------------------------------------------------------------
+f43=figure(43)
+subplot(2,1,1)
+plot(f_lin_shift,abs(Y_shift),"LineWidth",3)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$\omega / \Omega_{ce}$';
+%ax.YLabel.String = '$|fft(E_{x})|$';
+ax.YLabel.String = '$|fft(v_{ey})|$';
+title(strcat('$\omega_{m} /\Omega_{ce} =$',num2str(omegam)),'Interpreter','latex','FontSize',1.3*fs);
+%--------------------------------------------------------------------------
+
+%Space domain
+%--------------------------------------------------------------------------
+L=length(yll);
+Fs = 1/resy;            % Sampling frequency                    
+Om = 2*pi*Fs;
+T = 1/Fs;             % Sampling period       
+t = (0:L-1)*T; 
+
+f_lin=Om/L*(0:L-1);
+f_lin_shift=Om/L*(-L/2:L/2-1);
+
+dum=v_ey_1Dy(:,10);
+dum=dum-mean(dum);
+Y=fft(dum);
+Y_shift=fftshift(Y);
+
+kym = max(f_lin_shift(abs(Y_shift)==max(abs(Y_shift))));
+%title(strcat('kym=',num2str(kym)));
+%--------------------------------------------------------------------------
+subplot(2,1,2)
+plot(f_lin_shift,abs(Y_shift),"LineWidth",3)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$k_{y}d_{e}$';
+%ax.YLabel.String = '$|fft(E_{x})|$';
+ax.YLabel.String = '$|fft(v_{ey})|$';
+title(strcat('$k_{y,m}d_{e} = $',num2str(kym)),'Interpreter','latex','FontSize',1.3*fs);
+%--------------------------------------------------------------------------
+
+cd(path_1)
+saveas(f41,strcat(num2str(time_t),'in_time.png'));
+saveas(f42,strcat(num2str(time_t),'single_time.png'));
+saveas(f43,strcat(num2str(time_t),'waves_vey.png'));
+
+
+% %To find the amplitudes of the three frequency peaks, convert the fft spectrum 
+% % in Y to the single-sided amplitude spectrum
+% 
+% P2 = abs(Y/L);
+% P1 = P2(1:L/2+1);
+% P1(2:end-1) = 2*P1(2:end-1);
+% 
+% f = Fs/L*(0:(L/2));
+% f47=figure(47)
+% plot(f,P1,"LineWidth",3) 
+% title("Single-Sided Amplitude Spectrum of X(t)")
+% xlabel("f (Hz)")
+% ylabel("|P1(f)|")
+%--------------------------------------------------------------------------
+
+
+% Saving plots.
+%--------------------------------------------------------------------------
+cd(path_1)
+saveas(f35,strcat(num2str(time_t),'E_stack_long_cont_av.png'));
+saveas(f36,strcat(num2str(time_t),'B_stack_long_cont_av.png'));
+saveas(f37,strcat(num2str(time_t),'vi_stack_long_cont_av.png'));
+saveas(f38,strcat(num2str(time_t),'ve_stack_long_cont_av.png'));
+saveas(f39,strcat(num2str(time_t),'n_stack_long_cont_av.png'));
+saveas(f40,strcat(num2str(time_t),'J_stack_long_cont_av.png'));
+
+saveas(f351,strcat(num2str(time_t),'del_E_stack_long_cont_av.png'));
+saveas(f361,strcat(num2str(time_t),'del_B_stack_long_cont_av.png'));
+saveas(f371,strcat(num2str(time_t),'del_vi_stack_long_cont_av.png'));
+saveas(f381,strcat(num2str(time_t),'del_ve_stack_long_cont_av.png'));
+saveas(f391,strcat(num2str(time_t),'del_n_stack_long_cont_av.png'));
+saveas(f401,strcat(num2str(time_t),'del_J_stack_long_cont_av.png'));
+
+
+
+
+
+
+
+
+
+fufu=calc_fourier_1d(E_x_1Dy,yll,resy,time_t_2_Omega)
+
+
+function kym = calc_fourier_1d(E_x_1Dy,yll,resy,time_t_2_Omega)
+%--------------------------------------------------------------------------
+L=length(time_t_2_Omega);
+Dtt=200*dt/omega_pe_Omega_ce; %The real frequency sampling depends of the output frequency
+Fs = 1/Dtt;            % Sampling frequency
+Om = 2*pi*Fs;
+T = 1/Fs;             % Sampling period
+t = (0:L-1)*T;
+
+f_lin=Om/L*(0:L-1);
+f_lin_shift=Om/L*(-L/2:L/2-1);
+
+dum=E_x_1Dy(512,:);
+dum=dum-mean(dum);
+Y=fft(dum);
+Y_shift=fftshift(Y);
+
+omegam = max(f_lin_shift(abs(Y_shift)==max(abs(Y_shift))));
+
+%--------------------------------------------------------------------------
+f45=figure(45)
+subplot(2,1,1)
+plot(f_lin_shift,abs(Y_shift),"LineWidth",3)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$\omega / \Omega_{ce}$';
+ax.YLabel.String = '$|fft(E_{x})|$';
+title(strcat('$\omega_{m} /\Omega_{ce} =$',num2str(omegam)),'Interpreter','latex','FontSize',1.3*fs);
+%--------------------------------------------------------------------------
+
+%Space domain
+%--------------------------------------------------------------------------
+L=length(yll);
+Fs = 1/resy;            % Sampling frequency
+Om = 2*pi*Fs;
+T = 1/Fs;             % Sampling period
+t = (0:L-1)*T;
+
+f_lin=Om/L*(0:L-1);
+f_lin_shift=Om/L*(-L/2:L/2-1);
+
+dum=E_x_1Dy(:,10);
+dum=dum-mean(dum);
+Y=fft(dum);
+Y_shift=fftshift(Y);
+
+kym = max(f_lin_shift(abs(Y_shift)==max(abs(Y_shift))));
+%title(strcat('kym=',num2str(kym)));
+%--------------------------------------------------------------------------
+subplot(2,1,2)
+plot(f_lin_shift,abs(Y_shift),"LineWidth",3)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+ax.XLabel.String = '$k_{y}d_{e}$';
+ax.YLabel.String = '$|fft(E_{x})|$';
+title(strcat('$k_{y,m}d_{e} = $',num2str(kym)),'Interpreter','latex','FontSize',1.3*fs);
+%--------------------------------------------------------------------------
+end

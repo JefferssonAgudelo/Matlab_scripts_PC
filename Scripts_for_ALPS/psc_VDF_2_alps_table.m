@@ -43,8 +43,13 @@ i=N;
 
     %separate the popullations
     
+    % For ALPS, 1 for ions, 2 for electrons.
     % ions
-    q_i_index = find(q==1);
+    %q_i_index = find(q==1);
+    
+    % electrons
+    q_i_index = find(q==-1);
+
     %Coordinates of ions
     pxi=px(q_i_index); pyi=py(q_i_index); pzi=pz(q_i_index);
     qi=q(q_i_index);
@@ -64,6 +69,9 @@ i=N;
     % for the limits inside island central pinch
     %----------------------------------------------------------------------    
     yii1 = 10; yii2 = 20; zii1=30; zii2=50; % 1 is out 
+    %----------------------------------------------------------------------
+    %----------------------------------------------------------------------    
+    %yii1 = -20; yii2 = 20; zii1=-20; zii2=20; % 1 is out 
     %----------------------------------------------------------------------
     
     % for the case of dB04_kd4
@@ -236,8 +244,12 @@ i=N;
     yspace_per = [0, 0.5, 1.0];
     xlims = [-1.0, 1.0];
     ylims = [0.0, 1.0];
-    Xedges2D = linspace(-1.0,1.0);
-    Yedges2D = linspace(0.0,1.0);
+    %----------------------------------------------------------------------
+    dvpar=122;
+    dvper=62;
+    %----------------------------------------------------------------------
+    Xedges2D = linspace(-1.0,1.0,dvpar);
+    Yedges2D = linspace(0.0,1.0,dvper);
     %----------------------------------------------------------------------
 
     %----------------------------------------------------------------------
@@ -250,11 +262,14 @@ i=N;
     dum1 = v_new_par_1; dum2 = v_new_per_1; 
 
     [Ni,Xedgesi,Redgesi] = histcounts2(dum1,dum2,Xedges2D,Yedges2D);
-    Ni=Ni(1:99,1:99)';    Xedges2i=Xedgesi(2:100)'; Redges2i=Redgesi(2:100)';
+    Ni=Ni(1:dvpar-1,1:dvper-1)';    Xedges2i=Xedgesi(2:dvpar)'; Redges2i=Redgesi(2:dvper)';
 
     Xedges2i=Xedges2i-(Xedges2i(2)-Xedges2i(1))/2;    
     Redges2i=Redges2i-(Redges2i(2)-Redges2i(1))/2;
-    Ni(Ni<=no_le)=NaN;
+    %Ni(Ni<=no_le)=NaN;
+
+    %It seems the NaN might bring a problem 
+    Ni(Ni<=no_le)=1e-16;
     [Ci,Di]=meshgrid(Xedges2i,Redges2i);
 
     % compute the distribution function for 
@@ -274,20 +289,43 @@ i=N;
 
     %Now save the files in a ascii file 
     %----------------------------------------------------------------------
+    %----------------------------------------------------------------------
     out = [mome_per_1d mome_par_1d dist_funtion_i_1d];
-    save('test_psc.1.array', 'out', '-ascii')
+    %save('test_psc.1.array', 'out', '-ascii') % for ions
+    save('test_psc.2.array', 'out', '-ascii') % for electrons
+    %----------------------------------------------------------------------
     %----------------------------------------------------------------------
 
-end
+%end
 
-f1=figure(1)
-plot(1.*Ci(1,:), 'k')  
+
+% plot to see the diostribution function that I am testing
+
+cd(path_s)
+fs=18;  x0=45;  y0=54;  xx1=1210;    yy1=510;
+%----------------------------------------------------------------------
+f12=figure(12);
+set(gcf,'position',[x0,y0,yy1,yy1])
+h1=subaxis(1,1,1,'SV',0.01,'SH',0.004,'MR',0.01,'ML',0.05,'PL',0.01,'PR',0.006);
+hc=pcolor(Xedges2i,Redges2i, Ni./Di);
 hold on
-plot(1.*Ci(10,:), 'r')  
-plot(mome_par_1d(:), 'b')
+set(hc,'edgecolor','none');
+set(gca,'ColorScale','log','FontSize',fs)
+set(gca,'XScale','lin','YScale','lin','FontSize',fs)
+colormap(h1,'jet');
+c_lim=0.5*10^6;
+caxis([1 (c_lim)]); %hcb.Ticks = linspace(-0.8,0.8,5); hcb.TickLabels = [-0.8,-0.4,0,0.4,0.8] ;
+hcb=colorbar; hcb.Location = 'northoutside'; %hcb.Ruler.Exponent = -2;
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.XLabel.String = '$v_{\parallel}$'; ax.XTick = xspace_par;
+ax.YLabel.String = '$v_{\perp}$'; ax.YTick = yspace_per;
+xline(0,'--k'); yline(0,'--k');
+xlim(xlims); ylim(ylims);
+%title('In','Interpreter','latex','FontSize',fs');
+title('Bottom','Interpreter','latex','FontSize',fs');
+pbaspect([2 1 1])
 hold off
-
-
 
    
     

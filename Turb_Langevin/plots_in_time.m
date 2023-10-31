@@ -175,8 +175,14 @@ end
 
 %--------------------------------------------------------------------------
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di/';
-path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di_CP/';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di_CP/';
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di_lange_local/';
+
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local_asi/';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L6di_lange_local/';
+path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L4di_lange_local/';
+
+path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local_asi';
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -312,6 +318,7 @@ Bz_y0_i = zeros(LZs,N_jn);
 jn=220;
 jn=N;
 
+jn=10;
 
 %jn=135; %135 is the file number for 174.95
 
@@ -665,6 +672,24 @@ for jn=1:N
 
 end
 
+%Exfin=Ex;
+
+%Bz0=Bz;
+f21=figure(21)
+%plot(yll,Ex(:,512),'b')
+%hold on
+plot(yll,Ex(:,1024),'k')
+%hold off
+
+f3=figure(3)
+plot(yll,Bz0(:,512),'b')
+hold on
+plot(yll,Bz0(:,1024),'k')
+plot(yll,Bz(:,512),'--b')
+plot(yll,Bz(:,1024),'--k')
+xline(-4,'--')
+xline(4,'--')
+hold off
 %}
 % % %--------------------------------------------------------------------------
 % % %--------------------------------------------------------------------------
