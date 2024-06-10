@@ -1,0 +1,1428 @@
+%--------------------------------------------------------------------------
+% computing Energies from the gammas files 
+%--------------------------------------------------------------------------
+N_kn=14;
+%--------------------------------------------------------------------------
+B2_n_T = cell(1,N_kn);
+E2_n_T = cell(1,N_kn);
+U_EM2_n_T = cell(1,N_kn);
+U_k_e_n_T = cell(1,N_kn);
+U_k_i_n_T = cell(1,N_kn);
+U_th_e_n_T = cell(1,N_kn);
+U_th_i_n_T = cell(1,N_kn);
+
+gammas = cell(1,N_kn);
+%--------------------------------------------------------------------------
+time_t_2_T = cell(1,N_kn);
+%--------------------------------------------------------------------------
+kn=1
+for kn=1:N_kn
+
+    % This set shows the difference in terms of the onset.
+    % ABCDE
+    %----------------------------------------------------------------------------------------------------------------------
+    if(kn==1)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';
+    elseif(kn==2)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
+    elseif(kn==3)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';
+    elseif(kn==4)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';
+    elseif(kn==5)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_du02'; %<-- this is in reality L=4.
+    elseif(kn==6)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large_Bg02';
+        %-----------------------------------------------------------------------------------------------------------------------
+        %  Cyclotron frequency runs and short wave lengths
+        %----------------------------------------------------------------------------------------------------------------------
+    elseif(kn==7)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1';
+    elseif(kn==8)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1';
+    elseif(kn==9)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1';
+    elseif(kn==10)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1';
+        %-----------------------------------------------------------------------------------------------------------------------
+        %  plasma, cyclotron frequency, di, rho
+        %----------------------------------------------------------------------------------------------------------------------
+    elseif(kn==11)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1';
+    elseif(kn==12)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1';
+    elseif(kn==13)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLd1';
+    elseif(kn==14)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
+    end
+    %-----------------------------------------------------------------------------------------------------------------------
+
+    % For the scripts
+    path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
+    path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
+    path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+    %-----------------------------------------------------------------------------------------------------------------------
+
+    %-----------------------------------------------------------------------------------------------------------------------
+    % To save the plots
+    path_rec_r = strcat(path,'/spectra/rec_r');
+    path_rec_line = strcat(path,'/spectra/rec_line');
+    path_rec_line_ByBzJx = strcat(path,'/spectra/rec_line/ByBzJx');
+
+    if not(isfolder(path_rec_r))
+        mkdir(path_rec_r)
+    end
+    if not(isfolder(path_rec_line))
+        mkdir(path_rec_line)
+    end
+    if not(isfolder(path_rec_line_ByBzJx))
+        mkdir(path_rec_line_ByBzJx)
+    end
+    %-----------------------------------------------------------------------------------------------------------------------
+
+    cd(path)
+    %--------------------------------------------------------------------------
+    S = dir(fullfile(path,'pfd.*.h5'));
+    N=numel(S); % number of files to use
+    H=zeros(N);
+    %--------------------------------------------------------------------------
+    S2 = dir(fullfile(path,'pfd_moments.*.h5'));
+    N2=numel(S2); % number of files to use
+    H2=zeros(N2);
+    %--------------------------------------------------------------------------
+
+    %--------------------------------------------------------------------------
+    %B are normalized to the background magnetic field
+    B0=0.2;
+    %n is normalise to the proton density n0=1
+    n0=1;
+    %Vi normalised to the proton alfven speed V_a=0.1c The alfven speed of
+    %electrons is Vae=10Vai
+    Vae=0.2;%0.2;
+    Va=0.2;%0.2;
+    %--------------------------------------------------------------------------
+    nb_n0 =0.1;
+    kb = 1.; mu0 =1.; c=1; q = 1;
+
+    Vai=0.2;
+    Vai_b=Vai/sqrt(nb_n0);
+    Vae_b=Vae/sqrt(nb_n0);
+
+    mime =1.;
+    mi = 1.;
+    me = 1. / mime; eps0=1.;
+    omega_pi=1;
+    Omega_e=Vai*sqrt(mime)*omega_pi;
+    Omega_i=Omega_e / mime;
+    TOmega_e=1/Omega_e;
+    TOmega_i=1/Omega_i;
+    omega_pe_Omega_ce=5;
+    %--------------------------------------------------------------------------
+    in=1;
+    fileID =  S(in).name; %change the 1 per i
+    %h5disp(fileID);
+    info = h5info(fileID);
+    EHJ_1st = info.Groups(16).Name;
+    B=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+    ss=size(B);
+    LZs=ss(3);
+    clearvars B
+    N_jn=N;
+
+    % %--------------------------------------------------------------------
+    % % Making a plot for B2 as a function of time to see the growth rate of
+    % the instability
+    % %--------------------------------------------------------------------
+
+    in=1;
+    fileID =  S(in).name; %change the 1 per i
+    %h5disp(fileID);
+    info = h5info(fileID);
+    EHJ_1st = info.Groups(16).Name;
+    B=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+    ss=size(B);
+    LXs=ss(1); LYs=ss(2); LZs=ss(3);
+    %--------------------------------------------------------------------------
+    nx1=1;    nx2=LXs;
+    ny1=1;    ny2=LYs;
+    nz1=1;    nz2=LZs;
+
+    px2 = nx2; py2 = ny2; pz2 = nz2;
+    start = [nx1 ny1 nz1];
+    count = [px2 py2 pz2];
+
+    time_t_2=zeros(1,N);
+
+    B2_n=zeros(1,N);
+    E2_n=zeros(1,N);
+
+    U_EM2_n=zeros(1,N);
+    U_k_e_n=zeros(1,in);
+    U_k_i_n=zeros(1,in);
+    U_th_e_n=zeros(1,in);
+    U_th_i_n=zeros(1,in);
+
+    in = 1;
+
+    for in=1:floor(N)
+
+        %------------------------------------------------------------------
+        disp(strcat('Computing step ...',S(in).name))
+        fileID =  S(in).name; %change the 1 per i
+        %h5disp(fileID);
+        info = h5info(fileID);
+        EHJ_1st = info.Groups(16).Name;
+        grid_dt = info.Groups(20).Attributes;
+
+        grid_length = info.Groups(17).Attributes;
+        Lx=grid_length(4).Value(1);% - grid_length(3).Value(1);
+        Ly=grid_length(4).Value(2);% - grid_length(3).Value(2);
+        Lz=grid_length(4).Value(3);% - grid_length(3).Value(3);
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        %To make the coordinate transformation
+        %------------------------------------------------------------------
+        % Get the fiel name and remove the prt.
+        stri = S(in).name;
+        newStri = erase(stri,"pfd.");
+
+        % load the field files
+        Sm = dir(fullfile(path,'pfd_moments.*.h5'));
+        Nf=numel(Sm); % number of files to use
+
+        %The idea is to find the index that corresponds to the file that has
+        %the same name as in the prt info
+        Nff = {Sm.name};
+        Xff = contains(Nff,num2str(newStri));
+        jjn=find(Xff==1); % this finds the index
+        %Nff{Xff}
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        disp(strcat('Computing step ...',S2(jjn).name))
+        fileID2 =  S2(jjn).name; %change the 1 per i
+        %h5disp(fileID2);
+        info2 = h5info(fileID2);
+        moments_1st = info2.Groups(1).Name;
+        %----------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        Bx=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'),start,count);
+        By=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'),start,count);
+        Bz=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'),start,count);
+        Bx2 = Bx.^2; By2 = By.^2; Bz2 = Bz.^2;
+        B2 = mean((Bx2 + By2 + Bz2),'all'); % it seems the total magnetic field goes
+        clearvars Bx Bx2 By By2 Bz Bz2
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        Ex=h5read(fileID,strcat(EHJ_1st,'/ex_ec/p0/3d'),start,count);
+        Ey=h5read(fileID,strcat(EHJ_1st,'/ey_ec/p0/3d'),start,count);
+        Ez=h5read(fileID,strcat(EHJ_1st,'/ez_ec/p0/3d'),start,count);
+        Ex2 = Ex.^2; Ey2 = Ey.^2; Ez2 = Ez.^2;
+        E2 = mean((Ex2 + Ey2 + Ez2),'all'); % it seems the total magnetic field goes
+        clearvars Ex Ex2 Ey Ey2 Ez Ez2
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        p_e_up{1,1}=h5read(fileID2,strcat(moments_1st,'/px_e_UP/p0/3d'),start,count);
+        p_e_up{1,2}=h5read(fileID2,strcat(moments_1st,'/py_e_UP/p0/3d'),start,count);
+        p_e_up{1,3}=h5read(fileID2,strcat(moments_1st,'/pz_e_UP/p0/3d'),start,count);
+
+        p_i_up{1,1}=h5read(fileID2,strcat(moments_1st,'/px_i_UP/p0/3d'),start,count);
+        p_i_up{1,2}=h5read(fileID2,strcat(moments_1st,'/py_i_UP/p0/3d'),start,count);
+        p_i_up{1,3}=h5read(fileID2,strcat(moments_1st,'/pz_i_UP/p0/3d'),start,count);
+
+        p_e_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/px_e_BA/p0/3d'),start,count);
+        p_e_ba{1,2}=h5read(fileID2,strcat(moments_1st,'/py_e_BA/p0/3d'),start,count);
+        p_e_ba{1,3}=h5read(fileID2,strcat(moments_1st,'/pz_e_BA/p0/3d'),start,count);
+
+        p_i_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/px_i_BA/p0/3d'),start,count);
+        p_i_ba{1,2}=h5read(fileID2,strcat(moments_1st,'/py_i_BA/p0/3d'),start,count);
+        p_i_ba{1,3}=h5read(fileID2,strcat(moments_1st,'/pz_i_BA/p0/3d'),start,count);
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        n_e_up0=h5read(fileID2,strcat(moments_1st,'/rho_e_UP/p0/3d'),start,count);
+        n_i_up0=h5read(fileID2,strcat(moments_1st,'/rho_i_UP/p0/3d'),start,count);
+        n_e_up0=-1.*n_e_up0;
+        n_e_ba0=h5read(fileID2,strcat(moments_1st,'/rho_e_BA/p0/3d'),start,count);
+        n_i_ba0=h5read(fileID2,strcat(moments_1st,'/rho_i_BA/p0/3d'),start,count);
+        n_e_ba0=-1.*n_e_ba0;
+        n_e0=(n_e_up0 + n_e_ba0)./1;
+        n_i0=(n_i_up0 + n_i_ba0)./1;
+
+        n_e0(n_e0==0)=1e-20;
+        n_i0(n_i0==0)=1e-20;
+        n_e_up0(n_e_up0==0)=1e-20;
+        n_i_up0(n_i_up0==0)=1e-20;
+        n_e_ba0(n_e_ba0==0)=1e-20;
+        n_i_ba0(n_i_ba0==0)=1e-20;
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        p_e_up{1,1}=p_e_up{1,1}./n_e_up0;
+        p_e_up{1,2}=p_e_up{1,2}./n_e_up0;
+        p_e_up{1,3}=p_e_up{1,3}./n_e_up0;
+
+        p_i_up{1,1}=p_i_up{1,1}./n_i_up0;
+        p_i_up{1,2}=p_i_up{1,2}./n_i_up0;
+        p_i_up{1,3}=p_i_up{1,3}./n_i_up0;
+
+        p_e_ba{1,1}=p_e_ba{1,1}./n_e_ba0;
+        p_e_ba{1,2}=p_e_ba{1,2}./n_e_ba0;
+        p_e_ba{1,3}=p_e_ba{1,3}./n_e_ba0;
+
+        p_i_ba{1,1}=p_i_ba{1,1}./n_i_ba0;
+        p_i_ba{1,2}=p_i_ba{1,2}./n_i_ba0;
+        p_i_ba{1,3}=p_i_ba{1,3}./n_i_ba0;
+        %------------------------------------------------------------------
+
+        % this has to be here because it is after the correction dividing by n
+        %------------------------------------------------------------------
+        p_e{1,1}=(p_e_up{1,1} + p_e_ba{1,1})./1;
+        p_e{1,2}=(p_e_up{1,2} + p_e_ba{1,2})./1;
+        p_e{1,3}=(p_e_up{1,3} + p_e_ba{1,3})./1;
+
+        p_i{1,1}=(p_i_up{1,1} + p_i_ba{1,1})./1;
+        p_i{1,2}=(p_i_up{1,2} + p_i_ba{1,2})./1;
+        p_i{1,3}=(p_i_up{1,3} + p_i_ba{1,3})./1;
+        %------------------------------------------------------------------
+        
+        %------------------------------------------------------------------
+        v_e=cell(1,3);
+        v_i=cell(1,3);
+        v_e_up=cell(1,3);
+        v_i_up=cell(1,3);
+        v_e_ba=cell(1,3);
+        v_i_ba=cell(1,3);
+        for i=1:3
+            v_e{1,i} = (p_e{1,i} .* c ./ sqrt(c^2 .* me^2 + p_e{1,i}.^2)); % Do I need to do this normalization by VA2c
+            v_i{1,i} = (p_i{1,i} .* c ./ sqrt(c^2 .* mi^2 + p_i{1,i}.^2));
+            v_e_up{1,i} = (p_e_up{1,i} .* c ./ sqrt(c^2 .* me^2 + p_e_up{1,i}.^2));
+            v_i_up{1,i} = (p_i_up{1,i} .* c ./ sqrt(c^2 .* mi^2 + p_i_up{1,i}.^2));
+            v_e_ba{1,i} = (p_e_ba{1,i} .* c ./ sqrt(c^2 .* me^2 + p_e_ba{1,i}.^2));
+            v_i_ba{1,i} = (p_i_ba{1,i} .* c ./ sqrt(c^2 .* mi^2 + p_i_ba{1,i}.^2));
+        end
+        clearvars p_i p_e p_i_up p_e_up p_i_ba p_e_ba
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------        
+        v_ex = v_e{1,1};
+        v_ey = v_e{1,2};
+        v_ez = v_e{1,3};
+
+        v_ix = v_i{1,1};
+        v_iy = v_i{1,2};
+        v_iz = v_i{1,3};
+
+        v_i_upx = v_i_up{1,1};
+        v_i_upy = v_i_up{1,2};
+        v_i_upz = v_i_up{1,3};
+
+        v_e_upx = v_e_up{1,1};
+        v_e_upy = v_e_up{1,2};
+        v_e_upz = v_e_up{1,3};
+
+        v_e_bax = v_e_ba{1,1};
+        v_e_bay = v_e_ba{1,2};
+        v_e_baz = v_e_ba{1,3};
+
+        v_i_bax = v_i_ba{1,1};
+        v_i_bay = v_i_ba{1,2};
+        v_i_baz = v_i_ba{1,3};
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        Txx_e_up=h5read(fileID2,strcat(moments_1st,'/txx_e_UP/p0/3d'),start,count);
+        Tyy_e_up=h5read(fileID2,strcat(moments_1st,'/tyy_e_UP/p0/3d'),start,count);
+        Tzz_e_up=h5read(fileID2,strcat(moments_1st,'/tzz_e_UP/p0/3d'),start,count);
+        Txy_e_up=h5read(fileID2,strcat(moments_1st,'/txy_e_UP/p0/3d'),start,count);
+        Txz_e_up=h5read(fileID2,strcat(moments_1st,'/tzx_e_UP/p0/3d'),start,count);
+        Tyz_e_up=h5read(fileID2,strcat(moments_1st,'/tyz_e_UP/p0/3d'),start,count);
+
+        Txx_i_up=h5read(fileID2,strcat(moments_1st,'/txx_i_UP/p0/3d'),start,count);
+        Tyy_i_up=h5read(fileID2,strcat(moments_1st,'/tyy_i_UP/p0/3d'),start,count);
+        Tzz_i_up=h5read(fileID2,strcat(moments_1st,'/tzz_i_UP/p0/3d'),start,count);
+        Txy_i_up=h5read(fileID2,strcat(moments_1st,'/txy_i_UP/p0/3d'),start,count);
+        Txz_i_up=h5read(fileID2,strcat(moments_1st,'/tzx_i_UP/p0/3d'),start,count);
+        Tyz_i_up=h5read(fileID2,strcat(moments_1st,'/tyz_i_UP/p0/3d'),start,count);
+
+        Txx_e_ba=h5read(fileID2,strcat(moments_1st,'/txx_e_BA/p0/3d'),start,count);
+        Tyy_e_ba=h5read(fileID2,strcat(moments_1st,'/tyy_e_BA/p0/3d'),start,count);
+        Tzz_e_ba=h5read(fileID2,strcat(moments_1st,'/tzz_e_BA/p0/3d'),start,count);
+        Txy_e_ba=h5read(fileID2,strcat(moments_1st,'/txy_e_BA/p0/3d'),start,count);
+        Txz_e_ba=h5read(fileID2,strcat(moments_1st,'/tzx_e_BA/p0/3d'),start,count);
+        Tyz_e_ba=h5read(fileID2,strcat(moments_1st,'/tyz_e_BA/p0/3d'),start,count);
+
+        Txx_i_ba=h5read(fileID2,strcat(moments_1st,'/txx_i_BA/p0/3d'),start,count);
+        Tyy_i_ba=h5read(fileID2,strcat(moments_1st,'/tyy_i_BA/p0/3d'),start,count);
+        Tzz_i_ba=h5read(fileID2,strcat(moments_1st,'/tzz_i_BA/p0/3d'),start,count);
+        Txy_i_ba=h5read(fileID2,strcat(moments_1st,'/txy_i_BA/p0/3d'),start,count);
+        Txz_i_ba=h5read(fileID2,strcat(moments_1st,'/tzx_i_BA/p0/3d'),start,count);
+        Tyz_i_ba=h5read(fileID2,strcat(moments_1st,'/tyz_i_BA/p0/3d'),start,count);
+
+        Pij_i_ba=cell(3,3);
+        Pij_e_ba=cell(3,3);
+        Pij_i_up=cell(3,3);
+        Pij_e_up=cell(3,3);
+        %------------------------------------------------------------------
+        
+        %------------------------------------------------------------------
+        % Make the tensor [3, 3] for the ions
+        Pij_i_ba{1,1}=Txx_i_ba; Pij_i_ba{1,2}=Txy_i_ba; Pij_i_ba{1,3}=Txz_i_ba;
+        Pij_i_ba{2,1}=Txy_i_ba; Pij_i_ba{2,2}=Tyy_i_ba; Pij_i_ba{2,3}=Tyz_i_ba;
+        Pij_i_ba{3,1}=Txz_i_ba; Pij_i_ba{3,2}=Tyz_i_ba; Pij_i_ba{3,3}=Tzz_i_ba;
+        clearvars Txx_i_ba Txy_i_ba Txz_i_ba Tyy_i_ba Tyz_i_ba Tzz_i_ba
+        % Make the tensor [3, 3] for the electrons
+        Pij_e_ba{1,1}=Txx_e_ba; Pij_e_ba{1,2}=Txy_e_ba; Pij_e_ba{1,3}=Txz_e_ba;
+        Pij_e_ba{2,1}=Txy_e_ba; Pij_e_ba{2,2}=Tyy_e_ba; Pij_e_ba{2,3}=Tyz_e_ba;
+        Pij_e_ba{3,1}=Txz_e_ba; Pij_e_ba{3,2}=Tyz_e_ba; Pij_e_ba{3,3}=Tzz_e_ba;
+        clearvars Txx_e_ba Txy_e_ba Txz_e_ba Tyy_e_ba Tyz_e_ba Tzz_e_ba
+        %------------------------------------------------------------------
+        % Make the tensor [3, 3] for the ions
+        Pij_i_up{1,1}=Txx_i_up; Pij_i_up{1,2}=Txy_i_up; Pij_i_up{1,3}=Txz_i_up;
+        Pij_i_up{2,1}=Txy_i_up; Pij_i_up{2,2}=Tyy_i_up; Pij_i_up{2,3}=Tyz_i_up;
+        Pij_i_up{3,1}=Txz_i_up; Pij_i_up{3,2}=Tyz_i_up; Pij_i_up{3,3}=Tzz_i_up;
+        clearvars Txx_i_up Txy_i_up Txz_i_up Tyy_i_up Tyz_i_up Tzz_i_up
+        % Make the tensor [3, 3] for the electrons
+        Pij_e_up{1,1}=Txx_e_up; Pij_e_up{1,2}=Txy_e_up; Pij_e_up{1,3}=Txz_e_up;
+        Pij_e_up{2,1}=Txy_e_up; Pij_e_up{2,2}=Tyy_e_up; Pij_e_up{2,3}=Tyz_e_up;
+        Pij_e_up{3,1}=Txz_e_up; Pij_e_up{3,2}=Tyz_e_up; Pij_e_up{3,3}=Tzz_e_up;
+        clearvars Txx_e_up Txy_e_up Txz_e_up Tyy_e_up Tyz_e_up Tzz_e_up
+        %------------------------------------------------------------------
+
+        % This is to get the central momment pressure.
+        %------------------------------------------------------------------
+        % % PPij_i=cell(3,3);
+        % % PPij_e=cell(3,3);
+        PPij_i_ba=cell(3,3);
+        PPij_e_ba=cell(3,3);
+        PPij_i_up=cell(3,3);
+        PPij_e_up=cell(3,3);
+
+        for i=1:3
+            for j=1:3
+                if(isempty(Pij_i_ba{i,j}) == 1) % This is where if P_ba is zero, this should be changed.
+                    continue
+                end
+                PPij_i_ba{i,j} = Pij_i_ba{i,j} - 1.*n_i_ba0.*mi.*v_i_ba{1,i}.*v_i_ba{1,j};
+                PPij_e_ba{i,j} = Pij_e_ba{i,j} - 1.*n_e_ba0.*me.*v_e_ba{1,i}.*v_e_ba{1,j};
+                PPij_i_up{i,j} = Pij_i_up{i,j} - 1.*n_i_up0.*mi.*v_i_up{1,i}.*v_i_up{1,j};
+                PPij_e_up{i,j} = Pij_e_up{i,j} - 1.*n_e_up0.*me.*v_e_up{1,i}.*v_e_up{1,j};
+            end
+        end
+
+        % This is just to rename the variable
+        Pij_i_ba = PPij_i_ba;
+        Pij_e_ba = PPij_e_ba;
+        Pij_i_up = PPij_i_up;
+        Pij_e_up = PPij_e_up;
+
+        clearvars v_i_up v_e_up v_i_ba v_e_ba %<----
+        clearvars Txx_e_ba Txx_e_up Tyy_e_ba Tyy_e_up Tzz_e_ba Tzz_e_up
+        clearvars Txy_e_ba Txy_e_up Txz_e_ba Txz_e_up Tyz_e_ba Tyz_e_up
+        clearvars Txx_i_ba Txx_i_up Tyy_i_ba Tyy_i_up Tzz_i_ba Tzz_i_up
+        clearvars Txy_i_ba Txy_i_up Txz_i_ba Txz_i_up Tyz_i_ba Tyz_i_up
+        clearvars PPij_i_ba PPij_e_ba PPij_i_up PPij_e_up
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        dt=double(grid_dt(15).Value);
+        str = string(S(in).name);
+        newStr = extractBetween(str,"pfd.","_p000000.h5");
+        N_steps = str2double(newStr);
+        time_t = dt*N_steps;
+        time_t_2_Omega=time_t./omega_pe_Omega_ce;
+        time_t_2(1,in)=time_t_2_Omega;
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        U_k_e = 0.5 .* n_e_ba0 .* (v_ex.^2 + v_ey.^2 + v_ez.^2);
+        U_k_i = 0.5 .* n_i_ba0 .* (v_ix.^2 + v_iy.^2 + v_iz.^2);
+
+        U_th_e = 0.5 .* (Pij_e_ba{1,1} + Pij_e_up{1,1} + ...
+            Pij_e_ba{2,2} + Pij_e_up{2,2} + ...
+            Pij_e_ba{3,3} + Pij_e_up{3,3});
+        U_th_i = 0.5 .* (Pij_i_ba{1,1} + Pij_i_up{1,1} + ...
+            Pij_i_ba{2,2} + Pij_i_up{2,2} + ...
+            Pij_i_ba{3,3} + Pij_i_up{3,3});
+
+        U_k_e_m = mean(U_k_e,'all');
+        U_k_i_m = mean(U_k_i,'all');
+        U_th_e_m = mean(U_th_e,'all');
+        U_th_i_m = mean(U_th_i,'all');
+
+        B2_n(1,in) = B2;
+        E2_n(1,in) = E2;
+
+        U_EM2_n(1,in) = (B2 + E2)/2;
+        U_k_e_n(1,in) = U_k_e_m;
+        U_k_i_n(1,in) = U_k_i_m;
+        U_th_e_n(1,in) = U_th_e_m;
+        U_th_i_n(1,in) = U_th_i_m;        
+        %------------------------------------------------------------------        
+        clearvars Pij_i* Pij_e* v_* n_* ...
+            U_k_e U_k_i U_th_e U_th_i
+
+        cd(path)
+
+    end
+    % Estimating the growth rates
+    %--------------------------------------------------------------------------
+    %sigma_g=25;
+    % This is to find the growth rate of the maximum value
+    %--------------------------------------------------------------------------
+    % First smooth the curve
+
+    %--------------------------------------------------------------------------
+    B2_n_T{1,kn} = B2_n; 
+    E2_n_T{1,kn} = E2_n;
+    U_EM2_n_T{1,kn} = U_EM2_n;
+    U_k_e_n_T{1,kn} = U_k_e_n;
+    U_k_i_n_T{1,kn} = U_k_i_n;
+    U_th_e_n_T{1,kn} = U_th_e_n;
+    U_th_i_n_T{1,kn} = U_th_i_n;
+    time_t_2_T{kn} = time_t_2;
+
+    cd(path)
+    save('energy_densities_response.mat',...
+        'B2_n_T','E2_n_T','U_EM2_n_T','U_k_e_n_T','U_k_i_n_T','U_th_e_n_T','U_th_i_n_T','time_t_2_T')
+
+end
+
+
+
+
+C = {
+    [204/255, 102/255, 119/255],... %rose
+    [51/255, 34/255, 136/255],... % indigo
+    [221/255, 204/255, 119/255],... %sand
+    [17/255, 119/255, 51/255],... %green
+    [136/255, 204/255, 238/255],... %cyan
+    [136/255, 34/255, 85/255],... %wine
+    [68/255, 170/255, 153/255],... %teal
+    [170/255, 68/255, 153/255],... %purple
+    [153/255, 153/255, 51/255],... %olive
+    [221/255, 100/255, 100/255],... %pale grey
+    [21/255, 221/255, 221/255],... %cian 2
+    [121/255, 221/255, 221/255],... %cian clear 3
+    [221/255, 21/255, 221/255],... %magenta 3
+    [221/255, 121/255, 221/255],... %magenta clear 3
+    };
+
+% legends_comp={'$A$','$B$','$C$','$D$','$E$','$ABg_{02}$',...
+%     '$\Omega_{e}\lambda \delta B_{01}$',...
+%     '$\Omega_{e} \lambda \delta B_{08}$',...
+%     '$\Omega_{e} \Delta \delta B_{01}$',...
+%     '$\Omega_{e} \Delta \delta B_{08}$',...
+%     '$\Omega_{e} d_{e} \delta B_{01}$',...
+%     '$\Omega_{e} \rho_{e} \delta B_{01}$',...
+%     '$\omega_{pe} d_{e} \delta B_{01}$',...
+%     '$\omega_{pe} \rho_{e} \delta B_{01}$',...
+%     };
+
+legends_comp={'$SA$','$SB$','$SC$','$SD$','$SE$','$SF$',...
+    '$SG$',...
+    '$SH$',...
+    '$SI$',...
+    '$SJ$',...
+    '$SK$',...
+    '$SL$',...
+    '$SM$',...
+    '$SN$',...
+    };
+
+% % legends_comp={'$Base$',...
+% %     '$lange_{01}$',...
+% %     '$T_{\perp}>T_{\parallel}$',...
+% %     '$lange_{03}$',...
+% %     };
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+fs=25; x0=45;y0=54;xx1=1200;yy1=500;
+
+%--------------------------------------------------------------------------
+%max
+sigma_g=5; %gauss
+f1=figure(1);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%--------------------------------------------------------------------------
+subplot(1,1,1)
+Bx2_max = B2_n_T{1}; time_t_2 = time_t_2_T{1};
+Bx2_max(1,1) = Bx2_max(1,2);
+Bx2_max = Bx2_max - Bx2_max(1,1);
+y = imgaussfilt((Bx2_max),sigma_g)';
+plot(time_t_2,y/(2*0.2*0.2),LineWidth=2,color=C{1})
+hold on
+for kn=2:9
+    Bx2_max = B2_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(2*0.2*0.2),LineWidth=2,color=C{kn})
+end
+for kn=10:N_kn
+    Bx2_max = B2_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(2*0.2*0.2),'--',LineWidth=2,color=C{kn})
+end
+legend(legends_comp,'Interpreter','latex','FontSize',1.0*fs,'Location','southeastoutside','NumColumns',2)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle B^{2} \rangle/2B_{0}^{2}$'; 
+%ax.YTick = [1e0, 1e1, 1e2]; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%ylim([1e0 0.5e5]);
+xlim([0 350]);
+hold off
+%--------------------------------------------------------------------------
+
+f2=figure(2);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%--------------------------------------------------------------------------
+subplot(1,1,1)
+Bx2_max = E2_n_T{1}; time_t_2 = time_t_2_T{1};
+Bx2_max(1,1) = Bx2_max(1,2);
+Bx2_max = Bx2_max - Bx2_max(1,1);
+y = imgaussfilt((Bx2_max),sigma_g)';
+plot(time_t_2,y/(2*0.2*0.2),LineWidth=2,color=C{1})
+hold on
+for kn=2:9
+    Bx2_max = E2_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(2*0.2*0.2),LineWidth=2,color=C{kn})
+end
+for kn=10:N_kn
+    Bx2_max = E2_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(2*0.2*0.2),'--',LineWidth=2,color=C{kn})
+end
+legend(legends_comp,'Interpreter','latex','FontSize',1.0*fs,'Location','southeastoutside','NumColumns',2)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle E^{2} \rangle/2(cB_{0})^{2}$'; 
+%ax.YTick = [1e0, 1e1, 1e2]; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%ylim([1e0 0.5e5]);
+xlim([0 350]);
+hold off
+%--------------------------------------------------------------------------
+
+f3=figure(3);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%--------------------------------------------------------------------------
+subplot(1,1,1)
+Bx2_max = U_EM2_n_T{1}; time_t_2 = time_t_2_T{1};
+Bx2_max(1,1) = Bx2_max(1,2);
+Bx2_max = Bx2_max - Bx2_max(1,1);
+y = imgaussfilt((Bx2_max),sigma_g)';
+plot(time_t_2,y/(0.2*0.2),LineWidth=2,color=C{1})
+hold on
+for kn=2:9
+    Bx2_max = U_EM2_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(0.2*0.2),LineWidth=2,color=C{kn})
+end
+for kn=10:N_kn
+    Bx2_max = U_EM2_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(0.2*0.2),'--',LineWidth=2,color=C{kn})
+end
+legend(legends_comp,'Interpreter','latex','FontSize',1.0*fs,'Location','southeastoutside','NumColumns',2)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle U_{EM} \rangle/(cB_{0})^{2}$'; 
+%ax.YTick = [1e0, 1e1, 1e2]; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%ylim([1e0 0.5e5]);
+xlim([0 350]);
+hold off
+%--------------------------------------------------------------------------
+
+f4=figure(4);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%--------------------------------------------------------------------------
+subplot(1,1,1)
+Bx2_max = U_k_e_n_T{1}; time_t_2 = time_t_2_T{1};
+Bx2_max(1,1) = Bx2_max(1,2);
+Bx2_max = Bx2_max - Bx2_max(1,1);
+y = imgaussfilt((Bx2_max),sigma_g)';
+plot(time_t_2,y/(0.2*0.2),LineWidth=2,color=C{1})
+hold on
+for kn=2:9
+    Bx2_max = U_k_e_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(0.2*0.2),LineWidth=2,color=C{kn})
+end
+for kn=10:N_kn
+    if kn==14
+        fkn = 2;
+    else 
+        fkn = 1;
+    end
+    Bx2_max = fkn.*U_k_e_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(0.2*0.2),'--',LineWidth=2,color=C{kn})
+end
+legend(legends_comp,'Interpreter','latex','FontSize',1.0*fs,'Location','southeastoutside','NumColumns',2)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle U_{k,e} \rangle/(m_{e}v_{A})^{2}$'; 
+%ax.YTick = [1e0, 1e1, 1e2]; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%ylim([1e0 0.5e5]);
+xlim([0 350]);
+hold off
+%--------------------------------------------------------------------------
+
+f5=figure(5);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%--------------------------------------------------------------------------
+subplot(1,1,1)
+Bx2_max = U_th_e_n_T{1}; time_t_2 = time_t_2_T{1};
+Bx2_max(1,1) = Bx2_max(1,2);
+Bx2_max = Bx2_max - Bx2_max(1,1);
+y = imgaussfilt((Bx2_max),sigma_g)';
+plot(time_t_2,y/(0.2*0.2),LineWidth=2,color=C{1})
+hold on
+for kn=2:9
+    Bx2_max = U_th_e_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(0.2*0.2),LineWidth=2,color=C{kn})
+end
+for kn=10:N_kn
+    Bx2_max = U_th_e_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(0.2*0.2),'--',LineWidth=2,color=C{kn})
+end
+legend(legends_comp,'Interpreter','latex','FontSize',1.0*fs,'Location','southeastoutside','NumColumns',2)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle U_{th,e} \rangle/(m_{e}v_{A})^{2}$'; 
+%ax.YTick = [1e0, 1e1, 1e2]; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%ylim([1e0 0.5e5]);
+xlim([0 350]);
+hold off
+%--------------------------------------------------------------------------
+
+f6=figure(6);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%--------------------------------------------------------------------------
+subplot(1,1,1)
+Bx2_max = 2*U_th_e_n_T{1} + 2*U_k_e_n_T{1} + U_EM2_n_T{1}; time_t_2 = time_t_2_T{1};
+Bx2_max(1,1) = Bx2_max(1,2);
+%Bx2_max = Bx2_max - Bx2_max(1,1);
+y = imgaussfilt((Bx2_max),sigma_g)';
+plot(time_t_2,y/(0.2*0.2),LineWidth=2,color=C{1})
+hold on
+for kn=2:9
+    Bx2_max = 2*U_th_e_n_T{kn} + 2*U_k_e_n_T{kn} + U_EM2_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    %Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(0.2*0.2),LineWidth=2,color=C{kn})
+end
+for kn=10:N_kn
+    Bx2_max = 2*U_th_e_n_T{kn} + 2*U_k_e_n_T{kn} + U_EM2_n_T{kn};   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    %Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y/(0.2*0.2),'--',LineWidth=2,color=C{kn})
+end
+%legend(legends_comp,'Interpreter','latex','FontSize',1.0*fs,'Location','southeastoutside','NumColumns',1)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.YLabel.String = '$\langle \varepsilon_{T} \rangle/(m_{e}v_{A})^{2}$'; 
+%ax.YTick = [1e0, 1e1, 1e2]; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%ylim([1e0 0.5e5]);
+xlim([0 14]);
+xlim([0 350]);
+hold off
+
+%--------------------------------------------------------------------------
+saveas(f1,strcat(num2str(N_kn),'magnetic_energy.png'));
+saveas(f2,strcat(num2str(N_kn),'electric_energy.png'));
+saveas(f3,strcat(num2str(N_kn),'electromagnetic_energy.png'));
+saveas(f4,strcat(num2str(N_kn),'kinetic_energy_ele.png'));
+saveas(f5,strcat(num2str(N_kn),'thermal_energy_ele.png'));
+saveas(f6,strcat(num2str(N_kn),'Total_energy_ele2_2.png'));
+%--------------------------------------------------------------------------
+
+% 
+% % This is to see the trend of the energy. 
+% %--------------------------------------------------------------------------
+% ff = (0.01^2)*(0.01*time_t_2).^2;
+% ff2 = (0.01^2)^2*exp(2*0.01*time_t_2);
+% f7 = figure(7)
+% semilogy(time_t_2, ff)
+% %--------------------------------------------------------------------------
+
+
+% These is to check possible dependences with the magnetic energy
+fs=30;
+f41=figure(41);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%--------------------------------------------------------------------------
+subplot(1,1,1)
+Bx2_max = U_k_e_n_T{1}./(U_EM2_n_T{1}); time_t_2 = time_t_2_T{1};
+Bx2_max(1,1) = Bx2_max(1,2);
+%Bx2_max = Bx2_max - Bx2_max(1,1);
+y = imgaussfilt((Bx2_max),sigma_g)';
+plot(time_t_2,y,LineWidth=2,color=C{1})
+hold on
+for kn=2:9
+    Bx2_max = U_k_e_n_T{kn}./((U_EM2_n_T{kn}/1));   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    %Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y,LineWidth=2,color=C{kn})
+end
+for kn=10:N_kn
+    % if kn==14
+    %     fkn = 1;
+    % else 
+    %     fkn = 1;
+    % end
+    Bx2_max = U_k_e_n_T{kn}./((U_EM2_n_T{kn}/1));   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    %Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y,'--',LineWidth=2,color=C{kn})
+end
+%yline(1,'--k',"LineWidth",2)
+%legend(legends_comp,'Interpreter','latex','FontSize',1.0*fs,'Location','southeastoutside','NumColumns',2)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$ \langle U_{k,e} \rangle / \langle U_{EM} \rangle - \left( \langle U_{k,e}\rangle / \langle U_{EM} \rangle \right)|_{t=0}$'; 
+ax.YLabel.String = '$ \langle \varepsilon_{k} \rangle / \langle \varepsilon_{em} \rangle$'; 
+%ax.YTick = [1e0, 1e1, 1e2]; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%ylim([1e0 0.5e5]);
+xlim([0 350]);
+hold off
+%--------------------------------------------------------------------------
+
+f42=figure(42);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%--------------------------------------------------------------------------
+subplot(1,1,1)
+Bx2_max = U_th_e_n_T{1}./(U_EM2_n_T{1}); time_t_2 = time_t_2_T{1};
+Bx2_max(1,1) = Bx2_max(1,2);
+%Bx2_max = Bx2_max - Bx2_max(1,1);
+y = imgaussfilt((Bx2_max),sigma_g)';
+plot(time_t_2,y,LineWidth=2,color=C{1})
+hold on
+for kn=2:9
+    Bx2_max = U_th_e_n_T{kn}./((U_EM2_n_T{kn}/1));   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    %Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y,LineWidth=2,color=C{kn})
+end
+for kn=10:N_kn
+    Bx2_max = U_th_e_n_T{kn}./((U_EM2_n_T{kn}/1));   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    %Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    plot(time_t_2,y,'--',LineWidth=2,color=C{kn})
+end
+%yline(1,'--k',"LineWidth",2)
+%legend(legends_comp,'Interpreter','latex','FontSize',1.0*fs,'Location','southeastoutside','NumColumns',2)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$\langle U_{th,e} \rangle/\langle U_{EM} \rangle$'; 
+%ax.YLabel.String = '$ \Delta \Phi_{th,em} $'; 
+ax.YLabel.String = '$\langle \varepsilon_{th} \rangle / \langle \varepsilon_{em} \rangle$'; 
+%ax.YTick = [1e0, 1e1, 1e2]; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%ylim([1e0 0.5e5]);
+xlim([0 350]);
+hold off
+%--------------------------------------------------------------------------
+% f50=figure(50)
+% subplot(2,2,1)
+% plot(U_k_e_n_T{1,1})
+% subplot(2,2,2)
+% plot(U_th_e_n_T{1,1})
+% subplot(2,2,3)
+% plot(U_th_e_n_T{1,1}./U_k_e_n_T{1,1})
+
+f43=figure(43);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%--------------------------------------------------------------------------
+subplot(1,1,1)
+Bx2_max = U_th_e_n_T{1}./(U_k_e_n_T{1}); time_t_2 = time_t_2_T{1};
+Bx2_max(1,1) = Bx2_max(1,2);
+%%Bx2_max = Bx2_max - Bx2_max(1,1);
+y = imgaussfilt((Bx2_max),sigma_g)';
+% Bx2_max1 = U_th_e_n_T{1,1}; time_t_2 = time_t_2_T{1,1};
+% Bx2_max2 = U_k_e_n_T{1,1};
+% Bx2_max1(1,1) = Bx2_max1(1,2);
+% %Bx2_max1 = Bx2_max1 - Bx2_max1(1,1);
+% Bx2_max2(1,1) = Bx2_max2(1,2);
+% %Bx2_max2 = Bx2_max2 - Bx2_max2(1,1);
+% Bx2_max = Bx2_max1./Bx2_max2;
+% Bx2_max = imgaussfilt((Bx2_max1),sigma_g)./imgaussfilt((Bx2_max2),sigma_g);
+% y = Bx2_max';
+plot(time_t_2,y,LineWidth=2,color=C{1})
+hold on
+for kn=2:9
+    Bx2_max = U_th_e_n_T{kn}./((U_k_e_n_T{kn}/1));   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    %%Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    % Bx2_max1 = U_th_e_n_T{kn}; time_t_2 = time_t_2_T{kn};
+    % Bx2_max2 = U_k_e_n_T{kn};
+    % Bx2_max1(1,1) = Bx2_max1(1,2);
+    % %Bx2_max1 = Bx2_max1 - Bx2_max1(1,1);
+    % Bx2_max2(1,1) = Bx2_max2(1,2);
+    % %Bx2_max2 = Bx2_max2 - Bx2_max2(1,1);
+    % Bx2_max = imgaussfilt((Bx2_max1),sigma_g)./imgaussfilt((Bx2_max2),sigma_g);
+    % y = Bx2_max';
+    plot(time_t_2,y,LineWidth=2,color=C{kn})
+end
+for kn=10:N_kn
+    Bx2_max = U_th_e_n_T{kn}./((U_k_e_n_T{kn}/1));   time_t_2 = time_t_2_T{kn};
+    Bx2_max(1,1) = Bx2_max(1,2);
+    %%Bx2_max = Bx2_max - Bx2_max(1,1);
+    y = imgaussfilt((Bx2_max),sigma_g)';
+    % Bx2_max1 = U_th_e_n_T{kn}; time_t_2 = time_t_2_T{kn};
+    % Bx2_max2 = U_k_e_n_T{kn};
+    % Bx2_max1(1,1) = Bx2_max1(1,2);
+    % %Bx2_max1 = Bx2_max1 - Bx2_max1(1,1);
+    % Bx2_max2(1,1) = Bx2_max2(1,2);
+    % %Bx2_max2 = Bx2_max2 - Bx2_max2(1,1);
+    % Bx2_max = imgaussfilt((Bx2_max1),sigma_g)./imgaussfilt((Bx2_max2),sigma_g);
+    % y = Bx2_max';
+    plot(time_t_2,y,'--',LineWidth=2,color=C{kn})
+end
+yline(1,'--k',"LineWidth",2)
+%legend(legends_comp,'Interpreter','latex','FontSize',1.0*fs,'Location','southeastoutside','NumColumns',2)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+%ax.YLabel.String = '$\langle U_{th,e} \rangle/\langle U_{k,e} \rangle$'; 
+%ax.YLabel.String = '$ \Delta \Phi_{th,k} $'; 
+ax.YLabel.String = '$\langle \varepsilon_{th}\rangle / \langle \varepsilon_{k} \rangle$'; 
+%ax.YTick = [1e0, 1e1, 1e2]; %ax.YLabel.Position = [-0.6, 5];
+ax.XLabel.String = '$t / \Omega_{e}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+%ylim([1e0 0.5e5]);
+xlim([0 350]);
+hold off
+
+saveas(f41,strcat(num2str(N_kn),'kinetic2EM_minus_2.png'));
+saveas(f42,strcat(num2str(N_kn),'thermal2EM_minus_2.png'));
+saveas(f43,strcat(num2str(N_kn),'thermal2kinetic_minus_2.png'));
+
+
+
+
+
+
+
+% This is to make the plots of the 1D spectrum at different times to see how 
+% it changes in the different simulations 
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+% BE CAREFULL WITH PER AND PAR
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+C = {
+    [204/255, 102/255, 119/255],... %rose
+    [51/255, 34/255, 136/255],... % indigo
+    [221/255, 204/255, 119/255],... %sand
+    [17/255, 119/255, 51/255],... %green
+    [136/255, 204/255, 238/255],... %cyan
+    [136/255, 34/255, 85/255],... %wine
+    [68/255, 170/255, 153/255],... %teal
+    [170/255, 68/255, 153/255],... %purple
+    [153/255, 153/255, 51/255],... %olive
+    [221/255, 100/255, 100/255],... %pale grey
+    [21/255, 221/255, 221/255],... %cian 2
+    [121/255, 221/255, 221/255],... %cian clear 3
+    [221/255, 21/255, 221/255],... %magenta 3
+    [221/255, 121/255, 221/255],... %magenta clear 3
+    };
+
+% legends_comp={'$A$','$B$','$C$','$D$','$E$','$ABg_{02}$',...
+%     '$\Omega_{e}\lambda \delta B_{01}$',...
+%     '$\Omega_{e} \lambda \delta B_{08}$',...
+%     '$\Omega_{e} \Delta \delta B_{01}$',...
+%     '$\Omega_{e} \Delta \delta B_{08}$',...
+%     '$\Omega_{e} d_{e} \delta B_{01}$',...
+%     '$\Omega_{e} \rho_{e} \delta B_{01}$',...
+%     '$\omega_{pe} d_{e} \delta B_{01}$',...
+%     '$\omega_{pe} \rho_{e} \delta B_{01}$',...
+%     };
+
+legends_comp={'$SA$','$SB$','$SC$','$SD$','$SE$','$SF$',...
+    '$SG$',...
+    '$SH$',...
+    '$SI$',...
+    '$SJ$',...
+    '$SK$',...
+    '$SL$',...
+    '$SM$',...
+    '$SN$',...
+    };
+%--------------------------------------------------------------------------
+N_kn=1;
+%--------------------------------------------------------------------------
+for kn=14:N_kn
+
+    % This set shows the difference in terms of the onset.
+    % ABCDE
+    %----------------------------------------------------------------------------------------------------------------------
+    if(kn==1)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';
+    elseif(kn==2)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
+    elseif(kn==3)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';
+    elseif(kn==4)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';
+    elseif(kn==5)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_du02'; %<-- this is in reality L=4.
+    elseif(kn==6)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large_Bg02';
+        %-----------------------------------------------------------------------------------------------------------------------
+        %  Cyclotron frequency runs and short wave lengths
+        %----------------------------------------------------------------------------------------------------------------------
+    elseif(kn==7)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1';
+    elseif(kn==8)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1';
+    elseif(kn==9)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kd1';
+    elseif(kn==10)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_Omc1_kd1';
+        %-----------------------------------------------------------------------------------------------------------------------
+        %  plasma, cyclotron frequency, di, rho
+        %----------------------------------------------------------------------------------------------------------------------
+    elseif(kn==11)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLd1';
+    elseif(kn==12)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1_kLr1';
+    elseif(kn==13)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLd1';
+    elseif(kn==14)
+        path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_kLr1';
+    end
+    %-----------------------------------------------------------------------------------------------------------------------
+
+    % For the scripts
+    path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
+    path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
+    path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+    %-----------------------------------------------------------------------------------------------------------------------
+
+    %-----------------------------------------------------------------------------------------------------------------------
+    % To save the plots
+    path_rec_r = strcat(path,'/spectra/rec_r');
+    path_rec_line = strcat(path,'/spectra/rec_line');
+    path_rec_line_ByBzJx = strcat(path,'/spectra/rec_line/ByBzJx');
+
+    if not(isfolder(path_rec_r))
+        mkdir(path_rec_r)
+    end
+    if not(isfolder(path_rec_line))
+        mkdir(path_rec_line)
+    end
+    if not(isfolder(path_rec_line_ByBzJx))
+        mkdir(path_rec_line_ByBzJx)
+    end
+    %-----------------------------------------------------------------------------------------------------------------------
+
+    cd(path)
+    %--------------------------------------------------------------------------
+    S = dir(fullfile(path,'pfd.*.h5'));
+    N=numel(S); % number of files to use
+    H=zeros(N);
+    %--------------------------------------------------------------------------
+    S2 = dir(fullfile(path,'pfd_moments.*.h5'));
+    N2=numel(S2); % number of files to use
+    H2=zeros(N2);
+    %--------------------------------------------------------------------------
+
+    %--------------------------------------------------------------------------
+    %B are normalized to the background magnetic field
+    B0=0.2;
+    %n is normalise to the proton density n0=1
+    n0=1;
+    %Vi normalised to the proton alfven speed V_a=0.1c The alfven speed of
+    %electrons is Vae=10Vai
+    Vae=0.2;%0.2;
+    Va=0.2;%0.2;
+    %--------------------------------------------------------------------------
+    nb_n0 =0.1;
+    kb = 1.; mu0 =1.; c=1; q = 1;
+
+    Vai=0.2;
+    Vai_b=Vai/sqrt(nb_n0);
+    Vae_b=Vae/sqrt(nb_n0);
+
+    mime =1.;
+    mi = 1.;
+    me = 1. / mime; eps0=1.;
+    omega_pi=1;
+    Omega_e=Vai*sqrt(mime)*omega_pi;
+    Omega_i=Omega_e / mime;
+    TOmega_e=1/Omega_e;
+    TOmega_i=1/Omega_i;
+    omega_pe_Omega_ce=5;
+    %--------------------------------------------------------------------------
+    in=1;
+    fileID =  S(in).name; %change the 1 per i
+    %h5disp(fileID);
+    info = h5info(fileID);
+    EHJ_1st = info.Groups(16).Name;
+    B=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+    ss=size(B);
+    LZs=ss(3);
+    clearvars B
+    N_jn=N;
+
+    % %--------------------------------------------------------------------
+    % % Making a plot for B2 as a function of time to see the growth rate of
+    % the instability
+    % %--------------------------------------------------------------------
+
+    in=1;
+    fileID =  S(in).name; %change the 1 per i
+    %h5disp(fileID);
+    info = h5info(fileID);
+    EHJ_1st = info.Groups(16).Name;
+    B=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+    ss=size(B);
+    LXs=ss(1); LYs=ss(2); LZs=ss(3);
+    %--------------------------------------------------------------------------
+    nx1=1;    nx2=LXs;
+    ny1=1;    ny2=LYs;
+    nz1=1;    nz2=LZs;
+
+    px2 = nx2; py2 = ny2; pz2 = nz2;
+    start = [nx1 ny1 nz1];
+    count = [px2 py2 pz2];
+
+    time_t_2=zeros(1,N);
+
+
+    cd(path)
+    in = 2;
+    %in = N;
+    %------------------------------------------------------------------
+    disp(strcat('Computing step ...',S(in).name))
+    fileID =  S(in).name; %change the 1 per i
+    %h5disp(fileID);
+    info = h5info(fileID);
+    EHJ_1st = info.Groups(16).Name;
+    grid_dt = info.Groups(20).Attributes;
+
+    dt=double(grid_dt(15).Value);
+
+    grid_ng = info.Groups(19).Attributes;
+    dx=grid_ng(10).Value(1);
+    dy=grid_ng(10).Value(2);
+    dz=grid_ng(10).Value(3);
+
+    grid_length = info.Groups(17).Attributes;
+    Lx=grid_length(4).Value(1) - grid_length(3).Value(1);
+    Ly=grid_length(4).Value(2) - grid_length(3).Value(2);
+    Lz=grid_length(4).Value(3) - grid_length(3).Value(3);
+
+    resx=double(Lx)/double(dx);
+    resy=double(Ly)/double(dy);
+    resz=double(Lz)/double(dz); res=resz;
+
+    threshold=pi/resy;
+    %------------------------------------------------------------------
+
+    %------------------------------------------------------------------
+    Bx=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'),start,count);
+    By=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'),start,count);
+    Bz=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'),start,count);
+
+    Bx = Bx(1,:,:);
+    By = By(1,:,:);
+    Bz = Bz(1,:,:);
+
+    % This is to apply the hammin window so the boundaries are periodic. 
+    hammin_p =  hamming(ss(2),"periodic");
+    Bx_perio = zeros(1,ss(2),ss(3));
+    By_perio = Bx_perio; Bz_perio = Bx_perio;
+
+    for i=1:ss(3)
+        Bx_perio(1,:,i) = Bx(1,:,i).* hammin_p';
+        By_perio(1,:,i) = By(1,:,i).* hammin_p';
+        Bz_perio(1,:,i) = Bz(1,:,i).* hammin_p';
+
+    end
+
+    % %------------------------------------------------------------------
+    % f12=figure(12)
+    % subplot(2,3,1)
+    % imagesc(squeeze(Bx))
+    % colorbar
+    % subplot(2,3,2)
+    % imagesc(squeeze(Bx_perio))
+    % colorbar
+    % 
+    %  subplot(2,3,3)
+    % imagesc(squeeze(By))
+    % colorbar
+    % subplot(2,3,4)
+    % imagesc(squeeze(By_perio))
+    % colorbar
+    % 
+    % subplot(2,3,5)
+    % imagesc(squeeze(Bz))
+    % colorbar
+    % subplot(2,3,6)
+    % imagesc(squeeze(Bz_perio))
+    % colorbar
+    % %------------------------------------------------------------------
+
+    %------------------------------------------------------------------
+    dt=double(grid_dt(15).Value);
+    str = string(S(in).name);
+    newStr = extractBetween(str,"pfd.","_p000000.h5");
+    N_steps = str2double(newStr);
+    time_t = dt*N_steps;
+    time_t_2_Omega=time_t./omega_pe_Omega_ce;
+    time_t_2(1,in)=time_t_2_Omega;
+    %------------------------------------------------------------------
+
+    cd(path_s)
+    spectraB=CalcSpectra_CB_local(Bx_perio,By_perio,Bz_perio,resx,resy,resz,threshold);
+
+    fs=30; x0=45;y0=54;xx1=1200;yy1=500;
+    % %----------------------------------------------------------------------
+    % % Making plots
+    % %----------------------------------------------------------------------
+    %----------------------------------------------------------------------
+    %P1D_perB=(spectraB.P1Dper);
+    P1D_perB = (spectraB.P1Dper./max(spectraB.P1Dper));
+    %P1D_parB = (spectraB.P1Dpar./max(spectraB.P1Dpar));
+
+    f2=figure(2);
+    set(gcf,'position',[x0,y0,xx1,yy1])
+    
+    loglog(2*spectraB.kper, (2*spectraB.kper).^(1) .* P1D_perB,'-','LineWidth',2)
+    %loglog(spectraB.kpar, (spectraB.kpar).^(0) .* P1D_parB,'-','LineWidth',2)
+    
+    hold on
+    set(gca,'FontSize',fs)
+    %set(gca,'XScale','lin','YScale','log','FontSize',fs)
+    x2=log10([0.1 40]);     y2=x2.*(-8/3)-4; 
+    %loglog(10.^x2,10.^y2,'--b','LineWidth',2)
+    txt5 = '$$ k_{\perp}^{-5/3}$$';
+    %text(4 , 10e-3,txt5,'Interpreter','latex','FontSize',fs); 
+    %xlim([0.1 threshold]);
+    %ylim([10^(-6) 10^(0)]);
+    %hold off
+    %ylim([10^(3) 10^(13)]);
+    y1=get(gca,'ylim');
+    %----------------------------------------------------------------------
+    frac = floor(N/6);
+    Index_N = [2*frac, 3*frac, 4*frac, 5*frac, 6*frac];
+    %Index_N = [floor(N/16), floor(N/8), floor(N/4), floor(N/2), floor(N/1)];
+    jn=5
+    for jn=1:5
+        in=Index_N(jn);
+
+        cd(path)
+
+        %------------------------------------------------------------------
+        disp(strcat('Computing step ...',S(in).name))
+        fileID =  S(in).name; %change the 1 per i
+        %h5disp(fileID);
+        info = h5info(fileID);
+        EHJ_1st = info.Groups(16).Name;
+        grid_dt = info.Groups(20).Attributes;
+
+        dt=double(grid_dt(15).Value);
+
+        grid_ng = info.Groups(19).Attributes;
+        dx=grid_ng(10).Value(1);
+        dy=grid_ng(10).Value(2);
+        dz=grid_ng(10).Value(3);
+
+        grid_length = info.Groups(17).Attributes;
+        Lx=grid_length(4).Value(1) - grid_length(3).Value(1);
+        Ly=grid_length(4).Value(2) - grid_length(3).Value(2);
+        Lz=grid_length(4).Value(3) - grid_length(3).Value(3);
+
+        resx=double(Lx)/double(dx);
+        resy=double(Ly)/double(dy);
+        resz=double(Lz)/double(dz); res=resz;
+
+        threshold=pi/resy;
+        %------------------------------------------------------------------
+
+        %------------------------------------------------------------------
+        Bx=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'),start,count);
+        By=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'),start,count);
+        Bz=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'),start,count);
+        %------------------------------------------------------------------
+        Bx = Bx(1,:,:);
+        By = By(1,:,:);
+        Bz = Bz(1,:,:);
+
+        % This is to apply the hammin window so the boundaries are periodic.
+        hammin_p =  hamming(ss(2),"periodic");
+        Bx_perio = zeros(1,ss(2),ss(3));
+        By_perio = Bx_perio; Bz_perio = Bx_perio;
+
+        for i=1:ss(3)
+            Bx_perio(1,:,i) = Bx(1,:,i).* hammin_p';
+            By_perio(1,:,i) = By(1,:,i).* hammin_p';
+            Bz_perio(1,:,i) = Bz(1,:,i).* hammin_p';
+        end
+
+        %------------------------------------------------------------------
+        dt=double(grid_dt(15).Value);
+        str = string(S(in).name);
+        newStr = extractBetween(str,"pfd.","_p000000.h5");
+        N_steps = str2double(newStr);
+        time_t = dt*N_steps;
+        time_t_2_Omega=time_t./omega_pe_Omega_ce;
+        time_t_2(1,in)=time_t_2_Omega;
+        %------------------------------------------------------------------
+        cd(path_s)
+
+        spectraB=CalcSpectra_CB_local(Bx_perio,By_perio,Bz_perio,resx,resy,resz,threshold);
+
+        % %----------------------------------------------------------------------
+        % % Making plots
+        % %----------------------------------------------------------------------
+
+        %----------------------------------------------------------------------
+        %P1D_perB=(spectraB.P1Dper);
+        P1D_perB=(spectraB.P1Dper./max(spectraB.P1Dper));
+        loglog(2*spectraB.kper, (2*spectraB.kper).^(1) .* P1D_perB,'-','LineWidth',2)
+
+        %P1D_parB=(spectraB.P1Dpar./max(spectraB.P1Dpar));
+        %loglog(spectraB.kpar, (spectraB.kpar).^(0) .* P1D_parB,'-','LineWidth',2)
+
+        cd(path)
+
+    end
+    %colororder('dye')
+    legend('$t = \ $'+string(round((time_t_2(floor(2))),2)) + '$$ \ \Omega_{e}^{-1}$$',...
+        '$t = \ $'+string(round((time_t_2(2*frac)),2)) + '$$ \ \Omega_{e}^{-1}$$',...
+        '$t = \ $'+string(round((time_t_2(3*frac)),2)) + '$$ \ \Omega_{e}^{-1}$$',...
+        '$t = \ $'+string(round((time_t_2(4*frac)),2)) + '$$ \ \Omega_{e}^{-1}$$',...
+        '$t = \ $'+string(round((time_t_2(5*frac)),2)) + '$$ \ \Omega_{e}^{-1}$$',...
+        '$t = \ $'+string(round((time_t_2(6*frac)),2)) + '$$ \ \Omega_{e}^{-1}$$',...
+        'Interpreter','latex')
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$k_\perp d_i$'; %'$k_\parallel d_i$';%;
+    ax.YLabel.String = '$P^{B}_{1D_\perp}(k_{\perp}d_{i})^{8/3}$'; %'$P^{B}_{1D_\parallel}$';%
+    hold off
+
+    % cd(path_comp )
+    % saveas(f2,strcat(num2str(kn),'_1D_spectrum_B_times_per_comp.png'));
+    cd(path)
+end
+
+
+
+
+
+
+
+
+% fs=18;
+% %----------------------------------------------------------------------
+% [kp2J, kpJ]=meshgrid(spectraB.kpar,spectraB.kper);
+% P2D=spectraB.P2D/max(max(spectraB.P2D));
+% %P2D=spectraB.P2D;
+% %----------------------------------------------------------------------
+% f1=figure(1);
+% [C,h]=contourf(spectraB.kpar,spectraB.kper,log10(P2D'),'LevelStep',0.2);
+% set(h,'LineColor','none')
+% lim = caxis;
+% caxis([-8 0]); % normalised to the Max
+% %caxis([0 10]); % Without normalisation
+% colormap(jet)
+% colorbar
+% set(gca,'XScale','log','YScale','log','FontSize',fs)
+% xlabel('$k_\| d_i$','Interpreter','latex')
+% ylabel('$k_\perp d_i$','Interpreter','latex')
+% %x2=log10([0.21 1]); y2=x2 + 1.05;
+% %x3=log10([0.06 0.2]); y3=(3/2)*x3 + 1.4;
+% hold on
+% %loglog(10.^x3,10.^y3,'--k','LineWidth',2)
+% ylim([2*pi/Ly threshold])
+% xlim([2*pi/Lz threshold])
+% xticks([0.1 1 10]); yticks([0.1 1 10])
+% xticklabels({'10^{-1}','10^{0}','10^{1}'}); yticklabels({'10^{-1}','10^{0}','10^{1}'})
+% %txt = '$k_{\perp} \sim k_{\parallel}^{3/2}$';
+% %txt2 = '$k_{\perp} \sim k_{\parallel}$';
+% %text(0.1,0.4,txt,'Interpreter','latex','FontSize',fs)
+% yline(10,'--k','LineWidth',1);
+% xline(1,'--k','LineWidth',1);
+% title('$\log_{10}{P^{\mathbf{B}}_{2D}} \ ; \ t = \ $'+string(round((time_t/omega_pe_Omega_ce),2)) + ...
+%     '$$ \ \Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+% hold off
+% %----------------------------------------------------------------------
+% 
+% 
+% 
+% %----------------------------------------------------------------------
+% P1D_parB=(spectraB.P1Dpar)/(max(spectraB.P1Dpar));
+% %P1D_parB=(spectraB.P1Dpar);
+% f3=figure(3);
+% loglog(spectraB.kpar, (spectraB.kpar').^(0) .* P1D_parB,'-k','LineWidth',2)
+% hold on
+% set(gca,'FontSize',20)
+% %xlim([0.1 threshold]);
+% %ylim([10^(-6) 10^(0)]);
+% x2=log10([0.1 40]);     y2=x2.*(-2)-4; 
+% loglog(10.^x2,10.^y2,'--b','LineWidth',2)
+% txt5 = '$$ k_{\perp}^{-2}$$';
+% text(4.5 , 10e-2,txt5,'Interpreter','latex','FontSize',fs);
+% %xlim([1 14]); %ylim([10^(-6) 10^(0)]);
+% y1=get(gca,'ylim');
+% xlabel('$k_\| d_i$','Interpreter','latex','FontSize',fs)
+% ylabel('$P^{\psi}_{1D_\|}$','Interpreter','latex','FontSize',fs)
+% legend({'$\mathbf{B}$'},'Interpreter','latex','FontSize',fs)
+% title('$t = \ $'+string(round(time_t/omega_pe_Omega_ce,2)) + ...
+%     '$$ \ \Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+% hold off
+% %----------------------------------------------------------------------
+
+% parallel_index_m = mean( (spectraB.kpar').^1 .* P1D_parB,'all');
+
+%cd(path)
+
+
+
+
+

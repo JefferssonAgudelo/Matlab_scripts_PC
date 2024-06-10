@@ -107,7 +107,6 @@ N_jn=N; %This is to store some but not all the time steps
 %--------------------------------------------------------------------------
 U_em_mean=zeros(1,N_jn); % electromagnetic energy density
 U_em_std=zeros(1,N_jn);
-
 time_t_2=zeros(1,N_jn);
 %--------------------------------------------------------------------------
 
@@ -143,14 +142,18 @@ n_v_in = cell(3,j_a_b);
 %Ax_y_short_i = zeros(1,N);
 %ve_x_short_i = zeros(1,N);
 
+% The two times are not well aligned. The time for the field and the time
+% for the moment are out of phase. ???? This is intentional.
 
 for jn=j_a:j_b
     %for jn=1:N
     %----------------------------------------------------------------------
-    % for the fields
-    in=jn;
-    %for the momments
-    jjn=jn-j_a+1;
+    % % % % % % for the fields % I don't understand why I used it like this
+    % % % % % in=jn;
+    % % % % % %for the momments
+    % % % % % jjn=jn-j_a+1;
+    in = jn;
+    jjn = jn;
     %----------------------------------------------------------------------
     %for jn=2:floor(N/10)
     %    in=(jn-1)*jn;
@@ -527,6 +530,8 @@ for jn=j_a:j_b
 end
 
 %Consolidate the averages in time
+
+% setting the initial values to zero
 %----------------------------------------------------------------------
 DUM = 0.*E_in{1,1};
 
@@ -720,6 +725,10 @@ for ii=1:j_a_b+1
     n_vy_avgt_o = n_v_in{2,ii} ;
     n_vz_avgt_o = n_v_in{3,ii} ;
     %----------------------------------------------------------------------
+
+
+    % In the graham approach there is no need to compute so many
+    % fluctuations. Make a new file 
 
     % Compute the fluctuations, e.g., delta_n_e = n_e_time_i - <n>
     %----------------------------------------------------------------------

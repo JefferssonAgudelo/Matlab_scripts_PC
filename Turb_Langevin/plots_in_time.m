@@ -4,9 +4,8 @@
 for d=1
     % % % %With the guide field and 4di thickness
     % % %
-    % % % %path =
-    % % % %'/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';%A
-    % % % %path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large_2';%A
+    % % % path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';%A
+    % % % path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large_2';%A
     % % % %path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';%B
     % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';%C
     % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';%D
@@ -34,9 +33,8 @@ for d=1
     % % % % This set shows the difference in terms of the onset.
     % % % %----------------------------------------------------------------------------------------------------------------------
     % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large'; %A
-    % % % %path =
-    % % % %'/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large'; %B
-    % % % %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';%C
+    % % % path ='/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large'; %B
+    path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_Ax_large';%C
     % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large';%D
     % % % path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_noini_L8di_8_du02';%E %<-- this is in reality L=4.
     % % % %-----------------------------------------------------------------------------------------------------------------------
@@ -180,27 +178,35 @@ end
 
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local_asi/';
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L6di_lange_local/';
-path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L4di_lange_local/';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L4di_lange_local/';
 
-path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local_asi';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local_asi';
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
-%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L1di';
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L1di';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L1di';
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L1di';
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L4di';
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L4di';
+
+path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_pinch_short_L4di';
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L4di';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L4di_dB03';
+%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L4di'
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local/';
 %path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L8di_lange_local_asi/';
 %--------------------------------------------------------------------------
+
+
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB02';
+
 
 %--------------------------------------------------------------------------
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
@@ -289,8 +295,8 @@ Omega_i=Omega_e / mime;
 TOmega_e=1/Omega_e;
 TOmega_i=1/Omega_i;
 %--------------------------------------------------------------------------
-jn=1;
-in=N;
+in=1;
+%in=N;
 fileID =  S(in).name; %change the 1 per i
 %h5disp(fileID);
 info = h5info(fileID);
@@ -299,9 +305,9 @@ B=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
 ss=size(B);
 LZs=ss(3);
 clearvars B
-%N=183;
-jn=N;
-in=jn;
+
+%in=jn;
+
 N_jn=N; %This is to store some but not all the time steps
 %N=61;N_jn=61; &lt;------------------------------- this is for the 3000
 
@@ -319,6 +325,17 @@ jn=220;
 jn=N;
 
 jn=10;
+
+jn=1;
+in=1;
+
+
+jn=N-1;
+in=N-1;
+
+jn=11;
+in=11;
+
 
 %jn=135; %135 is the file number for 174.95
 
@@ -372,14 +389,14 @@ for jn=1:N
     % 'py_i_UP' 'pz_i_UP' 'txx_i_UP' 'tyy_i_UP' 'tzz_i_UP' 'txy_i_UP'
     % 'tyz_i_UP' 'tzx_i_UP'
     %----------------------------------------------------------------------
-    B{1,1}=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+    % B{1,1}=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
     B{1,2}=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'));
-    B{1,3}=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'));
-    E{1,1}=h5read(fileID,strcat(EHJ_1st,'/ex_ec/p0/3d'));
-    E{1,2}=h5read(fileID,strcat(EHJ_1st,'/ey_ec/p0/3d'));
-    E{1,3}=h5read(fileID,strcat(EHJ_1st,'/ez_ec/p0/3d'));
-    % %
-    J{1,1}=h5read(fileID,strcat(EHJ_1st,'/jx_ec/p0/3d'));
+    % B{1,3}=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'));
+    % E{1,1}=h5read(fileID,strcat(EHJ_1st,'/ex_ec/p0/3d'));
+    % E{1,2}=h5read(fileID,strcat(EHJ_1st,'/ey_ec/p0/3d'));
+    % E{1,3}=h5read(fileID,strcat(EHJ_1st,'/ez_ec/p0/3d'));
+    % % %
+    % J{1,1}=h5read(fileID,strcat(EHJ_1st,'/jx_ec/p0/3d'));
 %     J{1,2}=h5read(fileID,strcat(EHJ_1st,'/jy_ec/p0/3d'));
 %     J{1,3}=h5read(fileID,strcat(EHJ_1st,'/jz_ec/p0/3d'));
     %From 3D to 2D (x,y,z) to (y,z)
@@ -387,53 +404,54 @@ for jn=1:N
     %----------------------------------------------------------------------
     % computing magnetic flux velocity
     %----------------------------------------------------------------------
-    Bp=sqrt(B{1,2}.^2 + B{1,3}.^2);
-    by=B{1,2}./Bp;
-    bz=B{1,3}./Bp;
+    %Bp=sqrt(B{1,2}.^2 + B{1,3}.^2);
+    %by=B{1,2}./Bp;
+    %bz=B{1,3}./Bp;
     %----------------------------------------------------------------------
     %----------------------------------------------------------------------
     % slice in x
-    ssz=size(Bp);
+    By2 = B{1,2};
+    ssz=size(By2);
     sli_x = 1; % this value has to change to reconstruct the vector potential
     sli_y = floor(4+ssz(2)/2);%380;
     sli_z = floor(2+ssz(3)/2);%700;
     %----------------------------------------------------------------------
     %----------------------------------------------------------------------
-    Bp=squeeze(Bp(sli_x,:,:));
+    %Bp=squeeze(Bp(sli_x,:,:));
     % computing the electric field terms
     %----------------------------------------------------------------------
-    Bx = B{1,1}; Bx = squeeze(Bx(sli_x,:,:));
+    % Bx = B{1,1}; Bx = squeeze(Bx(sli_x,:,:));
     By = B{1,2}; By = squeeze(By(sli_x,:,:));
-    Bz = B{1,3}; Bz = squeeze(Bz(sli_x,:,:));
-    Ex = E{1,1}; Ex = squeeze(Ex(sli_x,:,:));
-    Ey = E{1,2}; Ey = squeeze(Ey(sli_x,:,:));
-    Ez = E{1,3}; Ez = squeeze(Ez(sli_x,:,:));
-    Jx = J{1,1}; Jx = squeeze(Jx(sli_x,:,:));
+    % Bz = B{1,3}; Bz = squeeze(Bz(sli_x,:,:));
+    % Ex = E{1,1}; Ex = squeeze(Ex(sli_x,:,:));
+    % Ey = E{1,2}; Ey = squeeze(Ey(sli_x,:,:));
+    % Ez = E{1,3}; Ez = squeeze(Ez(sli_x,:,:));
+    % Jx = J{1,1}; Jx = squeeze(Jx(sli_x,:,:));
 %     Jy = J{1,2}; Jy = squeeze(Jy(sli_x,:,:));
 %     Jz = J{1,3}; Jz = squeeze(Jz(sli_x,:,:));
     %----------------------------------------------------------------------
-    sss=size(Bx);
+    sss=size(By);
     size_X=sss;
     zll=linspace(-Lz,Lz,size_X(2)); %Jeff flag it works with (1,size_x(2))
     yll=linspace(-Ly,Ly,size_X(1));
     [ZLL, YLL] = meshgrid(zll,yll);
-    %----------------------------------------------------------------------
-    % Compute the out of the plane vector potential
-    %----------------------------------------------------------------------
-    % get ax integrating over y
-    dx = resy; dy = resz;
-    ny=sss(1);
-    nz=sss(2);
-    Iapprox = zeros(size(By));
-    Iapprox_i=0;
-    %integral over y
-    for i=1:ny-1
-        Iapprox_i = Iapprox_i + dy*Bz(i,:);
-        Iapprox(i,:)=Iapprox_i;
-    end
-    Ax_y=Iapprox; %&lt;------- This is the correct Ax
-    Ax_y=-Ax_y;
-    %----------------------------------------------------------------------
+% %     %----------------------------------------------------------------------
+% %     % Compute the out of the plane vector potential
+% %     %----------------------------------------------------------------------
+% %     % get ax integrating over y
+% %     dx = resy; dy = resz;
+% %     ny=sss(1);
+% %     nz=sss(2);
+% %     Iapprox = zeros(size(By));
+% %     Iapprox_i=0;
+% %     %integral over y
+% %     for i=1:ny-1
+% %         Iapprox_i = Iapprox_i + dy*Bz(i,:);
+% %         Iapprox(i,:)=Iapprox_i;
+% %     end
+% %     Ax_y=Iapprox; %&lt;------- This is the correct Ax
+% %     Ax_y=-Ax_y;
+% %     %----------------------------------------------------------------------
     %--------------------------------------------------------------------------
     str = string(S(in).name);
     newStr = extractBetween(str,"pfd.","_p000000.h5");
@@ -445,10 +463,10 @@ for jn=1:N
     yticks_mine=[floor(-Ly*0.9) floor(-Ly/2) 0 floor(Ly/2) floor(Ly*0.9)];
     zticks_mine=[floor(-Lz*0.9) floor(-Lz/2) 0 floor(Lz/2) floor(Lz*0.9)];
     %----------------------------------------------------------------------
-    
-    % to plot closer
-    aa=1/8; %(it was 1/4)
-     
+% % 
+% %     % to plot closer
+% %     aa=1/8; %(it was 1/4)
+% % 
 % %     %This plot shows the close-up with the squares to show the particle
 % %     %info regions
 % %     cd(path_s2)
@@ -481,10 +499,11 @@ for jn=1:N
 % %     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 % %     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
 % %     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-% %     
+% % 
 % %     zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
 % %     xlim([zll(1 ) zll(end )]);
-% %     ylim([yll(1 + Dy) yll(end - Dy)]);
+% %     %ylim([yll(1 + Dy) yll(end - Dy)]);
+% %     ylim([-30 30]);
 % % 
 % %     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
 % %     lgnd=legend([h3],'$\frac{J_{x}}{J_{0}} $','Interpreter','latex','FontSize',1.3*fs);
@@ -495,10 +514,10 @@ for jn=1:N
 % %     %%rectangle('Position',[-60 10 20 10],'EdgeColor','b','LineWidth',2) %lange disrupt
 % %     %%rectangle('Position',[-60 -5 20 10],'EdgeColor','r','LineWidth',2) %lange disrupt
 % %     %%caxis([-1.0 1.0]);
-% %     
+% % 
 % %     %%rectangle('Position',[0 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
 % %     %%rectangle('Position',[0 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
-% %     
+% % 
 % %     % central pinch island
 % %     %rectangle('Position',[30 10 20 10],'EdgeColor','b','LineWidth',2) %reconnecting
 % %     %rectangle('Position',[30 -5 20 10],'EdgeColor','r','LineWidth',2) %reconnecting
@@ -534,134 +553,133 @@ for jn=1:N
 % %     %saveas(f1,strcat(num2str(time_t),'Jx_zoom_squaresR4_dB01kd1_mag_inside.png'));
 % %     %----------------------------------------------------------------------
 % %     %----------------------------------------------------------------------
-
-    B0=0.2;
-    J0=0.2;
-    cd(path_s2)
-    fs=18;
-    %----------------------------------------------------------------------
-    x0=45;y0=54;xx1=810;yy1=710;
-    f57=figure();
-    %set(gcf,'Visible', 'off'); 
-    set(gcf,'position',[x0,y0,xx1,yy1])
-    %----------------------------------------------------------------------
-    h1=subplot(3,1,1);
-    dum_p2=By/B0;
-    %dum_p2=By/max(max(abs(By)));
-    lim_yp2=max(max(max(abs(dum_p2))));
-    %dum_p2=dum_p2/lim_yp2;
-    hc=pcolor(ZLL,YLL,dum_p2);
-    set(hc,'edgecolor','none')
-    hold on
-    %----------------------------------------------------------------------
-    dum_p=Ax_y;
-    lim_yp=max(max(max(abs(dum_p))));
-    dum_p=dum_p/lim_yp;
-    [C,h]=contour(ZLL,YLL,dum_p,'LevelStep',0.1);
-    set(h,'LineColor','black','LineWidth',1)
-    %----------------------------------------------------------------------
-    colorbar; colormap(h1,BWR);
-    hcb=colorbar; hcb.Location = 'eastoutside';
-    hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
-    caxis([-1.0 1.0]); % lange_all
-    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
-    ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-    zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
-    xlim([zll(1 ) zll(end )]);
-    ylim([yll(1 + Dy) yll(end - Dy)]);
-    %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
-    lgnd=legend([h1],'$\frac{B_{y}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
-    %set(lgnd,'color','none');
-    hold off
-    %----------------------------------------------------------------------
-    %----------------------------------------------------------------------
-    h2=subplot(3,1,2);
-    dum_p2=Bz/B0;
-    %dum_p2=Bz/max(max(abs(Bz)));
-    lim_yp2=max(max(max(abs(dum_p2))));
-    %dum_p2=dum_p2/lim_yp2;
-    hc=pcolor(ZLL,YLL,dum_p2);
-    set(hc,'edgecolor','none')
-    hold on
-    %----------------------------------------------------------------------
-    dum_p=Ax_y;
-    lim_yp=max(max(max(abs(dum_p))));
-    dum_p=dum_p/lim_yp;
-    [C,h]=contour(ZLL,YLL,dum_p,'LevelStep',0.1);
-    set(h,'LineColor','black','LineWidth',1)
-    %----------------------------------------------------------------------
-    colorbar; colormap(h2,BWR);
-    hcb=colorbar; hcb.Location = 'eastoutside';
-    hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
-    caxis([-1.0 1.0]); % lange_all
-    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
-    ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-    zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
-    xlim([zll(1 ) zll(end )]);
-    ylim([yll(1 + Dy) yll(end - Dy)]);
-    %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
-    lgnd=legend([h2],'$\frac{B_{z}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
-    %set(lgnd,'color','none');
-    hold off
-    %----------------------------------------------------------------------
-    %----------------------------------------------------------------------
-    h3=subplot(3,1,3);
-    %f1=figure(1)
-    %h3=subplot(1,1,1);
-    dum_p2=Jx/J0;
-    %dum_p2=Jx/max(max(abs(Jx)));
-    lim_yp2=max(max(max(abs(dum_p2))));
-    %dum_p2=dum_p2/lim_yp2;
-    hc=pcolor(ZLL,YLL,dum_p2);
-    set(hc,'edgecolor','none')
-    hold on
-    %----------------------------------------------------------------------
-    dum_p=Ax_y;
-    lim_yp=max(max(max(abs(dum_p))));
-    dum_p=dum_p/lim_yp;
-    [C,h]=contour(ZLL,YLL,dum_p,'LevelStep',0.1);
-    set(h,'LineColor','black','LineWidth',1)
-    %----------------------------------------------------------------------
-    colorbar; colormap(h3,BWR);
-    hcb=colorbar; hcb.Location = 'eastoutside';
-    hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
-    caxis([-1.0 1.0]); % lange_all
-    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
-    ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-
-    zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
-    xlim([zll(1 ) zll(end )]);
-    ylim([yll(1 + Dy) yll(end - Dy)]);
-
-    %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
-    lgnd=legend([h3],'$\frac{J_{x}}{J_{0}} $','Interpreter','latex','FontSize',1.3*fs);
-    %set(lgnd,'color','none');
-    %rectangle('Position',[-10 10 20 20],'EdgeColor','b','LineWidth',2)
-    %rectangle('Position',[-10 -5 20 5],'EdgeColor','r','LineWidth',2)
-    hold off
-    %----------------------------------------------------------------------
-    sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
-    %----------------------------------------------------------------------
-
-    %----------------------------------------------------------------------
-
-    %----------------------------------------------------------------------
-    cd(path_rec_line_ByBzJx_zoom)
-    saveas(f57,strcat(num2str(time_t),'ByBzJx_zoom.png'));
-    close(f57);
-    delete(f57);
-    %----------------------------------------------------------------------
+% % 
+% %     B0=0.2;
+% %     J0=0.2;
+% %     cd(path_s2)
+% %     fs=18;
+% %     %----------------------------------------------------------------------
+% %     x0=45;y0=54;xx1=810;yy1=710;
+% %     f57=figure();
+% %     set(gcf,'Visible', 'off'); 
+% %     set(gcf,'position',[x0,y0,xx1,yy1])
+% %     %----------------------------------------------------------------------
+% %     h1=subplot(3,1,1);
+% %     dum_p2=By/B0;
+% %     %dum_p2=By/max(max(abs(By)));
+% %     lim_yp2=max(max(max(abs(dum_p2))));
+% %     %dum_p2=dum_p2/lim_yp2;
+% %     hc=pcolor(ZLL,YLL,dum_p2);
+% %     set(hc,'edgecolor','none')
+% %     hold on
+% %     %----------------------------------------------------------------------
+% %     dum_p=Ax_y;
+% %     lim_yp=max(max(max(abs(dum_p))));
+% %     dum_p=dum_p/lim_yp;
+% %     [C,h]=contour(ZLL,YLL,dum_p,'LevelStep',0.1);
+% %     set(h,'LineColor','black','LineWidth',1)
+% %     %----------------------------------------------------------------------
+% %     colorbar; colormap(h1,BWR);
+% %     hcb=colorbar; hcb.Location = 'eastoutside';
+% %     hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+% %     caxis([-1.0 1.0]); % lange_all
+% %     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+% %     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+% %     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+% %     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+% %     zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
+% %     xlim([zll(1 ) zll(end )]);
+% %     ylim([yll(1 + Dy) yll(end - Dy)]);
+% %     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
+% %     lgnd=legend([h1],'$\frac{B_{y}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+% %     %set(lgnd,'color','none');
+% %     hold off
+% %     %----------------------------------------------------------------------
+% %     %----------------------------------------------------------------------
+% %     h2=subplot(3,1,2);
+% %     dum_p2=Bz/B0;
+% %     %dum_p2=Bz/max(max(abs(Bz)));
+% %     lim_yp2=max(max(max(abs(dum_p2))));
+% %     %dum_p2=dum_p2/lim_yp2;
+% %     hc=pcolor(ZLL,YLL,dum_p2);
+% %     set(hc,'edgecolor','none')
+% %     hold on
+% %     %----------------------------------------------------------------------
+% %     dum_p=Ax_y;
+% %     lim_yp=max(max(max(abs(dum_p))));
+% %     dum_p=dum_p/lim_yp;
+% %     [C,h]=contour(ZLL,YLL,dum_p,'LevelStep',0.1);
+% %     set(h,'LineColor','black','LineWidth',1)
+% %     %----------------------------------------------------------------------
+% %     colorbar; colormap(h2,BWR);
+% %     hcb=colorbar; hcb.Location = 'eastoutside';
+% %     hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+% %     caxis([-1.0 1.0]); % lange_all
+% %     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+% %     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+% %     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+% %     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+% %     zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
+% %     xlim([zll(1 ) zll(end )]);
+% %     ylim([yll(1 + Dy) yll(end - Dy)]);
+% %     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
+% %     lgnd=legend([h2],'$\frac{B_{z}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+% %     %set(lgnd,'color','none');
+% %     hold off
+% %     %----------------------------------------------------------------------
+% %     %----------------------------------------------------------------------
+% %     h3=subplot(3,1,3);
+% %     %f1=figure(1)
+% %     %h3=subplot(1,1,1);
+% %     dum_p2=Jx/J0;
+% %     %dum_p2=Jx/max(max(abs(Jx)));
+% %     lim_yp2=max(max(max(abs(dum_p2))));
+% %     %dum_p2=dum_p2/lim_yp2;
+% %     hc=pcolor(ZLL,YLL,dum_p2);
+% %     set(hc,'edgecolor','none')
+% %     hold on
+% %     %----------------------------------------------------------------------
+% %     dum_p=Ax_y;
+% %     lim_yp=max(max(max(abs(dum_p))));
+% %     dum_p=dum_p/lim_yp;
+% %     [C,h]=contour(ZLL,YLL,dum_p,'LevelStep',0.1);
+% %     set(h,'LineColor','black','LineWidth',1)
+% %     %----------------------------------------------------------------------
+% %     colorbar; colormap(h3,BWR);
+% %     hcb=colorbar; hcb.Location = 'eastoutside';
+% %     hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+% %     caxis([-1.0 1.0]); % lange_all
+% %     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+% %     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+% %     ax.YLabel.String = '$y / d_{i}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
+% %     ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
+% % 
+% %     zlen=length(zll); Dz=floor(aa*zlen); ylen=length(yll); Dy=floor(aa*ylen);
+% %     xlim([zll(1 ) zll(end )]);
+% %     ylim([yll(1 + Dy) yll(end - Dy)]);
+% % 
+% %     %length_yl=yll(end) - yll(1); ylim([-length_yl/4 length_yl/4]);
+% %     lgnd=legend([h3],'$\frac{J_{x}}{J_{0}} $','Interpreter','latex','FontSize',1.3*fs);
+% %     %set(lgnd,'color','none');
+% %     %rectangle('Position',[-10 10 20 20],'EdgeColor','b','LineWidth',2)
+% %     %rectangle('Position',[-10 -5 20 5],'EdgeColor','r','LineWidth',2)
+% %     hold off
+% %     %----------------------------------------------------------------------
+% %     sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+% %     %----------------------------------------------------------------------
+    % % 
+    % % %----------------------------------------------------------------------
+    % % 
+    % % %----------------------------------------------------------------------
+    % % cd(path_rec_line_ByBzJx_zoom)
+    % % saveas(f57,strcat(num2str(time_t),'ByBzJx_zoom.png'));
+    % % close(f57);
+    % % delete(f57);
+    % % %----------------------------------------------------------------------
     cd(path)
     By_y0_i(:,jn) = By(length(yll)/2,:); %For the stack plots I'm taking the y=0 so it doesnt consider the oscillation 
-    Bx_y0_i(:,jn) = Bx(length(yll)/2,:);
-    Bz_y0_i(:,jn) = Bz(length(yll)/2,:);
-
+    %Bx_y0_i(:,jn) = Bx(length(yll)/2,:);
+    %Bz_y0_i(:,jn) = Bz(length(yll)/2,:);
 
     % This block is to make plotss that better show the initial
     % fluctuations and their effect
@@ -672,25 +690,25 @@ for jn=1:N
 
 end
 
-%Exfin=Ex;
-
-%Bz0=Bz;
-f21=figure(21)
-%plot(yll,Ex(:,512),'b')
-%hold on
-plot(yll,Ex(:,1024),'k')
-%hold off
-
-f3=figure(3)
-plot(yll,Bz0(:,512),'b')
-hold on
-plot(yll,Bz0(:,1024),'k')
-plot(yll,Bz(:,512),'--b')
-plot(yll,Bz(:,1024),'--k')
-xline(-4,'--')
-xline(4,'--')
-hold off
-%}
+% % %Exfin=Ex;
+% % 
+% % %Bz0=Bz;
+% % f21=figure(21)
+% % %plot(yll,Ex(:,512),'b')
+% % %hold on
+% % contourf(By_y0_i')
+% % %hold off
+% % 
+% % f3=figure(3)
+% % plot(yll,Bz0(:,512),'b')
+% % hold on
+% % plot(yll,Bz0(:,1024),'k')
+% % plot(yll,Bz(:,512),'--b')
+% % plot(yll,Bz(:,1024),'--k')
+% % xline(-4,'--')
+% % xline(4,'--')
+% % hold off
+% % %}
 % % %--------------------------------------------------------------------------
 % % %--------------------------------------------------------------------------
 % %
@@ -705,6 +723,8 @@ hold off
 %%Error in plots_in_time (line 450) <------ here I go, I need to resolve
 %%this
 %%caxis([-lim_yp,lim_yp])
+
+
 
 
 %making the stack plot By
@@ -724,16 +744,20 @@ set(hc,'edgecolor','none')
 %colorbar; colormap(h1,flipud(turbo))
 colorbar; colormap(h1,BWR)
 lim_yp=0.7*max(max(max(abs(dum_p))));
-caxis([-lim_yp,lim_yp]);
+%caxis([-lim_yp,lim_yp]);
+caxis([-1.5,1.5]);
 hcb=colorbar; hcb.Location = 'eastoutside';
 hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
 ax.FontSize=fs;
 ax.YLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Position = [-0.6, 5];
 ax.XLabel.String = '$z / d_{i}$'; %ax.XTick = zticks_mine; %ax.XLabel.Position = [5.1, -0.6];
-xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+%xlim([zll(1) zll(end)]); ylim([time_t_2_Omega(1) time_t_2_Omega(end)]);
+xlim([zll(1) zll(end)]); ylim([0 300]);
 lgnd=legend([h1],'$\frac{B_{y}}{B_{0}} $','Interpreter','latex','FontSize',1.3*fs);
 hold off
+
+saveas(f35,strcat(num2str(time_t),'By_stack_long_cont.png'));
 
 %making the stack plot Bx
 %--------------------------------------------------------------------------

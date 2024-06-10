@@ -1,14 +1,25 @@
+
+%/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_3D_yz_lange_Ax_lambda
+
 %--------------------------------------------------------------------------
-path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
+%path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
 path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
 path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
 %--------------------------------------------------------------------------
 
 %path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L1di';
-path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L1di';
-%path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L1di';
+%path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L1di';
+path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L1di';
 
 %path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L4di_lange_local/';
+
+%path_1 = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/psc_Ex_injection';
+%path_1 = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/psc_harris_yz_Ax_L5di_lange_local_E';
+
+%path_1 = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/delete_test';
+%path_1 = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/test_delete';
+
+%path_1 = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/checking_in_laptop_anomalous/psc_harris_yz_Ax_L5di_lange_local_E';
 
 %Maybe I can reduce the
 
@@ -99,39 +110,43 @@ ss=size(B);
 LYs=ss(2);
 LZs=ss(3);
 clearvars B
-N_jn=N; %This is to store some but not all the time steps
+N_jn=N-1; %This is to store some but not all the time steps
 %--------------------------------------------------------------------------
 
 j_a_b = N_jn;
 
 %--------------------------------------------------------------------------
-    E_x_1Dy = zeros(LYs,N_jn);
-    E_y_1Dy = zeros(LYs,N_jn);
-    E_z_1Dy = zeros(LYs,N_jn);
+E_x_1Dy = zeros(LYs,N_jn);
+E_y_1Dy = zeros(LYs,N_jn);
+E_z_1Dy = zeros(LYs,N_jn);
 
-    B_x_1Dy = zeros(LYs,N_jn);
-    B_y_1Dy = zeros(LYs,N_jn);
-    B_z_1Dy = zeros(LYs,N_jn);
+B_x_1Dy = zeros(LYs,N_jn);
+B_y_1Dy = zeros(LYs,N_jn);
+B_z_1Dy = zeros(LYs,N_jn);
 
-    J_x_1Dy = zeros(LYs,N_jn);
-    J_y_1Dy = zeros(LYs,N_jn);
-    J_z_1Dy = zeros(LYs,N_jn);
+J_x_1Dy = zeros(LYs,N_jn);
+J_y_1Dy = zeros(LYs,N_jn);
+J_z_1Dy = zeros(LYs,N_jn);
 
-    v_ix_1Dy = zeros(LYs,N_jn);
-    v_iy_1Dy = zeros(LYs,N_jn);
-    v_iz_1Dy = zeros(LYs,N_jn);
+v_ix_1Dy = zeros(LYs,N_jn);
+v_iy_1Dy = zeros(LYs,N_jn);
+v_iz_1Dy = zeros(LYs,N_jn);
 
-    v_ex_1Dy = zeros(LYs,N_jn);
-    v_ey_1Dy = zeros(LYs,N_jn);
-    v_ez_1Dy = zeros(LYs,N_jn);
+v_ex_1Dy = zeros(LYs,N_jn);
+v_ey_1Dy = zeros(LYs,N_jn);
+v_ez_1Dy = zeros(LYs,N_jn);
 
-    n_i_1Dy = zeros(LYs,N_jn);
-    n_e_1Dy = zeros(LYs,N_jn);
-    
-    time_t_2 = zeros(1,N_jn);
+n_i_1Dy = zeros(LYs,N_jn);
+n_e_1Dy = zeros(LYs,N_jn);
+
+time_t_2 = zeros(1,N_jn);
+
+
+
 %--------------------------------------------------------------------------
-
-for jn=1:N
+jn=N-1;
+jn=3
+for jn=2:N
     %----------------------------------------------------------------------
     % for the fields
     %jn=N;
@@ -161,9 +176,9 @@ for jn=1:N
     Lx=grid_length(4).Value(1);% - grid_length(3).Value(1);
     Ly=grid_length(4).Value(2);% - grid_length(3).Value(2);
     Lz=grid_length(4).Value(3);% - grid_length(3).Value(3);
-    resx=double(Lx)/double(dx);
-    resy=double(Ly)/double(dy);
-    resz=double(Lz)/double(dz); res=resy;
+    resx=2*double(Lx)/double(dx);
+    resy=2*double(Ly)/double(dy);
+    resz=2*double(Lz)/double(dz); res=resy;
     threshold=pi/resy;
     %----------------------------------------------------------------------
 
@@ -177,13 +192,33 @@ for jn=1:N
     %----------------------------------------------------------------------
 
     %----------------------------------------------------------------------
+    step_sep = 50 ; % can I get this from a file? This reuqerieres to read from the slurm output file.
+    mime=25;
+    ome_pi = 0.2;
+    ome_pe = 1;
+    Ome_ci = 0.008;
+    Ome_ce = 0.2;
+    beta_0 = 0.2;
+    de=1;
+    rho_e = sqrt(beta_0)*de;
+
+    ome_sam = 1/(step_sep * dt);    
+    ome_lh = sqrt(Ome_ci * Ome_ce);
+    k_max = pi / resx;
+    k_rhoe =2*pi / rho_e;
+    kmax_2_krhoe = k_max / k_rhoe;
+    ome_sam2_2_ome_lh = ome_sam / ome_lh;
+
+    %----------------------------------------------------------------------
+
+    %----------------------------------------------------------------------
     disp(strcat('Computing step ...',S2(jjn).name))
     fileID2 =  S2(jjn).name; %change the 1 per i
     %h5disp(fileID2);
     info2 = h5info(fileID2);
     moments_1st = info2.Groups(1).Name;
     %----------------------------------------------------------------------
-
+    
     %----------------------------------------------------------------------
     B{1,1}=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
     B{1,2}=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'));
@@ -193,17 +228,15 @@ for jn=1:N
     E{1,2}=h5read(fileID,strcat(EHJ_1st,'/ey_ec/p0/3d'));
     E{1,3}=h5read(fileID,strcat(EHJ_1st,'/ez_ec/p0/3d'));
 
-    n_e_up{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_e_UP/p0/3d'));
-    n_i_up{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_i_UP/p0/3d'));
-    n_e_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_e_BA/p0/3d'));
-    n_i_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_i_BA/p0/3d'));
-    n_e_up{1,1}=-1.*n_e_up{1,1};
-    n_e_ba{1,1}=-1.*n_e_ba{1,1};
-
     % This needs to be changed including the background
     J_up{1,1}=h5read(fileID2,strcat(moments_1st,'/jx_e_UP/p0/3d'));
     J_up{1,2}=h5read(fileID2,strcat(moments_1st,'/jy_e_UP/p0/3d'));
     J_up{1,3}=h5read(fileID2,strcat(moments_1st,'/jz_e_UP/p0/3d'));
+
+    % J{1,1}=J_up{1,1};
+    % J{1,2}=J_up{1,2};
+    % J{1,3}=J_up{1,3};
+    
     J_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/jx_e_BA/p0/3d'));
     J_ba{1,2}=h5read(fileID2,strcat(moments_1st,'/jy_e_BA/p0/3d'));
     J_ba{1,3}=h5read(fileID2,strcat(moments_1st,'/jz_e_BA/p0/3d'));
@@ -212,7 +245,156 @@ for jn=1:N
     J{1,2}=(J_up{1,2}+J_ba{1,2})./1;
     J{1,3}=(J_up{1,3}+J_ba{1,3})./1;
     %clearvars J_ba J_up
+
+
+    n_e_up{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_e_UP/p0/3d'));
+    n_i_up{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_i_UP/p0/3d'));
+    n_e_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_e_BA/p0/3d'));
+    n_i_ba{1,1}=h5read(fileID2,strcat(moments_1st,'/rho_i_BA/p0/3d'));
+    %n_e_up{1,1}=-1.*n_e_up{1,1};
+    n_e_up{1,1}=-1.*(n_e_up{1,1} + n_e_ba{1,1});
+
     %----------------------------------------------------------------------
+
+    %--------------------------------------------------------------------------
+    cd(path_s2)
+    fs=18;
+    x0=45;y0=54;xx1=810;yy1=710;
+
+    n1=mean(abs(n_e_up{1,1}),'all');
+    %E1=mean(abs(E{1,1}),'all');
+    E1=mean( abs( sqrt((E{1,3}).^2 + (E{1,3}).^2 + (E{1,3}).^2 ) ),'all');
+    B1=mean( abs( sqrt((B{1,3}).^2 + (B{1,3}).^2 + (B{1,3}).^2 ) ),'all');
+
+    %n1=1;
+    
+    dump=n_e_up{1,1};
+    dum_p=mean((dump),3);
+    dump2=E{1,1};
+    dum_p2=mean((dump2),3);
+    dump3=B{1,3};
+    dum_p3=mean((dump3),3);
+    dump4=E{1,2};
+    dum_p4=mean((dump2),3);
+
+    a = length(dum_p(1,:))/2;
+
+    % this is to see the 1D cuts of the components of ne, Ex, Bz, Ey
+    for a=1:length(dum_p(1,:))
+        f20=figure(20)
+        dum_pp = dum_p-mean(dum_p,'all');
+        plot(dum_pp(:,a)/max(dum_pp(:,a)), 'b','LineWidth',3)
+        hold on
+        dum_p2p = dum_p2-mean(dum_p2,'all');
+        plot(dum_p2p(:,a)/max(dum_p2p(:,a)), 'k','LineWidth',3)
+        dum_p3p = dum_p3-mean(dum_p3,'all');
+        plot(dum_p3p(:,a)/max(dum_p3p(:,a)), 'r','LineWidth',3)
+        dum_p4p = dum_p4-mean(dum_p4,'all');
+        plot(dum_p4p(:,a)/max(dum_p4p(:,a)), '--c','LineWidth',3)
+        legend('(ne-1)/max','Ex/max','Bz/max','Ey/max')
+        xlabel('x')
+        %ylim([-1,1])
+        hold off
+        pause(0.5)
+
+        f21=figure(21)
+        dum_pp = dum_p-mean(dum_p,'all');
+        plot((dum_pp(:,a))/n1, 'b','LineWidth',3)
+        hold on
+        dum_p2p = dum_p2-mean(dum_p2,'all');
+        plot(dum_p2p(:,a)/E1, 'k','LineWidth',3)
+        dum_p3p = dum_p3-mean(dum_p3,'all');
+        plot((dum_p3p(:,a))/0.2, 'r','LineWidth',3)
+        dum_p4p = dum_p4-mean(dum_p4,'all');
+        plot((dum_p4p(:,a))/E1, '--c','LineWidth',3)
+        legend('(ne-1)/mean(||)','Ex/mean(||)','Bz/mean(||)','Ey/mean(||)')
+        %legend('(ne-1)/mean(|ne|)','Bz/mean(|B|)')
+        xlabel('x')
+        %ylim([-0.04, 0.04])
+        hold off
+        pause(0.5)
+
+
+        %dBz_dEx = mean(abs( dum_p3(:,a) ) ) / mean (abs ( dum_p2(:,a) ) )
+
+        % dne_mean = mean(abs ( dum_p(:,:) ),'all' )
+        % dEx_mean = mean(abs ( dum_p2(:,:) ),'all' )
+        % dBz_mean = mean(abs ( dum_p3(:,:) ),'all' )
+        % 
+        % dBz_dEx2 = dBz_mean./dEx_mean
+
+    end
+
+    % % 
+    % % %dn/n << dBz/B0 for the case with no guide field along z.
+    % % % This is not consistent woth the lower hybrid waves escenario
+    % % 
+    % % %mean(|dB|)/mean(|dE|)>1, this is consistent with the LH waves
+    % % %properties
+    % % 
+    % % %With the second run changing the geometry and keeping the same number of
+    % % %particles.
+    % % 
+    % % cd(path_1)
+    % % saveas(f20,strcat(num2str(time_t),'del_n_Exy_Bz_max.png'));
+    % % saveas(f21,strcat(num2str(time_t),'del_n_Exy_Bz_mean.png'));
+
+%--------------------------------------------------------------------------
+
+
+    f23=figure(23)
+    set(gcf,'position',[x0,y0,xx1,yy1])
+    h1=subplot(1,2,1);
+    hc = pcolor(dum_p2');
+    hold on
+    set(hc,'edgecolor','none')
+    colorbar; colormap(h1,BWR)
+    lim_yp=1.0*max(max(max(abs(dum_p2)))); caxis([-lim_yp,lim_yp]);
+    hcb=colorbar; hcb.Location = 'eastoutside';
+    hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs;
+    title('Ex')
+    hold off
+    h2=subplot(1,2,2);
+    hc = pcolor(dum_p');
+    hold on
+    set(hc,'edgecolor','none')
+    colorbar; colormap(h2,BWR)
+    lim_yp=1.0*max(max(max(abs(dum_p)))); caxis([-lim_yp,lim_yp]);
+    hcb=colorbar; hcb.Location = 'eastoutside';
+    hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs;
+    title('n-1')
+    hold off
+    pause(0.5)
+
+    % cd(path_s2)
+    % f23=figure(23)
+    % set(gcf,'position',[x0,y0,xx1,yy1])
+    % h1=subplot(1,1,1);
+    % dumst = J{1,1};
+    % dumst =squeeze(dumst(1,:,:));
+    % hc = pcolor(dumst);
+    % hold on
+    % set(hc,'edgecolor','none')
+    % colorbar; colormap(h1,BWR)
+    % lim_yp=1.0*max(max(max(abs(dumst)))); caxis([-lim_yp,lim_yp]);
+    % hcb=colorbar; hcb.Location = 'eastoutside';
+    % hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+    % ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    % ax.FontSize=fs;
+    % title('Jx')
+    % hold off
+
+
+    cd(path)
+
+
+
+end
+%--------------------------------------------------------------------------
 
     ssz=size(B{1,1});
     sli_x = 1; %floor(4+ssz(1)/2);%1;
@@ -348,39 +530,66 @@ for jn=1:N
     % n_e_1Dy(:,jn) = squeeze(n_e(:,sli_z));
 
 
-    %dum_1=v_e{1,1}; dum_1=squeeze(dum_1(sli_x,:,:));
-    %dum_1_av = mean(dum_1,2);
-    % Now let's get the 1D profiles taking the average
+    % %dum_1=v_e{1,1}; dum_1=squeeze(dum_1(sli_x,:,:));
+    % %dum_1_av = mean(dum_1,2);
+    % % Now let's get the 1D profiles taking the average
+    % %----------------------------------------------------------------------
+    % E_x_1Dy(:,jn) = mean(Ex,2);
+    % E_y_1Dy(:,jn) = mean(Ey,2);
+    % E_z_1Dy(:,jn) = mean(Ez,2);
+    % 
+    % B_x_1Dy(:,jn) = mean(Bx,2);
+    % B_y_1Dy(:,jn) = mean(By,2);
+    % B_z_1Dy(:,jn) = mean(Bz,2);
+    % 
+    % J_x_1Dy(:,jn) = mean(Jx,2);
+    % J_y_1Dy(:,jn) = mean(Jy,2);
+    % J_z_1Dy(:,jn) = mean(Jz,2);
+    % 
+    % v_ix_1Dy(:,jn) = mean(v_ix,2);
+    % v_iy_1Dy(:,jn) = mean(v_iy,2);
+    % v_iz_1Dy(:,jn) = mean(v_iz,2);
+    % 
+    % v_ex_1Dy(:,jn) = mean(v_ex,2);
+    % v_ey_1Dy(:,jn) = mean(v_ey,2);
+    % v_ez_1Dy(:,jn) = mean(v_ez,2);
+    % 
+    % n_i_1Dy(:,jn) = mean(n_i,2);
+    % n_e_1Dy(:,jn) = mean(n_e,2);
     %----------------------------------------------------------------------
-    E_x_1Dy(:,jn) = mean(Ex,2);
-    E_y_1Dy(:,jn) = mean(Ey,2);
-    E_z_1Dy(:,jn) = mean(Ez,2);
 
-    B_x_1Dy(:,jn) = mean(Bx,2);
-    B_y_1Dy(:,jn) = mean(By,2);
-    B_z_1Dy(:,jn) = mean(Bz,2);
+    % averaging the absolute values
+    %----------------------------------------------------------------------
+    E_x_1Dy(:,jn) = mean(abs(Ex),2);
+    E_y_1Dy(:,jn) = mean(abs(Ey),2);
+    E_z_1Dy(:,jn) = mean(abs(Ez),2);
 
-    J_x_1Dy(:,jn) = mean(Jx,2);
-    J_y_1Dy(:,jn) = mean(Jy,2);
-    J_z_1Dy(:,jn) = mean(Jz,2);
+    B_x_1Dy(:,jn) = mean(abs(Bx),2);
+    B_y_1Dy(:,jn) = mean(abs(By),2);
+    B_z_1Dy(:,jn) = mean(abs(Bz),2);
 
-    v_ix_1Dy(:,jn) = mean(v_ix,2);
-    v_iy_1Dy(:,jn) = mean(v_iy,2);
-    v_iz_1Dy(:,jn) = mean(v_iz,2);
+    J_x_1Dy(:,jn) = mean(abs(Jx),2);
+    J_y_1Dy(:,jn) = mean(abs(Jy),2);
+    J_z_1Dy(:,jn) = mean(abs(Jz),2);
 
-    v_ex_1Dy(:,jn) = mean(v_ex,2);
-    v_ey_1Dy(:,jn) = mean(v_ey,2);
-    v_ez_1Dy(:,jn) = mean(v_ez,2);
+    v_ix_1Dy(:,jn) = mean(abs(v_ix),2);
+    v_iy_1Dy(:,jn) = mean(abs(v_iy),2);
+    v_iz_1Dy(:,jn) = mean(abs(v_iz),2);
 
-    n_i_1Dy(:,jn) = mean(n_i,2);
-    n_e_1Dy(:,jn) = mean(n_e,2);
+    v_ex_1Dy(:,jn) = mean(abs(v_ex),2);
+    v_ey_1Dy(:,jn) = mean(abs(v_ey),2);
+    v_ez_1Dy(:,jn) = mean(abs(v_ez),2);
 
+    n_i_1Dy(:,jn) = mean(abs(n_i),2);
+    n_e_1Dy(:,jn) = mean(abs(n_e),2);
+    
     clearvars Ex Ey Ez...
         Bx By Bz...
         Jx Jy Jz...
         v_ix    v_iy   v_iz...
         v_ex   v_ey    v_ez...
         n_i     n_e
+    %----------------------------------------------------------------------
 
 end
 
@@ -821,7 +1030,7 @@ ylim([yll(1) yll(end)]); xlim([time_t_2_Omega(1) time_t_2_Omega(end)]);
 lgnd=legend([h1],'$\frac{\Delta E_{z}}{E_{0}} $','Interpreter','latex','FontSize',1.3*fs);
 hold off
 %--------------------------------------------------------------------------
-f361=figure(361)
+f361=figure(361);
 set(gcf,'position',[x0,y0,xx1,yy1])
 h1=subplot(1,3,1);
 dum_p=B_x_1Dy_d/B0;
@@ -1071,7 +1280,6 @@ hold off
 %--------------------------------------------------------------------------
 
 
-
 % checking the onset
 %--------------------------------------------------------------------------
 f43=figure(43)
@@ -1088,7 +1296,7 @@ ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Posit
 legend('$E_{x}$','$\Delta n_{e}$','$v_{ey}$','$v_{ez}$','Interpreter','latex','FontSize',1.3*fs);
 hold off
 cd(path_1)
-saveas(f43,strcat(num2str(time_t),'Ex_deln_vy_vz.png'));
+saveas(f43,strcat(num2str(time_t),'Ex_deln_vy_vz_abs.png'));
 %--------------------------------------------------------------------------
 
 
@@ -1123,6 +1331,7 @@ ax.XLabel.String = '$t / \Omega_{e}$'; %ax.YTick = yticks_mine; %ax.YLabel.Posit
 legend('$v_{ey} - \langle v_{ey} \rangle$','$B_{y} - \langle B_{y} \rangle$','Interpreter','latex','FontSize',1.3*fs);
 hold off
 %--------------------------------------------------------------------------
+
 
 %Waves at a single time and in y direction
 %--------------------------------------------------------------------------
@@ -1169,7 +1378,7 @@ hold off
 
 
 
-% It is importnat to compute over the delta of the quantity
+% It is important to compute over the delta of the quantity
 %Time domain
 %--------------------------------------------------------------------------
 L=length(time_t_2_Omega);
@@ -1255,20 +1464,20 @@ saveas(f43,strcat(num2str(time_t),'waves_vey.png'));
 % Saving plots.
 %--------------------------------------------------------------------------
 cd(path_1)
-saveas(f35,strcat(num2str(time_t),'E_stack_long_cont_av.png'));
-saveas(f36,strcat(num2str(time_t),'B_stack_long_cont_av.png'));
-saveas(f37,strcat(num2str(time_t),'vi_stack_long_cont_av.png'));
-saveas(f38,strcat(num2str(time_t),'ve_stack_long_cont_av.png'));
-saveas(f39,strcat(num2str(time_t),'n_stack_long_cont_av.png'));
-saveas(f40,strcat(num2str(time_t),'J_stack_long_cont_av.png'));
+saveas(f35,strcat(num2str(time_t),'E_stack_long_cont_av_abs.png'));
+saveas(f36,strcat(num2str(time_t),'B_stack_long_cont_av_abs.png'));
+saveas(f37,strcat(num2str(time_t),'vi_stack_long_cont_av_abs.png'));
+saveas(f38,strcat(num2str(time_t),'ve_stack_long_cont_av_abs.png'));
+saveas(f39,strcat(num2str(time_t),'n_stack_long_cont_av_abs.png'));
+saveas(f40,strcat(num2str(time_t),'J_stack_long_cont_av_abs.png'));
 
-saveas(f351,strcat(num2str(time_t),'del_E_stack_long_cont_av.png'));
-saveas(f361,strcat(num2str(time_t),'del_B_stack_long_cont_av.png'));
-saveas(f371,strcat(num2str(time_t),'del_vi_stack_long_cont_av.png'));
-saveas(f381,strcat(num2str(time_t),'del_ve_stack_long_cont_av.png'));
-saveas(f391,strcat(num2str(time_t),'del_n_stack_long_cont_av.png'));
-saveas(f401,strcat(num2str(time_t),'del_J_stack_long_cont_av.png'));
-
+saveas(f351,strcat(num2str(time_t),'del_E_stack_long_cont_av_abs.png'));
+saveas(f361,strcat(num2str(time_t),'del_B_stack_long_cont_av_abs.png'));
+saveas(f371,strcat(num2str(time_t),'del_vi_stack_long_cont_av_abs.png'));
+saveas(f381,strcat(num2str(time_t),'del_ve_stack_long_cont_av_abs.png'));
+saveas(f391,strcat(num2str(time_t),'del_n_stack_long_cont_av_abs.png'));
+saveas(f401,strcat(num2str(time_t),'del_J_stack_long_cont_av_abs.png'));
+%--------------------------------------------------------------------------
 
 
 
@@ -1309,6 +1518,8 @@ ax.XLabel.String = '$\omega / \Omega_{ce}$';
 ax.YLabel.String = '$|fft(E_{x})|$';
 title(strcat('$\omega_{m} /\Omega_{ce} =$',num2str(omegam)),'Interpreter','latex','FontSize',1.3*fs);
 %--------------------------------------------------------------------------
+
+
 
 %Space domain
 %--------------------------------------------------------------------------

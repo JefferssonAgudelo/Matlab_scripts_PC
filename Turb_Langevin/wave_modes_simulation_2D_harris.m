@@ -5,7 +5,8 @@
 % For the alfven modes and different times to extract the frequencies
 %--------------------------------------------------------------------------
 %path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_large';
-path = '/Users/jeffersson_agudelo/Downloads/plot_laptop/local_file';
+%path = '/Users/jeffersson_agudelo/Downloads/plot_laptop/local_file';
+path = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/psc_harris_yz_Ax_L5di_lange_local_E';
 %--------------------------------------------------------------------------
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
 path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
@@ -72,7 +73,7 @@ TOmega_i=1/Omega_i;
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
-out_sam_rate = 100;
+out_sam_rate = 50;
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -88,10 +89,9 @@ ss=size(B);
 LZs=ss(3);
 
 grid_size = [ss(2), ss(3), N]; % y,z,t
-
 var0 = zeros(grid_size);
-
 clearvars B
+
 %N=183;
 jn=N;
 in=jn;
@@ -99,8 +99,8 @@ N_jn=N; %This is to store some but not all the time steps
 
 time_t_2=zeros(1,N_jn);
 
-for ddt_i=1:100
-    dt_i=1;
+for dt_i=1:100
+    %dt_i=1;
     %----------------------------------------------------------------------
     disp(strcat('Computing step ...',S(dt_i).name))
     fileID =  S(dt_i).name; %change the 1 per i
@@ -118,14 +118,15 @@ for ddt_i=1:100
     Lx=grid_length(4).Value(1);% - grid_length(3).Value(1); % this is in di 
     Ly=grid_length(4).Value(2);% - grid_length(3).Value(2);
     Lz=grid_length(4).Value(3);% - grid_length(3).Value(3);
-    resx=double(Lx)/double(dx);
-    resy=double(Ly)/double(dy);
-    resz=double(Lz)/double(dz); res=resy;
+    resx=2*double(Lx)/double(dx);
+    resy=2*double(Ly)/double(dy);
+    resz=2*double(Lz)/double(dz); res=resy;
     threshold=pi/resy;
     %----------------------------------------------------------------------
     %var=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'));
-     var=h5read(fileID,strcat(EHJ_1st,'/ez_ec/p0/3d')); 
-     var0(:,:,ddt_i) = squeeze(var(1,:,:))*sin(2*pi*rand(1));   
+     var=h5read(fileID,strcat(EHJ_1st,'/ex_ec/p0/3d')); 
+     var0(:,:,dt_i) = squeeze(var(1,:,:));
+     %var0(:,:,dt_i) = squeeze(var(1,:,:))*sin(2*pi*rand(1));   
 
     %----------------------------------------------------------------------
 end

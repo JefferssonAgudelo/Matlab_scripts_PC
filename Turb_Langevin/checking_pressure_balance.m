@@ -6,7 +6,8 @@
 %path_1 = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/psc_harris_yz_base_2_alone_large';
 %path_1 = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/psc_harris_yz_base_2_alone_large2';
 
-%path_1 = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';
+path_1 = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_base_2_alone_large';
+
 
 %path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_many_Ax_large_L8di_dB01_Omc1_kLd1_local_3';
 
@@ -17,12 +18,17 @@
 %path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L10di_lange_local/';
 
 %path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_Tba_perpar_short_L1di';
-%path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L1di';
+path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_short_L1di';
 %path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L1di';
 
-path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L4di_lange_local/';
+%%path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_base_many_Ax_large_L4di_lange_local/';
+
+%path_1 = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_Ax_L5di_lange_local_E';
+%path_1 = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/checking_prt_tag';
 
 %Maybe I can reduce the
+
+sigma_g=3;
 
 %--------------------------------------------------------------------------
 path=path_1;
@@ -131,10 +137,10 @@ n_e_ve_in = cell(3,j_a_b);
 n_v_in = cell(3,j_a_b);
 %--------------------------------------------------------------------------
 
-for jn=1:N
+for jn=1:1
     %----------------------------------------------------------------------
     % for the fields
-    %jn=N;
+    %jn=2;
     in=jn;
     jjn=jn;
 
@@ -158,9 +164,9 @@ for jn=1:N
     dy=grid_ng(10).Value(2);
     dz=grid_ng(10).Value(3);
     grid_length = info.Groups(17).Attributes;
-    Lx=grid_length(4).Value(1);% - grid_length(3).Value(1);
-    Ly=grid_length(4).Value(2);% - grid_length(3).Value(2);
-    Lz=grid_length(4).Value(3);% - grid_length(3).Value(3);
+    Lx=grid_length(4).Value(1) - grid_length(3).Value(1);
+    Ly=grid_length(4).Value(2) - grid_length(3).Value(2);
+    Lz=grid_length(4).Value(3) - grid_length(3).Value(3);
     resx=double(Lx)/double(dx);
     resy=double(Ly)/double(dy);
     resz=double(Lz)/double(dz); res=resy;
@@ -243,13 +249,13 @@ for jn=1:N
     p_i_ba{1,2}=h5read(fileID2,strcat(moments_1st,'/py_i_BA/p0/3d'));
     p_i_ba{1,3}=h5read(fileID2,strcat(moments_1st,'/pz_i_BA/p0/3d'));
 
-    p_e{1,1}=(p_e_up{1,1}+p_e_ba{1,1})./1;
-    p_e{1,2}=(p_e_up{1,2}+p_e_ba{1,2})./1;
-    p_e{1,3}=(p_e_up{1,3}+p_e_ba{1,3})./1;
+    p_e{1,1}=(p_e_up{1,1}+p_e_ba{1,1})./VA2c;
+    p_e{1,2}=(p_e_up{1,2}+p_e_ba{1,2})./VA2c;
+    p_e{1,3}=(p_e_up{1,3}+p_e_ba{1,3})./VA2c;
 
-    p_i{1,1}=(p_i_up{1,1}+p_i_ba{1,1})./1;
-    p_i{1,2}=(p_i_up{1,2}+p_i_ba{1,2})./1;
-    p_i{1,3}=(p_i_up{1,3}+p_i_ba{1,3})./1;
+    p_i{1,1}=(p_i_up{1,1}+p_i_ba{1,1})./VA2c;
+    p_i{1,2}=(p_i_up{1,2}+p_i_ba{1,2})./VA2c;
+    p_i{1,3}=(p_i_up{1,3}+p_i_ba{1,3})./VA2c;
 
     %clearvars p_i_up p_e_up p_i_ba p_e_ba
     %----------------------------------------------------------------------
@@ -263,13 +269,22 @@ for jn=1:N
     v_e_up=cell(1,3);
     v_i_up=cell(1,3);
 
+    % for i=1:3
+    %     v_e{1,i} = p_e{1,i} * c ./ sqrt(c^2 * me^2 + p_e{1,i}.^2);
+    %     v_i{1,i} = p_i{1,i} * c ./ sqrt(c^2 * mi^2 + p_i{1,i}.^2);
+    %     v_e_up{1,i} = p_e_up{1,i} * c ./ sqrt(c^2 * me^2 + p_e_up{1,i}.^2);
+    %     v_i_up{1,i} = p_i_up{1,i} * c ./ sqrt(c^2 * mi^2 + p_i_up{1,i}.^2);
+    %     v_e_ba{1,i} = p_e_ba{1,i} * c ./ sqrt(c^2 * me^2 + p_e_ba{1,i}.^2);
+    %     v_i_ba{1,i} = p_i_ba{1,i} * c ./ sqrt(c^2 * mi^2 + p_i_ba{1,i}.^2);
+    % end
+
     for i=1:3
-        v_e{1,i} = p_e{1,i} * c ./ sqrt(c^2 * me^2 + p_e{1,i}.^2);
-        v_i{1,i} = p_i{1,i} * c ./ sqrt(c^2 * mi^2 + p_i{1,i}.^2);
-        v_e_up{1,i} = p_e_up{1,i} * c ./ sqrt(c^2 * me^2 + p_e_up{1,i}.^2);
-        v_i_up{1,i} = p_i_up{1,i} * c ./ sqrt(c^2 * mi^2 + p_i_up{1,i}.^2);
-        v_e_ba{1,i} = p_e_ba{1,i} * c ./ sqrt(c^2 * me^2 + p_e_ba{1,i}.^2);
-        v_i_ba{1,i} = p_i_ba{1,i} * c ./ sqrt(c^2 * mi^2 + p_i_ba{1,i}.^2);
+        v_e{1,i} = p_e{1,i} ;
+        v_i{1,i} = p_i{1,i} ;
+        v_e_up{1,i} = p_e_up{1,i} ;
+        v_i_up{1,i} = p_i_up{1,i} ;
+        v_e_ba{1,i} = p_e_ba{1,i} ;
+        v_i_ba{1,i} = p_i_ba{1,i} ;
     end
 
     %clearvars p_i p_e p_i_up p_e_up p_i_ba p_e_ba
@@ -396,10 +411,10 @@ for jn=1:N
             end
             % % PPij_i{i,j} = Pij_i{i,j} - n_i{1,1}.*mi.*v_i{1,i}.*v_i{1,j};
             % % PPij_e{i,j} = Pij_e{i,j} - n_e{1,1}.*me.*v_e{1,i}.*v_e{1,j};
-            PPij_i_ba{i,j} = Pij_i_ba{i,j} - n_i_ba{1,1}.*mi.*v_i_ba{1,i}.*v_i_ba{1,j};
-            PPij_e_ba{i,j} = Pij_e_ba{i,j} - n_e_ba{1,1}.*me.*v_e_ba{1,i}.*v_e_ba{1,j};
-            PPij_i_up{i,j} = Pij_i_up{i,j} - n_i_up{1,1}.*mi.*v_i_up{1,i}.*v_i_up{1,j};
-            PPij_e_up{i,j} = Pij_e_up{i,j} - n_e_up{1,1}.*me.*v_e_up{1,i}.*v_e_up{1,j};
+            PPij_i_ba{i,j} = Pij_i_ba{i,j} - 1.*n_i_ba{1,1}.*mi.*v_i_ba{1,i}.*v_i_ba{1,j}; %%is it a +??? 
+            PPij_e_ba{i,j} = Pij_e_ba{i,j} - 1.*n_e_ba{1,1}.*me.*v_e_ba{1,i}.*v_e_ba{1,j};
+            PPij_i_up{i,j} = Pij_i_up{i,j} - 1.*n_i_up{1,1}.*mi.*v_i_up{1,i}.*v_i_up{1,j};
+            PPij_e_up{i,j} = Pij_e_up{i,j} - 1.*n_e_up{1,1}.*me.*v_e_up{1,i}.*v_e_up{1,j};
         end
     end
 
@@ -427,29 +442,29 @@ for jn=1:N
     Pij_i_ba_xy =  Pij_i_ba{1,2}; Pij_i_ba_xy = squeeze(Pij_i_ba_xy(sli_x,:,:));
     Pij_i_ba_xz =  Pij_i_ba{1,3}; Pij_i_ba_xz = squeeze(Pij_i_ba_xz(sli_x,:,:));
     Pij_i_ba_yy =  Pij_i_ba{2,2}; Pij_i_ba_yy = squeeze(Pij_i_ba_yy(sli_x,:,:));
-    Pij_i_ba_yz =  Pij_i_ba{2,2}; Pij_i_ba_yz = squeeze(Pij_i_ba_yz(sli_x,:,:));    
-    Pij_i_ba_zz =  Pij_i_ba{2,2}; Pij_i_ba_zz = squeeze(Pij_i_ba_zz(sli_x,:,:));    
+    Pij_i_ba_yz =  Pij_i_ba{2,3}; Pij_i_ba_yz = squeeze(Pij_i_ba_yz(sli_x,:,:));    
+    Pij_i_ba_zz =  Pij_i_ba{3,3}; Pij_i_ba_zz = squeeze(Pij_i_ba_zz(sli_x,:,:));    
 
     Pij_i_up_xx =  Pij_i_up{1,1}; Pij_i_up_xx = squeeze(Pij_i_up_xx(sli_x,:,:));
     Pij_i_up_xy =  Pij_i_up{1,2}; Pij_i_up_xy = squeeze(Pij_i_up_xy(sli_x,:,:));
     Pij_i_up_xz =  Pij_i_up{1,3}; Pij_i_up_xz = squeeze(Pij_i_up_xz(sli_x,:,:));
     Pij_i_up_yy =  Pij_i_up{2,2}; Pij_i_up_yy = squeeze(Pij_i_up_yy(sli_x,:,:));
-    Pij_i_up_yz =  Pij_i_up{2,2}; Pij_i_up_yz = squeeze(Pij_i_up_yz(sli_x,:,:));    
-    Pij_i_up_zz =  Pij_i_up{2,2}; Pij_i_up_zz = squeeze(Pij_i_up_zz(sli_x,:,:));
+    Pij_i_up_yz =  Pij_i_up{2,3}; Pij_i_up_yz = squeeze(Pij_i_up_yz(sli_x,:,:));    
+    Pij_i_up_zz =  Pij_i_up{3,3}; Pij_i_up_zz = squeeze(Pij_i_up_zz(sli_x,:,:));
 
     Pij_e_ba_xx =  Pij_e_ba{1,1}; Pij_e_ba_xx = squeeze(Pij_e_ba_xx(sli_x,:,:));
     Pij_e_ba_xy =  Pij_e_ba{1,2}; Pij_e_ba_xy = squeeze(Pij_e_ba_xy(sli_x,:,:));
     Pij_e_ba_xz =  Pij_e_ba{1,3}; Pij_e_ba_xz = squeeze(Pij_e_ba_xz(sli_x,:,:));
     Pij_e_ba_yy =  Pij_e_ba{2,2}; Pij_e_ba_yy = squeeze(Pij_e_ba_yy(sli_x,:,:));
-    Pij_e_ba_yz =  Pij_e_ba{2,2}; Pij_e_ba_yz = squeeze(Pij_e_ba_yz(sli_x,:,:));    
-    Pij_e_ba_zz =  Pij_e_ba{2,2}; Pij_e_ba_zz = squeeze(Pij_e_ba_zz(sli_x,:,:));    
+    Pij_e_ba_yz =  Pij_e_ba{2,3}; Pij_e_ba_yz = squeeze(Pij_e_ba_yz(sli_x,:,:));    
+    Pij_e_ba_zz =  Pij_e_ba{3,3}; Pij_e_ba_zz = squeeze(Pij_e_ba_zz(sli_x,:,:));    
 
     Pij_e_up_xx =  Pij_e_up{1,1}; Pij_e_up_xx = squeeze(Pij_e_up_xx(sli_x,:,:));
     Pij_e_up_xy =  Pij_e_up{1,2}; Pij_e_up_xy = squeeze(Pij_e_up_xy(sli_x,:,:));
     Pij_e_up_xz =  Pij_e_up{1,3}; Pij_e_up_xz = squeeze(Pij_e_up_xz(sli_x,:,:));
     Pij_e_up_yy =  Pij_e_up{2,2}; Pij_e_up_yy = squeeze(Pij_e_up_yy(sli_x,:,:));
-    Pij_e_up_yz =  Pij_e_up{2,2}; Pij_e_up_yz = squeeze(Pij_e_up_yz(sli_x,:,:));    
-    Pij_e_up_zz =  Pij_e_up{2,2}; Pij_e_up_zz = squeeze(Pij_e_up_zz(sli_x,:,:));
+    Pij_e_up_yz =  Pij_e_up{2,3}; Pij_e_up_yz = squeeze(Pij_e_up_yz(sli_x,:,:));    
+    Pij_e_up_zz =  Pij_e_up{3,3}; Pij_e_up_zz = squeeze(Pij_e_up_zz(sli_x,:,:));
 
     %----------------------------------------------------------------------
 
@@ -630,63 +645,64 @@ for jn=1:N
     % Save the data for the time average
     %----------------------------------------------------------------------
     inn=jjn;
+   
 
-    E_in{1,inn} = Ex;
-    E_in{2,inn} = Ey;
-    E_in{3,inn} = Ez;
+    E_in{1,inn} = imgaussfilt(Ex ,sigma_g);
+    E_in{2,inn} = imgaussfilt(Ey ,sigma_g);
+    E_in{3,inn} = imgaussfilt(Ez ,sigma_g);
 
-    B_in{1,inn} = Bx;
-    B_in{2,inn} = By;
-    B_in{3,inn} = Bz;
+    B_in{1,inn} = imgaussfilt(Bx ,sigma_g);
+    B_in{2,inn} = imgaussfilt(By ,sigma_g);
+    B_in{3,inn} = imgaussfilt(Bz ,sigma_g);
+ 
+    J_in{1,inn} = imgaussfilt(Jx ,sigma_g);
+    J_in{2,inn} = imgaussfilt(Jy ,sigma_g);
+    J_in{3,inn} = imgaussfilt(Jz ,sigma_g);
 
-    J_in{1,inn} = Jx;
-    J_in{2,inn} = Jy;
-    J_in{3,inn} = Jz;
+    n_in{1,inn} = imgaussfilt(n_e ,sigma_g);
+    n_in{2,inn} = imgaussfilt(n_i ,sigma_g);
 
-    n_in{1,inn} = n_e;
-    n_in{2,inn} = n_i;
+    v_i_in{1,inn} = imgaussfilt(v_ix ,sigma_g);
+    v_i_in{2,inn} = imgaussfilt(v_iy ,sigma_g);
+    v_i_in{3,inn} = imgaussfilt(v_iz ,sigma_g);
 
-    v_i_in{1,inn} = v_ix;
-    v_i_in{2,inn} = v_iy;
-    v_i_in{3,inn} = v_iz;
+    v_e_in{1,inn} = imgaussfilt(v_ex ,sigma_g);
+    v_e_in{2,inn} = imgaussfilt(v_ey ,sigma_g);
+    v_e_in{3,inn} = imgaussfilt(v_ez ,sigma_g);
 
-    v_e_in{1,inn} = v_ex;
-    v_e_in{2,inn} = v_ey;
-    v_e_in{3,inn} = v_ez;
+    Pij_i_in{1,inn} = imgaussfilt(Pij_i_ba_xx + Pij_i_up_xx ,sigma_g);
+    Pij_i_in{2,inn} = imgaussfilt(Pij_i_ba_xy + Pij_i_up_xy ,sigma_g);
+    Pij_i_in{3,inn} = imgaussfilt(Pij_i_ba_xz + Pij_i_up_xz ,sigma_g);
+    Pij_i_in{4,inn} = imgaussfilt(Pij_i_ba_yy + Pij_i_up_yy ,sigma_g);
+    Pij_i_in{5,inn} = imgaussfilt(Pij_i_ba_yz + Pij_i_up_yz ,sigma_g);
+    Pij_i_in{6,inn} = imgaussfilt(Pij_i_ba_zz + Pij_i_up_zz ,sigma_g);
 
-    Pij_i_in{1,inn} = Pij_i_ba_xx + Pij_i_up_xx;
-    Pij_i_in{2,inn} = Pij_i_ba_xy + Pij_i_up_xy;
-    Pij_i_in{3,inn} = Pij_i_ba_xz + Pij_i_up_xz;
-    Pij_i_in{4,inn} = Pij_i_ba_yy + Pij_i_up_yy;
-    Pij_i_in{5,inn} = Pij_i_ba_yz + Pij_i_up_yz;
-    Pij_i_in{6,inn} = Pij_i_ba_zz + Pij_i_up_zz;
-
-    Pij_e_in{1,inn} = Pij_e_ba_xx + Pij_e_up_xx;
-    Pij_e_in{2,inn} = Pij_e_ba_xy + Pij_e_up_xy;
-    Pij_e_in{3,inn} = Pij_e_ba_xz + Pij_e_up_xz;
-    Pij_e_in{4,inn} = Pij_e_ba_yy + Pij_e_up_yy;
-    Pij_e_in{5,inn} = Pij_e_ba_yz + Pij_e_up_yz;
-    Pij_e_in{6,inn} = Pij_e_ba_zz + Pij_e_up_zz;
+    Pij_e_in{1,inn} = imgaussfilt(Pij_e_ba_xx + Pij_e_up_xx ,sigma_g);
+    Pij_e_in{2,inn} = imgaussfilt(Pij_e_ba_xy + Pij_e_up_xy ,sigma_g);
+    Pij_e_in{3,inn} = imgaussfilt(Pij_e_ba_xz + Pij_e_up_xz ,sigma_g);
+    Pij_e_in{4,inn} = imgaussfilt(Pij_e_ba_yy + Pij_e_up_yy ,sigma_g);
+    Pij_e_in{5,inn} = imgaussfilt(Pij_e_ba_yz + Pij_e_up_yz ,sigma_g);
+    Pij_e_in{6,inn} = imgaussfilt(Pij_e_ba_zz + Pij_e_up_zz ,sigma_g);
 
     % The composed quiantities
     %----------------------------------------------------------------------
-    v_in{1,inn} = v_x;
-    v_in{2,inn} = v_y;
-    v_in{3,inn} = v_z;
+    v_in{1,inn} = imgaussfilt(v_x ,sigma_g);
+    v_in{2,inn} = imgaussfilt(v_x ,sigma_g);
+    v_in{3,inn} = imgaussfilt(v_x ,sigma_g);
 
-    n_in{3,inn} = n;
+    n_in{3,inn} = imgaussfilt(n ,sigma_g);
 
-    n_i_vi_in{1,inn} = n_i.*v_ix;
-    n_i_vi_in{2,inn} = n_i.*v_iy;
-    n_i_vi_in{3,inn} = n_i.*v_iz;
+    n_i_vi_in{1,inn} = imgaussfilt(n_i.*v_ix ,sigma_g);
+    n_i_vi_in{2,inn} = imgaussfilt(n_i.*v_iy ,sigma_g);
+    n_i_vi_in{3,inn} = imgaussfilt(n_i.*v_iz ,sigma_g);
 
-    n_e_ve_in{1,inn} = n_e.*v_ex;
-    n_e_ve_in{2,inn} = n_e.*v_ey;
-    n_e_ve_in{3,inn} = n_e.*v_ez;
+    n_e_ve_in{1,inn} = imgaussfilt(n_e.*v_ex ,sigma_g);
+    n_e_ve_in{2,inn} = imgaussfilt(n_e.*v_ey ,sigma_g);
+    n_e_ve_in{3,inn} = imgaussfilt(n_e.*v_ez ,sigma_g);
 
-    n_v_in{1,inn} = n.*v_x;
-    n_v_in{2,inn} = n.*v_y;
-    n_v_in{3,inn} = n.*v_z;
+    n_v_in{1,inn} = imgaussfilt(n.*v_x ,sigma_g);
+    n_v_in{2,inn} = imgaussfilt(n.*v_y ,sigma_g);
+    n_v_in{3,inn} = imgaussfilt(n.*v_z ,sigma_g);
     %----------------------------------------------------------------------
 
     %----------------------------------------------------------------------
@@ -736,9 +752,9 @@ nu_av=1;
 %nu_av=N; % this is for the average
 %nu_av=3; % this is for the average
 %----------------------------------------------------------------------
-
+ii=1;
 %----------------------------------------------------------------------
-for ii=1:N
+for ii=1:1
     Ex_avgt_o = Ex_avgt_i + E_in{1,ii}; Ex_avgt_i = Ex_avgt_o;
     Ey_avgt_o = Ey_avgt_i + E_in{2,ii}; Ey_avgt_i = Ey_avgt_o;
     Ez_avgt_o = Ez_avgt_i + E_in{3,ii}; Ez_avgt_i = Ez_avgt_o;
@@ -921,6 +937,9 @@ hold on
 set(hc,'edgecolor','none')
 hold off
 
+sli_y = 80;
+sli_z = 160;
+
 f30 = figure(30);
 plot(yll,divB(:,sli_z),'b')
 %plot(yll,Bz_avgt_i_z(:,sli_z),'b')
@@ -928,36 +947,36 @@ legend('divB')
 hold off
 
 
-f33 = figure(33);
-dum = J_ba{1,1} + J_up{1,1};
-dum = squeeze(dum(1,:,:));
-plot(yll,dum(:,sli_z),'b')
-hold on
-plot(yll,Jx_hand(:,sli_z)/(1),'r')
-legend('jx','jxhand')
-hold off
+% f33 = figure(33);
+% dum = J_ba{1,1} + J_up{1,1};
+% dum = squeeze(dum(1,:,:));
+% plot(yll,dum(:,sli_z),'b')
+% hold on
+% plot(yll,Jx_hand(:,sli_z)/(1),'r')
+% legend('jx','jxhand')
+% hold off
 
-% There is a problem with the normalization. What is that normalization? 
-f31 = figure(31);
-plot(yll,Jx_avgt_i(:,sli_z)/max(Jx_avgt_i(:,sli_z)),'b')
-hold on
-plot(yll,Jx_hand(:,sli_z)/max(Jx_hand(:,sli_z)),'r')
-legend('jx','jxhand')
-hold off
+% % There is a problem with the normalization. What is that normalization? 
+% f31 = figure(31);
+% plot(yll,Jx_avgt_i(:,sli_z)/max(Jx_avgt_i(:,sli_z)),'b')
+% hold on
+% plot(yll,Jx_hand(:,sli_z)/max(Jx_hand(:,sli_z)),'r')
+% legend('jx','jxhand')
+% hold off
 
-f33 = figure(33);
-plot(yll,Jx_avgt_i(:,sli_z),'b')
-hold on
-plot(yll,Jx_hand(:,sli_z)/(2),'r')
-legend('jx','jxhand')
-hold off
-
-f33 = figure(33);
-plot(zll,Jx_avgt_i(sli_y,:),'b')
-hold on
-plot(zll,Jx_hand(sli_y,:)/(1),'r')
-legend('jx','jxhand')
-hold off
+% f33 = figure(33);
+% plot(yll,Jx_avgt_i(:,sli_z),'b')
+% hold on
+% plot(yll,Jx_hand(:,sli_z)/(2),'r')
+% legend('jx','jxhand')
+% hold off
+% 
+% f33 = figure(33);
+% plot(zll,Jx_avgt_i(sli_y,:),'b')
+% hold on
+% plot(zll,Jx_hand(sli_y,:)/(1),'r')
+% legend('jx','jxhand')
+% hold off
 %--------------------------------------------------------------------------
 
 
@@ -981,8 +1000,8 @@ ssz=size(DUM);
 %sli_y = 90; %floor(4+ssz(2)/2);%380;
 %sli_z = 180; %floor(2+ssz(3)/2);%700;
 %----------------------------------------------------------------------
-xlim_a = zll(160); xlim_b = zll(200);
-ylim_a = yll(20); ylim_b = yll(160);
+%xlim_a = zll(160); xlim_b = zll(200);
+%ylim_a = yll(20); ylim_b = yll(160);
 
 xlim_a = -4; xlim_b = 4;
 ylim_a = -4; ylim_b = 4;
@@ -1009,7 +1028,8 @@ x0=45;y0=54;xx1=810;yy1=710;
 % %--------------------------------------------------------------------------
 
 
-f1=figure(1);
+Pt = p_m + (p_i_s + p_e_s);
+f11=figure(11);
 %set(gcf,'Visible', 'off');
 set(gcf,'position',[x0,y0,xx1,yy1])
 %------------------------------------
@@ -1037,9 +1057,21 @@ sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Inte
 hold off
 %--------------------------------------------------------------------------
 
+f13=figure(13);
+%--------------------------------------------------------------------------
+ve_av_x_B_av_z = v_ex_avgt_i .* By_avgt_i - v_ey_avgt_i .* Bx_avgt_i;
+%--------------------------------------------------------------------------
+dum_1 = (Ez_avgt_i);
+plot(yll,dum_1(:,sli_z),'r','LineWidth',lw);
+hold on
+dum_2 = -ve_av_x_B_av_z/B0;
+plot(yll,dum_2(:,sli_z),'k','LineWidth',lw);
+%dum_2 = (Ez_avgt_i + ve_av_x_B_av_z);
+%plot(yll,dum_2(:,sli_z),'b','LineWidth',lw);
+hold off
 
 % Components of the pressure
-f2=figure(2);
+f222=figure(222);
 %set(gcf,'Visible', 'off');
 set(gcf,'position',[x0,y0,xx1,yy1])
 %------------------------------------
@@ -1057,7 +1089,7 @@ plot(yll,dum_5(:,sli_z),'--c','LineWidth',lw);
 dum_6 = Pij_e_yz_avgt_i;
 plot(yll,dum_6(:,sli_z),'--g','LineWidth',lw);
 %xlim([ylim_a, ylim_b]);
-ylim([-0.01, 0.05]);
+%ylim([-0.01, 0.05]);
 xlabel('$y/d_i$','Interpreter','latex','FontSize',fs);
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
 ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
@@ -1073,7 +1105,14 @@ sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\Omega_{e}^{-1}$$','Inte
 hold off
 %--------------------------------------------------------------------------
 
-% Components of the pressure
+cd(path)
+saveas(f11,strcat('pressure_balance_0_ini_sigma1' + string(round(time_t_2_Omega,2)) +'.png'));
+saveas(f222,strcat('pressure_components_0_ini_sigma1' + string(round(time_t_2_Omega,2)) +'.png'));
+
+
+
+
+% Components of the pressure ions
 %--------------------------------------------------------------------------
 f3=figure(3);
 %set(gcf,'Visible', 'off');

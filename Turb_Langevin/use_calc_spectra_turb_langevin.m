@@ -2,6 +2,15 @@
 % This is to compute the diagnostics of the turbulence
 %#----------------------------------------------------------------------
 
+
+%I want to use this script to get the evolution of the spectrum in time for
+%each run.
+
+% I guess the best way is to integrate the total spectrum and see if there 
+% is a sort of developed energy cascade at any point. Maybe this is related 
+% to the onset of the tearing and the growing of the magnetic islands.  
+
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_langevin/res100';
 %path = '/Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Turb_alfven/res100';
@@ -199,7 +208,7 @@ for in_i=1:N
  
     resx=double(Lx)/double(dx);    
     resy=double(Ly)/double(dy);    
-    resz=double(Lz)/double(dz); res=resx;
+    resz=double(Lz)/double(dz); res=resz;
     
     threshold=pi/resy; 
     %--------------------------------------------------------------------------
@@ -283,7 +292,7 @@ for in_i=1:N
     %----------------------------------------------------------------------  
     cd(path_s)
     spectraB=CalcSpectra_CB_local(Bx,By,Bz,resx,resy,resz,threshold); % the local goes with the assymetry
-    spectraPe=CalcSpectra_CB_local(px_e,py_e,pz_e,resx,resy,resz,threshold);
+    %spectraPe=CalcSpectra_CB_local(px_e,py_e,pz_e,resx,resy,resz,threshold);
     
     %spectraB=CalcSpectra_CB(Bx,By,Bz,res,threshold); % the local goes with the assymetry
     %spectraE=CalcSpectra_CB(Ex,Ey,Ez,res,threshold);
@@ -371,19 +380,19 @@ for in_i=1:N
     %----------------------------------------------------------------------    
     %P1D_perB=(spectraB.P1Dper)./(max(spectraB.P1Dper));
     P1D_perB=(spectraB.P1Dper);
-    P1D_perPe=(spectraPe.P1Dper); 
+    %P1D_perPe=(spectraPe.P1Dper); 
     %P1D_perPi=(spectraPi.P1Dper);    
     %----------------------------------------------------------------------        
     f3=figure(3);
     loglog(spectraB.kper,P1D_perB./max(P1D_perB),'-k','LineWidth',2)
     hold on
-    loglog(spectraPe.kper,P1D_perPe./max(P1D_perB),'-b','LineWidth',2)
+    %loglog(spectraPe.kper,P1D_perPe./max(P1D_perB),'-b','LineWidth',2)
     %loglog(spectraPi.kper,P1D_perPi,'-r','LineWidth',2)
     set(gca,'FontSize',20)
     x2=log10([1 40]);     y2=x2.*(-2.8)-1; 
-    xlim([0.1 threshold]); 
+    %xlim([0.1 threshold]); 
     ylim([10^(-8) 10^(0)]);
-    loglog(10.^x2,10.^y2,'--k')
+    %loglog(10.^x2,10.^y2,'--k')
     %ylim([10^(3) 10^(13)]);
     y1=get(gca,'ylim');
     loglog(10.^x2,10.^y2,'--b','LineWidth',2)

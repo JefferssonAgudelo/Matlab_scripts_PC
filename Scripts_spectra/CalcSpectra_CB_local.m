@@ -27,9 +27,9 @@ dz=resz;
 
 N=size(var1); %all the variables has the same size
 Lx=N(1)*dx; %Length of box as function of d_i
-Ly=N(2)*dy; 
-Lz=N(3)*dz; 
-    
+Ly=N(2)*dy;
+Lz=N(3)*dz;
+
 if nargin==4 %Calculate 3D Fourier transform of each variable (narging return the number of inputs of a function)
     [ff,kx,ky,kz]=Four3D(var1,Lx,Ly,Lz);
     ff=ff.^2;
@@ -47,7 +47,7 @@ end
 P3D=ff./(N(1)*N(2)*N(3)); %Normalise by 1/Nx*Ny*Nz  %Second normalization? jeff
 
 for j=1:size(ff,2)
-    for i=1:size(ff,1) 
+    for i=1:size(ff,1)
         %--------------------------------------------------------------------------
         %kp(i,j)=sqrt(ky(j).^2+kx(i).^2); %Calculate kperp array with negative wavenumbers
         %--------------------------------------------------------------------------
@@ -88,7 +88,7 @@ i3=fix(kp2/dkpar); %Index linking kp2 with each kpar value
 
 k2=kp/dkper-i1; % this is calculating basically the residuo. kp is a matrix
 k1=1-k2;
-    
+
 for k= 1:size(P3D,3) %For each value of kpar, integrate over rings of kper
     P1=k1.*P3D(:,:,k); %For interpolation
     P2=k2.*P3D(:,:,k);
@@ -99,11 +99,11 @@ for k= 1:size(P3D,3) %For each value of kpar, integrate over rings of kper
                 %rings of kper:
                 Ptemp(k,i2(i,j)+1)=Ptemp(k,i2(i,j)+1)+P2(i,j); %Interpolate power to next ring
                 Ptemp(k,i1(i,j)+1)=Ptemp(k,i1(i,j)+1)+P1(i,j); %Interpolate power to previous ring
-                
+
                 %Update number of points interpolated for each ring:
-                Nkper(i2(i,j)+1)=Nkper(i2(i,j)+1)+k2(i,j); 
-                Nkper(i1(i,j)+1)=Nkper(i1(i,j)+1)+k1(i,j);                
-             end
+                Nkper(i2(i,j)+1)=Nkper(i2(i,j)+1)+k2(i,j);
+                Nkper(i1(i,j)+1)=Nkper(i1(i,j)+1)+k1(i,j);
+            end
         end
     end
     if i3(k)<nkpar
@@ -125,52 +125,52 @@ end
 
 %--------------------------------------------------------------------------
 function [ft,kx,ky,kz]=Four3D(var,Lx,Ly,Lz)
-    %Calculates 3D spatial Fourier transfrom of variable 'var', shifted so
-    %that the centre is the zero k. xx/yy/zz are Lx, Ly and Lz.
-    
-    var=var-mean(mean(mean((var)))); %Detrend mean
+%Calculates 3D spatial Fourier transfrom of variable 'var', shifted so
+%that the centre is the zero k. xx/yy/zz are Lx, Ly and Lz.
 
-    N=size(var); %N=[Nx,Ny,Nz]
+var=var-mean(mean(mean((var)))); %Detrend mean
 
-    f=abs(fftn(var))*sqrt(N(1)*N(2)*N(3)); %Take abs value and normalise
-    %^Should it be fftn instead of ifftn?
-    
-    ft=fftshift(f); %Shift ft to centre wavenumber
-    
-    kx=((0:N(1)-1)-N(1)/2).*2*pi/Lx; %Includes negative wavenumbers
-    ky=((0:N(2)-1)-N(2)/2).*2*pi/Ly;
-    kz=((0:N(3)-1)-N(3)/2).*2*pi/Lz;
+N=size(var); %N=[Nx,Ny,Nz]
+
+f=abs(fftn(var))*sqrt(N(1)*N(2)*N(3)); %Take abs value and normalise
+%^Should it be fftn instead of ifftn?
+
+ft=fftshift(f); %Shift ft to centre wavenumber
+
+kx=((0:N(1)-1)-N(1)/2).*2*pi/Lx; %Includes negative wavenumbers
+ky=((0:N(2)-1)-N(2)/2).*2*pi/Ly;
+kz=((0:N(3)-1)-N(3)/2).*2*pi/Lz;
 
 %     From Groselj et al (2018)
 %     Kper can be assumed as kper = (k_{x}^2 + k_{y}^{2})^{1/2}
-%     The definition is consistent with previous works [44–46] and is 
-%     motivated by the fact that the local k⊥ is to lowest order in ϵ = 
-%     δB/B0 equal to (kx, ky), whereas, even to lowest order in ϵ, kz 
+%     The definition is consistent with previous works [44–46] and is
+%     motivated by the fact that the local k⊥ is to lowest order in ϵ =
+%     δB/B0 equal to (kx, ky), whereas, even to lowest order in ϵ, kz
 %     cannot be considered representative for the local kk [45,46].
 end
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 % function [ft,kx,ky,kz]=Four3DLocal(var,Lx,Ly,Lz)
-% 
+%
 %     N=size(var); %N=[Nx,Ny,Nz]
 %     kx=((0:N(1)-1)-N(1)/2).*2*pi/Lx; %Includes negative wavenumbers % Make an array of Kx
 %     ky=((0:N(2)-1)-N(2)/2).*2*pi/Ly;
 %     kz=((0:N(3)-1)-N(3)/2).*2*pi/Lz;
-%     
+%
 %     %Fourier transform
-%     
+%
 %     var=var-mean(mean(mean((var)))); %Detrend mean
-% 
-%     % fftn The N-D transform is equivalent to computing the 1-D transform along each dimension of X. 
+%
+%     % fftn The N-D transform is equivalent to computing the 1-D transform along each dimension of X.
 %     f=abs(fftn(var)).*sqrt(N(1)*N(2)*N(3)); %Take abs value and normalise
-%     
+%
 %     ft=fftshift(f); %Shift ft to centre wavenumber
-% 
+%
 % end
 
-    % to erase
-    %------------------
+% to erase
+%------------------
 %     f1=figure(1)
 %     subplot(2,2,1)
 %     f=real(fftn(var));
@@ -193,12 +193,12 @@ end
 %     dum=squeeze(ft(:,:,400));
 %     contourf(dum)
 %     colorbar
-% 
+%
 %     f2=figure(2)
 %     dum=squeeze(var(:,:,400));
 %     contourf(dum)
 %     colorbar
-    %------------------
+%------------------
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -209,23 +209,23 @@ end
 % This also needs to be fixed to use it in non symmetry configurations
 
 %     From Groselj et al (2018) the local magnetic field is obtained by
-%     "At a given perpendicular wave number k⊥, we define a local mean magnetic 
-%     field B_{0,k⊥} and a local fluctuating field δBk⊥. The local mean field is 
-%     obtained by eliminating the Fourier modes with perpendicular wave numbers 
-%     greater than k⊥/2 and the fluctuating field is obtained by eliminating 
+%     "At a given perpendicular wave number k⊥, we define a local mean magnetic
+%     field B_{0,k⊥} and a local fluctuating field δBk⊥. The local mean field is
+%     obtained by eliminating the Fourier modes with perpendicular wave numbers
+%     greater than k⊥/2 and the fluctuating field is obtained by eliminating
 %     the modes with wave numbers less than k⊥/2 or greater than 2k⊥."
 %    f_local = f - f*(kper_l>kper_p)
 
 
-% for each kper set a threshold 
+% for each kper set a threshold
 function [P1Dper,P1Dpar]=Compute1DSpectra(P2D,kper,threshold)
 %Calculate parallel and perpendicular 1D sepctra from the 2D spectrum.
-    [c1,index1]=min(abs(kper-threshold)); %Cut spectrum above a threshold k
+[c1,index1]=min(abs(kper-threshold)); %Cut spectrum above a threshold k
 
-    [c,index]=min(abs(kper-threshold)); %Cut spectrum above a threshold k
-    Pthres=P2D(2,index);    
-    mask2D=P2D>Pthres;
-    fieldMASKED=P2D.*mask2D;
-    P1Dper=sum(fieldMASKED,1); %Sum over parallel k
-    P1Dpar=sum(fieldMASKED,2); %Sum over perpendicular k
+[c,index]=min(abs(kper-threshold)); %Cut spectrum above a threshold k
+Pthres=P2D(2,index);
+mask2D=P2D>Pthres;
+fieldMASKED=P2D.*mask2D;
+P1Dper=sum(fieldMASKED,1); %Sum over parallel k
+P1Dpar=sum(fieldMASKED,2); %Sum over perpendicular k
 end

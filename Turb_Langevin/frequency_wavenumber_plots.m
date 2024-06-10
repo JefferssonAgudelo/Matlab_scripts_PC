@@ -91,7 +91,6 @@ dt=double(grid_dt(15).Value);
 %--------------------------------------------------------------------------
 
 
-
 %--------------------------------------------------------------------------
 Lz = Lz0;
 kz = 1/Lz ;%(2*pi/Lz);
@@ -103,12 +102,80 @@ k_max = threshold;
 omegas_u = omega_pe * [0.9*kz*VA2c ,0.9*kz*VA2c, 0.2, 0.9*kz*VA2c, 1, 0.2,0.2,...
     1, 0.9*kz*VA2c, 0.9*kz*VA2c, 0.9*kz*VA2c,0.9*kz*VA2c];
 ksdi_u = di * kz * [Lz/4, Lz/8, Lz/4, Lz/Lz, Lz/Lz, Lz/Lz, Lz/4, Lz/1, Lz/16, Lz/4, Lz/8, Lz/2]; 
-dB_B0_u = [0.125,0.125,0.125,0.2,0.2,0.8,0.125,0.01, 0.8, 0.4, 0.8, 0.2];
+
+%dB_B0_u = [0.125,0.125,0.125,0.2,0.2,0.8,0.125,0.01, 0.8, 0.4, 0.8, 0.2];
+dB_B0_u = [0.125,0.125,0.125,0.2,0.2,0.8,0.125,0.01, 0.8, 0.4, 0.8, 0.2].*(0.136/0.8);
+
+dB_B0_u = [0.01,0.002,0.004,0.016,0.03,0.016,0.21,0.01, 0.8, 0.4, 0.8, 0.2];
 
 %stables (tearing doesn't grow)
 omegas_s = omega_pe * [0.2, 0.2 ,1 ,1, 0.2, 0.9*kz*VA2c, 0.2];
 ksdi_s = di * kz * [Lz/rho_i, Lz/1, Lz/rho_i, Lz/1, Lz/4, Lz/1, Lz]; 
-dB_B0_s = [0.2, 0.2, 0.2, 0.2, 0.8, 0.2, 0.4];
+%dB_B0_s = [0.2, 0.2, 0.2, 0.2, 0.8, 0.2, 0.4];
+dB_B0_s = [0.2, 0.2, 0.2, 0.2, 0.8, 0.2, 0.4].*(0.136/0.8);
+
+
+% % %--------------------------------------------------------------------------
+% %     path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB001_omp1_kLd1' 
+% %     % 0.0055 % reconnecting % Perlmutter  %  di... 8 ...omepe done
+% %     path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_klong/psc_harris_yz_lange_many_Ax_large_L4di_dB01_omp1_klong';
+% %     % 5.3866e-04 reconnecting % perlmutter  %Ly... 8... omepe done
+% %     path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1/psc_harris_yz_lange_many_Ax_large_L4di_dB01_olong_kLd1';
+% %     % 0.1096 suppresing %perlmutter % di,...8...,0.9Va done
+% %     path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01'; %1,2,3,4...32 0.1VA
+% %     % 0.0160 reconnecting done
+% %     path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB04_olong_kLd4'; % 
+% %     % 0.0673 reconnecting %perlmutter  4di,...8... 0.9 VA done
+% %     path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB01_Omc1'; % 1,2,3,4...32 ..Omc
+% %     % 0.0025 reconnecting done
+% %     path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB02'; % 2,4,6,8..32..VA
+% %     % 0.0079 reconnecting done
+% % %--------------------------------------------------------------------------
+dBB_u =     [2,     4,      16,     3,      16,     21,     5,      0.5,    16,     67,     2,      8]/1000;
+kzz_u =     [4,     4,      8,      8,      8,      64,     256,    1,      4,      64,     4,      8]/(2*Lz);
+omepp_u =   [0.004, 0.004,  0.005,  0.2,    0.2,    0.2,    1,      1,      0.0004,  0.004,  0.2,    0.005]; % 0.004 corresponds to 0.9va va=0.004/0.9=0.005
+
+dBB_s =     [136,   69,     36,     69,    36,  109]/1000;
+kzz_s =     [64,    256,    512,    256,   512, 256]/(2*Lz);
+omepp_s =   [0.2,   0.2,    0.2,    1,     1,   0.005];
+
+% The plot
+%--------------------------------------------------------------------------
+fs=18; %x0=45;y0=54;xx1=810;yy1=710;
+f2=figure(2);
+%set(gcf,'position',[x0,y0,1.3*xx1,yy1/2])
+%--------------------------------------------------------------------------
+colormap(jet(9))                           
+scatter(omepp_u,kzz_u,160, dBB_u,"square",LineWidth=2)
+hold on
+scatter(omepp_s,kzz_s,80, dBB_s,"filled","d") 
+xline(0.2,'--k','LineWidth',1);
+yline(kz*Lz/rho_i,'--k','LineWidth',1);
+txt = '$\rho_{e}^{-1}$';
+txt2 = '$\Omega_{ce}$';
+text(0.002,2.5,txt,'Interpreter','latex','FontSize',1.3*fs)
+text(0.3,51e-4,txt2,'Interpreter','latex','FontSize',1.3*fs)
+txt3 = '$\delta B \sim 0.1B_{0}$';
+txt4 = '$\delta B \sim 0.8B_{0}$';
+ylim([5e-4 k_max]);
+xlim([2e-4 omega_max]);
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(gca,'XScale','log','YScale','log','FontSize',1.3*fs)
+ax.YLabel.String = '$k d_{e}$'; 
+ax.XLabel.String = '$\omega_{0}/\omega_{pe}$'; 
+c = colorbar;
+c.Location = "northoutside";
+c.Title.Interpreter = 'latex';
+c.Title.String = '$\langle |\delta B_{y}|/\mathbf{B} \rangle$'; 
+c.Label.Rotation = 90;
+c.Title.FontSize = 1.3*fs;
+c.TickLabelInterpreter = "latex";
+caxis([0 1.0*max(max(dBB_s),max(dBB_u))])
+%caxis([0 1])
+hold off
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
 %--------------------------------------------------------------------------
 
 % The relation for k and w for a given dB
@@ -141,6 +208,7 @@ loglog(Omega1,kdi1,'k',LineWidth=2)
 hold on
 loglog(Omega1,kdi2,'b',LineWidth=2)
 hold off
+
 %--------------------------------------------------------------------------
 
 
@@ -163,9 +231,8 @@ colormap(jet(9))
 scatter(omegas_u, ksdi_u, 140, dB_B0_u,"square",LineWidth=2)     
 hold on
 scatter(omegas_s, ksdi_s, 60, dB_B0_s, "filled","d")  
-
-plot(omega2,k_per2,'k',LineWidth=1.5)
-plot(omega2,k_per21,'b',LineWidth=1.5)
+%plot(omega2,k_per2,'k',LineWidth=1.5)
+%plot(omega2,k_per21,'b',LineWidth=1.5)
 % x1=linspace(0.2,omega_max,10);
 % curve1 = 2*pi*ones(size(x1));
 % curve2 = k_max*pi*ones(size(x1));
@@ -191,8 +258,8 @@ yline(kz*Lz/rho_i,'--k','LineWidth',1);
 %yline((beta01^(1/4))*(0.8^(-3/2)),'--r','LineWidth',1);
 %yline((beta01^(1/4))*(1^(-3/2)),'--k','LineWidth',1);
 
-x2=log10([0.21 1]); y2=x2 + 1.05;
-x3=log10([0.06 0.2]); y3=(3/2)*x3 + 1.4;
+%%%x2=log10([0.21 1]); y2=x2 + 1.05;
+%%%x3=log10([0.06 0.2]); y3=(3/2)*x3 + 1.4;
 %loglog(10.^x2,10.^y2,'--k','LineWidth',2)
 %loglog(10.^x3,10.^y3,'--k','LineWidth',2)
 
@@ -229,7 +296,7 @@ c.Title.FontSize = 1.3*fs;
 c.TickLabelInterpreter = "latex";
 
 %caxis([0 1.2*max(max(dB_B0_s),max(dB_B0_u))])
-caxis([0 1])
+%caxis([0 1])
 
 %loglog(Omega1,kdi1,'--b',LineWidth=2)
 %loglog(Omega1,kdi2,'--c',LineWidth=2)
@@ -237,6 +304,9 @@ caxis([0 1])
 
 hold off
 %--------------------------------------------------------------------------
+
+
+
 
 
 
@@ -282,7 +352,7 @@ lin = 1 4
 %--------------------------------------------------------------------------
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
 cd(path_comp);
-saveas(f1,'Parameter_space_3.png');
+saveas(f2,'Parameter_space_4.png');
 
 %--------------------------------------------------------------------------
 
