@@ -8,7 +8,9 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/Cirrus_folders/elongated_box';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/Cirrus_folders/elongated_box';
+path = '/Volumes/PSC_CORI_DATA/TESTS_2022/Cirrus_folders/short_cube';
+
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
 path_s = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,7 +24,7 @@ N=numel(S); % number of files to use
 
 %--------------------------------------------------------------------------
 % This has to be put by hand
-ppc = 50;
+ppc = 200;
 mime =100.;
 Lx0 = 4; % this can be extracted better 
 Ly0 = 4;
@@ -33,10 +35,12 @@ c=1;
 omega_pe_Omega_ce=5;
 %--------------------------------------------------------------------------
 % chose the particle file to work with.
-i=2;
+i=13;
 %5 for the later; 100 for the initial. %This is for the distribution function plot. at later time the electrons
 %have way more energy 
 frac= 10;
+frac= 100;
+%frac= 5;
 
 %number of points to get a ndi window
 ndi=0.2;
@@ -87,7 +91,8 @@ stride = 1;
 
 prt = info.Groups(1).Name;
 %read the information from the fields of the struct
-prtfields=h5read(fileID,strcat(prt,'/p0/1d'),start,count,stride);
+%prtfields=h5read(fileID,strcat(prt,'/p0/1d'),start,count,stride); 
+prtfields=h5read(fileID,strcat(prt,'/p0/1d'));
 x = prtfields.x;
 y = prtfields.y;
 z = prtfields.z;
@@ -109,8 +114,8 @@ q = prtfields.q;
 
 %separate the popullations
 
-q_i_index = find(q==1); % ions
-%q_i_index = find(q==-1); %electrons
+%q_i_index = find(q==1); % ions
+q_i_index = find(q==-1); %electrons
 
 %Coordinates of ions
 xi=x(q_i_index); 
@@ -154,6 +159,11 @@ xii1 = x_min; xii2 = x_min +ndi;
 yii1 = y_min; yii2 = y_min +ndi; 
 zii1 = z_min; zii2 = z_min +ndi; 
 
+% % xii1 = x_min; xii2 = x_max; % This is for the whole domain
+% % yii1 = y_min; yii2 = y_max; 
+% % zii1 = z_min; zii2 = z_max; 
+
+
 cond_y1 = find(ge(xi,xii1) & le(xi,xii2) & ge(yi,yii1) & le(yi,yii2) & ge(zi,zii1) & le(zi,zii2) );  
 %----------------------------------------------------------------------
 pxi_sub1=pxi(cond_y1);
@@ -184,15 +194,15 @@ pzi = pzi - pzi_av;
 % ions
 %pxi = pxi .* c ./ sqrt(c^2 .* me^2 + pxi.^2);
 
-%iones
-pxi = pxi .* c ./ sqrt(c^2 .* 1^2 + pxi.^2);
-pyi = pyi .* c ./ sqrt(c^2 .* 1^2 + pyi.^2);
-pzi = pzi .* c ./ sqrt(c^2 .* 1^2 + pzi.^2);
+% % % %iones
+% % % pxi = pxi .* c ./ sqrt(c^2 .* 1^2 + pxi.^2);
+% % % pyi = pyi .* c ./ sqrt(c^2 .* 1^2 + pyi.^2);
+% % % pzi = pzi .* c ./ sqrt(c^2 .* 1^2 + pzi.^2);
 
-% % % %electrons
-% % pxi = pxi .* c ./ sqrt(c^2 .* mi^2 + pxi.^2);
-% % pyi = pyi .* c ./ sqrt(c^2 .* mi^2 + pyi.^2);
-% % pzi = pzi .* c ./ sqrt(c^2 .* mi^2 + pzi.^2);
+% %electrons
+pxi = pxi .* c ./ sqrt(c^2 .* mi^2 + pxi.^2);
+pyi = pyi .* c ./ sqrt(c^2 .* mi^2 + pyi.^2);
+pzi = pzi .* c ./ sqrt(c^2 .* mi^2 + pzi.^2);
 %-------------------------------------------------
 
 % limits electrons
@@ -355,7 +365,7 @@ time_t_2_Omega=time_t./omega_pe_Omega_ce;
 % plots in the par per plane with 2 plots
 %----------------------------------------------------------------------
 cd(path_s)
-fs=18;  x0=45;  y0=54;  xx1=1000;    yy1=300;
+fs=18;  x0=45;  y0=54;  xx1=1200;    yy1=450;
 %----------------------------------------------------------------------
 f12=figure(12);
 set(gcf,'position',[x0,y0,xx1,yy1])
@@ -380,11 +390,11 @@ clim([1 (c_lim)]);
 hcb=colorbar; hcb.Location = 'northoutside';
 hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ax.XLabel.String = '$v_{\parallel}/c$'; ax.XTick = xspace_par;
+ax.XLabel.String = '$v_{z}/c$'; ax.XTick = xspace_par;
 ax.YLabel.String = '$v_{\perp}/c$'; ax.YTick = yspace_per;
 xline(0,'--k'); yline(0,'--k');
 xlim(xlims); ylim(ylims);
-title('$f_{i}(v_{z},\sqrt{v_{x}^2 + v_{y}^2})$','Interpreter','latex','FontSize',fs');
+title('$f_{e}(v_{z},\sqrt{v_{x}^2 + v_{y}^2})$','Interpreter','latex','FontSize',fs');
 pbaspect([2 1 1])
 hold off
 %----------------------------------------------------------------------
@@ -414,14 +424,14 @@ ax.XLabel.String = '$v_{\parallel}/c$'; ax.XTick = xspace_par;
 ax.YTick = [];
 xline(0,'--k'); yline(0,'--k');
 xlim(xlims); ylim(ylims);
-title('$f_{i}(v_{\parallel}, v_{\perp})$','Interpreter','latex','FontSize',fs);
+title('$f_{e}(v_{\parallel}, v_{\perp})$','Interpreter','latex','FontSize',fs);
 pbaspect([2 1 1])
 hold off
 %----------------------------------------------------------------------
-%sgtitle('$$log(f_{i}) \ ; \ t = \ $$'+string(round(time_t_2_Omega,2))+'$$\ \Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+sgtitle('$$t = \ $$'+string(round(time_t_2_Omega,2))+'$$\ \Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
 %----------------------------------------------------------------------
-%cd(path)
-%saveas(f12,strcat('large_vper_par_elec' + string(i+1) +'.png'));
+cd(path)
+saveas(f12,strcat('large_vper_par_elec' + string(i+1) +'.png'));
 %saveas(f13,strcat('large_vper_par_ion' + string(i+1) +'.png'));
 %----------------------------------------------------------------------
 %f12=figure(12);

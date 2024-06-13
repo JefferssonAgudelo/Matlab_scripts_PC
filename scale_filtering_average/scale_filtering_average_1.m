@@ -36,7 +36,7 @@ Vai=0.2;
 Vai_b=Vai/sqrt(nb_n0);
 Vae_b=Vae/sqrt(nb_n0);
 
-mime =1.;
+mime =100.;
 mi = 1.;
 me = 1. / mime; eps0=1.;
 m = mi + me;
@@ -138,24 +138,40 @@ in = 1;
     %----------------------------------------------------------------------
     %----------------------------------------------------------------------
     % define the window for the kernel and convolution
-    ndv = 150; % create a patch for the size of the convolution window  
+
+    %ndv = 6*LXs; % create a patch for the size of the convolution window  
+    %l_wind_x = LXs/ndv; %size of the window
+    
+    resx = Lx/LXs;
     %----------------------------------------------------------------------
 
+    % Maybe it is better to define this in terms of the real resolution
     %----------------------------------------------------------------------
     l_wind_x = LXs/ndv; %size of the window
     l_wind_y = LYs/ndv;
     l_wind_z = LZs/ndv;    
+
     [XL3d, YL3d, ZL3d] = meshgrid(xl,yl,zl);
     %----------------------------------------------------------------------
 
     % Define the gaussian kernel function
     %----------------------------------------------------------------------    
-    C_gs = (1/(2.*pi.*l_wind_x.^2))^(3/2);
-
+    % First kernel
+    %----------------------------------------------------------------------    
+    C_gs = (1/(2.*pi.*l_wind_x.^2))^(3/2);    
     G_gs = C_gs.*...
         exp(-(0.5.*(XL3d./l_wind_x).^2)).*...
         exp(-(0.5.*(YL3d./l_wind_y).^2)).*...
         exp(-(0.5.*(ZL3d./l_wind_z).^2));
+    %----------------------------------------------------------------------    
+    % %second kernel
+    % %----------------------------------------------------------------------    
+    % C_gs = (1/(2.*pi.*l_wind_x.^2))^(3/2);        
+    % G_gs = C_gs.*...
+    %     exp(-(0.5.*(XL3d./l_wind_x).^2)).*...
+    %     exp(-(0.5.*(YL3d./l_wind_y).^2)).*...
+    %     exp(-(0.5.*(ZL3d./l_wind_z).^2));
+    %----------------------------------------------------------------------    
 
     G_gs_n = G_gs./sum(G_gs(:)); % This is to ensure that the integral of the kernel is one 
     %G_gs_n = G_gs;
@@ -163,7 +179,48 @@ in = 1;
     % Perform the FFT of the function g
     F_G_gs_n = fftn(G_gs_n);
     %----------------------------------------------------------------------
-    %----------------------------------------------------------------------
+    % % This is to test
+    % %----------------------------------------------------------------------
+    % B{1,1}=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'),start,count);
+    % Bx_dt=B{1,1}; 
+    % Bx_filt = Filtering_kernel(Bx_dt,F_G_gs_n);
+    % Bx_pri = Bx_dt - Bx_filt;
+    % 
+    % i=30;
+    % f1=figure(1);
+    % subplot(1,3,1)
+    % dump = squeeze(Bx_dt(:,:,i));
+    % y_lim = max(max(max(abs(dump))));
+    % hc=pcolor(dump);
+    % hold on
+    % set(hc,'edgecolor','none')
+    % clim([-y_lim y_lim]);
+    % title('Bx')
+    % colorbar
+    % hold off
+    % 
+    % subplot(1,3,2)
+    % dump = squeeze(Bx_filt(:,:,i));
+    % hc=pcolor(dump);
+    % %y_lim = max(max(max(abs(dump))));    
+    % hold on
+    % set(hc,'edgecolor','none')
+    % clim([-y_lim y_lim]);
+    % colorbar
+    % title('<Bx>')
+    % hold off
+    % 
+    % subplot(1,3,3)
+    % dump = squeeze(Bx_pri(:,:,i));
+    % hc=pcolor(dump);
+    % %y_lim = max(max(max(abs(dump))));
+    % hold on
+    % set(hc,'edgecolor','none')
+    % clim([-y_lim y_lim]);
+    % colorbar
+    % title('Bx_{pri} ' )
+    % hold off
+    % %----------------------------------------------------------------------
 
 
     % Load the variables
@@ -580,6 +637,79 @@ in = 1;
     %----------------------------------------------------------------------  
 
 
+    % Let's have a look a the quantities
+    % Bx_dt is the unfilterd, B_filt is the filtered, B_pri is the
+    % unresolved
+    %----------------------------------------------------------------------
+    i=30;
+    f1=figure(1);
+    subplot(2,3,1)
+    dump = squeeze(Bx_dt(:,:,i));
+    y_lim = max(max(max(abs(dump))));
+    hc=pcolor(dump);
+    hold on
+    set(hc,'edgecolor','none')
+    clim([-y_lim y_lim]);
+    title('Bx')
+    colorbar
+    hold off
+
+    subplot(2,3,2)
+    dump = squeeze(Bx_filt(:,:,i));
+    hc=pcolor(dump);
+    %y_lim = max(max(max(abs(dump))));    
+    hold on
+    set(hc,'edgecolor','none')
+    clim([-y_lim y_lim]);
+    colorbar
+    title('<Bx>')
+    hold off
+
+    subplot(2,3,3)
+    dump = squeeze(Bx_pri(:,:,i));
+    hc=pcolor(dump);
+    %y_lim = max(max(max(abs(dump))));
+    hold on
+    set(hc,'edgecolor','none')
+    clim([-y_lim y_lim]);
+    colorbar
+    title('Bx_{pri} ' )
+    hold off
+
+    subplot(2,3,4)
+    dump = squeeze(v_ex_dt(:,:,i));
+    y_lim = max(max(max(abs(dump))));
+    hc=pcolor(dump);
+    hold on
+    set(hc,'edgecolor','none')
+    clim([-y_lim y_lim]);
+    title('vex')
+    colorbar
+    hold off
+
+    subplot(2,3,5)
+    dump = squeeze(v_ex_filt(:,:,i));
+    hc=pcolor(dump);
+    %y_lim = max(max(max(abs(dump))));    
+    hold on
+    set(hc,'edgecolor','none')
+    clim([-y_lim y_lim]);
+    colorbar
+    title('<vex>')
+    hold off
+
+    subplot(2,3,6)
+    dump = squeeze(v_ex_pri(:,:,i));
+    hc=pcolor(dump);
+    %y_lim = max(max(max(abs(dump))));
+    hold on
+    set(hc,'edgecolor','none')
+    clim([-y_lim y_lim]);
+    colorbar
+    title('vex_{pri}' )
+    hold off
+
+    %----------------------------------------------------------------------
 
 
 
@@ -593,39 +723,40 @@ in = 1;
     %----------------------------------------------------------------------
 
     %----------------------------------------------------------------------
-    % % Plots the field to see how it looks with the filter 
-    %y_lim = max(max(max(abs(Bx_dt))));
-    % %----------------------------------------------------------------------
-    % i=84;
-    % f3=figure(3);
-    % subplot(2,3,1)
-    % hc=pcolor(squeeze(Bx_dt(:,:,i)));
-    % hold on
-    % set(hc,'edgecolor','none')
-    % clim([-y_lim y_lim]);
-    % title('Bx')
-    % colorbar
-    % hold off
-    % 
-    % subplot(2,3,2)
-    % hc=pcolor(squeeze(G_gs(:,:,i)));
-    % hold on
-    % set(hc,'edgecolor','none')
-    % %clim([-y_lim y_lim]);
-    % colorbar
-    % title('G')
-    % hold off
-    % 
-    % subplot(2,3,3)
-    % y_lim_cv = max(max(max(abs(convolution_result(:,:,i)))));
-    % hc=pcolor(squeeze(convolution_result(:,:,i)));
-    % hold on
-    % set(hc,'edgecolor','none')
-    % clim([-y_lim_cv y_lim_cv]);
-    % colorbar
-    % title('Bx filtered')
-    % hold off
-    % %----------------------------------------------------------------------
+    % Plots the field to see how it looks with the filter 
+    y_lim = max(max(max(abs(Bx_dt))));
+    %----------------------------------------------------------------------
+    i=84;
+    f3=figure(3);
+    subplot(2,3,1)
+    hc=pcolor(squeeze(Bx_dt(:,:,i)));
+    hold on
+    set(hc,'edgecolor','none')
+    clim([-y_lim y_lim]);
+    title('Bx')
+    colorbar
+    hold off
+
+    subplot(2,3,2)
+    hc=pcolor(squeeze(G_gs(:,:,i)));
+    hold on
+    set(hc,'edgecolor','none')
+    %clim([-y_lim y_lim]);
+    colorbar
+    title('G')
+    hold off
+
+    subplot(2,3,3)
+    y_lim_cv = max(max(max(abs(convolution_result(:,:,i)))));
+    hc=pcolor(squeeze(convolution_result(:,:,i)));
+    hold on
+    set(hc,'edgecolor','none')
+    clim([-y_lim_cv y_lim_cv]);
+    colorbar
+    title('Bx filtered')
+    hold off
+    %----------------------------------------------------------------------
+
 
     % %This is to make the plots for the spectra
     % %----------------------------------------------------------------------
@@ -685,7 +816,7 @@ in = 1;
 
     % Funtion to make the filtering 
     %----------------------------------------------------------------------
-    function [convolution_result]=Filtering_kernel(Bx,F_G_gs_n)
+    function [convolution_result]=Filtering_kernel(var,F_G_gs_n)
     %----------------------------------------------------------------------
     % The inputs are the variable, the fourier transform of the kernel and
     % the output is the filted signal
@@ -693,11 +824,11 @@ in = 1;
  
     %----------------------------------------------------------------------
     % Perform the FFT of the function f
-    F_Bx = fftn(Bx);
+    F_var = fftn(var);
 
     % Convolve in the frequency domain (element-wise multiplication)
 
-    F_convolution = F_Bx .* F_G_gs_n;
+    F_convolution = F_var .* F_G_gs_n;
 
     % Perform the inverse FFT to get the convolved function
     convolution_result = ifftn(F_convolution);
