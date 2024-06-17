@@ -1,0 +1,1392 @@
+Accessing RC services
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ip MSSL pc: 128.40.69.115
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# man ssh (manual of ssh)
+
+ssh ucasjaa@grace.rc.ucl.ac.uk
+
+#Accessing services from outside UCL
+
+ssh ucasjaa@socrates.ucl.ac.uk 
+
+#and then 
+
+ucasjaa@grace.rc.ucl.ac.uk 
+
+#or via IS VPN
+
+(About memory the Scratch has more memory)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#Running graphical applications using X-forwarding
+
+ssh -X ucasjaa@grace.rc.ucl.ac.uk 
+
+(Check how does it work)
+
+
+
+Mannaging data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Copy
+#From the local to the remote
+scp <local_data_file> <remote_user_id>@<remote_hostname>:<remote_path>
+#Copy a folder
+scp new_folder ucasjaa@grace.rc.ucl.ac.uk:Grace_folder_1
+# copy a file
+scp Commands_run_grace ucasjaa@grace.rc.ucl.ac.uk:Grace_folder_1
+
+
+****Being outside the remote host!!!*****
+
+#From the remote to the local
+scp <remote_user_id>@<remote_hostname>:<remote_path><remote_data_file> <local_path>
+# copy a folder
+
+scp -r ucasjaa@grace.rc.ucl.ac.uk:/home/ucasjaa/Grace_folder_1 /disk/home/jaa/Downloads 
+
+
+
+
+scp -r ucasjaa@grace.rc.ucl.ac.uk:/home/ucasjaa/Scratch/output/3hours /disk/plasma4/jaa/PSC_things/GRACE_RUNS
+
+# copy a file
+scp ucasjaa@grace.rc.ucl.ac.uk:/home/ucasjaa/Grace_folder_1/Commands_2 /disk/home/jaa/Downloads
+
+When I type w, this is displayed
+ucasjaa  pts/41   msslt7.mssl.ucl. 13:47    4.00s  0.11s  0.01s w
+pwd
+/home/ucasjaa
+
+
+sftp to log into the remote machine
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+sftp <remote_user_id>@<remote_hostname>
+sftp ucasjaa@grace.rc.ucl.ac.uk
+cd <remote_path>
+
+#Once login I can access to the files easier
+get <remote_file>
+lcd <local_path>
+put <local_file>
+
+
+rsync???
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Check this to work with synchronised folders
+
+
+To check quota
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+du -ch <dir>
+quota_check
+du -ch --max-depth=1 ./
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Users may automate the transfer of data from $TMPDIR to their scratch area by adding the directive #Local2Scratch to their job script.
+he amount of space available in $TMPDIR is controlled on a per node basis by the #$ -l tmpfs grid engine directive his is to stop jobs interfering with each other by running out of disk space
+
+Dedicated transfer node
+Legion provides a dedicated transfer node with ten gigabit network connections to the UCL network and to Legion. To access this node, log in via scp, sftp or ssh to:
+
+login05.external.legion.ucl.ac.uk
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+#Modules to run software
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+modules environment system to manage packages
+
+The default environment has the most commonly required modules already loaded for your convenience.
+
+module list
+module whatis
+module avail
+
+to load additional modules into your current session by using the command:
+
+module load fftw/2.1.5/intel-2015-update2
+module unload fftw/2.1.5/intel-2015-update2
+
+#To change the compilers if it is neccesary 
+module unload compilers 
+module unload mpi
+module load compilers/gnu/4.9.2
+module load mpi/intel/2015/update3/gnu-4.9.2
+
+module purge	unloads all modules
+module show <module>	List the contents of the module fire. Shows environment variables set-up by the module
+module help <module>	Shows helpful information about a module, including instructions on how to use the application
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+module 
+
+
+
+
+#HOW TO COMPILE THE CODE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#Firts, download the code
+wget https://www.example.com/program.tar.gz
+#or
+curl https://www.example.com/program.tar.gz
+
+tar -xvf program.tar.gz
+
+#Then Set up your modules
+
+#To check the compilers
+module avail compilers
+
+# The plasma code may run with MPI
+module unload compilers mpi mkl 
+module load compilers/gnu/4.9.2
+module load mpi/openmpi/1.10.1/gnu-4.9.2
+
+
+module load hdf/5-1.8.15/gnu-4.9.2
+
+
+
+
+qsub myscript.sh
+qsub -N NewName myscript.sh
+qsub -l h_rt=24:0:0 myscript.sh
+qsub -hold_jid 12345 myscript.sh
+qsub -ac allow=XYZ myscript.sh
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#!/bin/bash -l
+# Batch script to run an MPI parallel job with the upgraded software
+# stack under SGE with Intel MPI.
+# 1. Force bash as the executing shell.
+#$ -S /bin/bash
+# 2. Request ten minutes of wallclock time (format hours:minutes:seconds).
+#$ -l h_rt=0:10:0
+# 3. Request 1 gigabyte of RAM per process (must be an integer)
+#$ -l mem=1G
+# 4. Request 15 gigabyte of TMPDIR space per node (default is 10 GB)
+#$ -l tmpfs=15G
+# 5. Set the name of the job.
+#$ -N MadScience_1_16
+# 6. Select the MPI parallel environment and 16 processes.
+#$ -pe mpi 16
+# 7. Set the working directory to somewhere in your scratch space.  This is
+# a necessary step with the upgraded software stack as compute nodes cannot
+# write to $HOME.
+# Replace "<your_UCL_id>" with your UCL user ID :
+#$ -wd /home/<your_UCL_id>/Scratch/output
+# 8. Run our MPI job.  GERun is a wrapper that launches MPI jobs on our clusters.
+gerun $HOME/src/madscience/madscience
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+This compilation doesn't finish in GRACE
+##############################################
+module unload compilers mpi
+module load compilers/gnu/4.9.2
+module load mpi/openmpi/3.0.0/gnu-4.9.2
+module load hdf/5-1.8.15/gnu-4.9.2
+
+
+#To remove something from the path
+#####################################################
+PATH=$(REMOVE_PART="/home/jaa/.hdf5/bin" sh -c 'echo ":$PATH:" | sed "s@:$REMOVE_PART:@:@g;s@^:\(.*\):\$@\1@"')
+
+LD_LIBRARY_PATH=$(REMOVE_PART="/home/jaa/.openmpi/lib/" sh -c 'echo ":$LD_LIBRARY_PATH:" | sed "s@:$REMOVE_PART:@:@g;s@^:\(.*\):\$@\1@"')
+
+
+
+
+
+
+
+
+DIRAC
+
+
+--------------------------------------------------------------------------------------------------
+For Dirac
+#----------------------------
+ssh -l dc-agud1 dial.dirac.ac.uk
+
+# To copy from the remote dirac
+scp -r dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/PSC/psc-dev/JOBS/Whistler_trial /home/jaa/DIRAC
+
+scp -r dc-agud1@dial.dirac.ac.uk:/scratch/dp126/dc-agud1/JOBS_SCRATCH/TR_RUNS/TR_3/SCALLING_TEST/scalling_512cores /disk/plasma4/jaa/PSC_things/DiRAC_things/DIRAC_RUNS/SCALLING_8_WAVES
+
+scp -r dc-agud1@dial.dirac.ac.uk:/scratch/dp126/dc-agud1/JOBS_SCRATCH/TR_RUNS/TR_3/SCALLING_TEST/scalling_256cores /run/media/jaa/C2BCB9BCBCB9AB75/DIRAC_RUNs/SCALING
+
+# To copy from the local
+scp -r /home/jaa/DIRAC dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/PSC/psc-dev/JOBS/Whistler_trial (-r?)
+
+scp /home/jaa/DIRAC/psc_8_waves_basic.cxx dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/PSC/psc-dev/src
+
+scp /disk/plasma4/jaa/PSC_things/CONDA2/Miniconda3-latest-Linux-x86_64.sh dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/pkgs/CONDA/
+
+
+scp /disk/plasma4/jaa/PSC_things/Paraview_Jeff/Python_things/timeseries_using_viscid.py dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/PSC/psc-dev/Processing_Outputs/python_scripts
+scp dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/PSC/psc-dev/Processing_Outputs/python_scripts/timeseries_using_viscid.py /disk/plasma4/jaa/PSC_things/Paraview_Jeff/Python_things/ 
+
+scp -r /media/oem/C2BCB9BCBCB9AB75/DIRAC/psc_2counterwaves_per.cxx dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/PSC/psc-dev/src/
+
+scp -r /run/media/jaa/C2BCB9BCBCB9AB75/DIRAC_scripts/psc_2counterwaves_per.cxx dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/PSC/psc-dev/src/
+
+scp -r dc-agud1@dial.dirac.ac.uk:/scratch/dp126/dc-agud1/JOBS_SCRATCH/TR_RUNS/TR_3/2waves/2basic_waves_2 /disk/plasma2/jaa/2basic_waves
+
+scp dc-agud1@dial.dirac.ac.uk:/scratch/dp126/dc-agud1/JOBS_SCRATCH/TR_RUNS/TR_3/CBNwaves/CB8waves_103_1/pfd.002000_p000000.h5 /disk/plasma2/jaa/CB8WAVES
+#---------------------------
+---------------------------------------------------------------------------------------------------
+
+
+
+Paraview
+---------------------------------------------------------------------------
+
+/disk/plasma4/jaa/PSC_things/Paraview_Jeff/ParaView-5.5.0-Qt5-MPI-Linux-64bit/bin/mpiexec -np 4 \ /disk/plasma4/jaa/PSC_things/Paraview_Jeff/ParaView-5.5.0-Qt5-MPI-Linux-64bit/bin/pvbatch \ sphere.py
+
+
+
+
+Trillian
+#---------------------------
+---------------------------------------------------------------------------------------------------
+
+scp -r /run/media/jaa/C2BCB9BCBCB9AB75/DIRAC_scripts/psc_2counterwaves_per.cxx ucasjaa@trillian.sr.unh.edu:/home/space/ucasjaa/PSC_Daniel_email/psc-dev/src
+
+
+scp -r ucasjaa@trillian.sr.unh.edu:/home/space/ucasjaa/PSC_Daniel_email/psc-dev/JOBS/SCALLING/2waves_Contrast_Dirac_1 /disk/plasma2/jaa/TRILLIAN
+
+
+
+
+MSSLBU
+#--------------------------------------------------------------------------
+
+scp -r /disk/plasma2/jaa/2basic_waves jeffersson@msslbu:/home/jeffersson/sim_data
+
+
+
+
+
+From MSSL desktop to my laptop
+
+
+scp -r /disk/plasmaz/jaa/Critical_Balance/CB8waves_104_1/Video_maglines dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/TUNELLING
+scp -r dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/TUNELLING/Video_maglines /Users/jeffersson_agudelo/Documents/CB104_local_data
+
+
+
+
+
+scp -r dc-agud1@dial.dirac.ac.uk:/home/dc-agud1/PSC/psc_trial_030420/psc-dev/src/psc_Isotropic_AW_test1.cxx /Users/jeffersson_agudelo/Documents/PSC_here/PSC_This_mac/psc-dev/src
+
+
+scp -r dc-agud1@dial.dirac.ac.uk:/scratch/dp126/dc-agud1/JOBS_SCRATCH/TR_RUNS/TR_3/CBNwaves/TEST2020/changing_ppc/ppc_50/pfd.000000_p000000.h5 /Volumes/PSC_DiRAC_DATA/TEST2020_1/changing_ppc/ppc_50
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% From Kathleen
+
+
+scp -o ProxyJump=socrates.ucl.ac.uk my_file myriad.rc.ucl.ac.uk:~/Scratch/
+
+scp -o ProxyJump=socrates.ucl.ac.uk /Users/jeffersson_agudelo/Documents/PSC_here/PSC_Dirac_to_Kathleen/psc-dev.zip Kathleen.rc.ucl.ac.uk:~/Scratch/
+
+
+/home/ucasjaa/codes/PSC
+
+
+%This is in NERSC Cori
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+module load cmake/3.21.3
+module avail openmpi
+module load openmpi/4.0.2
+module load cray-hdf5
+
+
+. cmake.sh 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%This is in NERSC Cori (after the change)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+mkdir build
+Cd build
+
+module load cmake/3.22.1
+module load cray-mpich/7.7.19
+module load cray-hdf5-parallel
+
+cat > cmake.sh <<EOF
+cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DUSE_CUDA=OFF \
+    -DUSE_VPIC=OFF \
+    ..
+EOF
+. cmake.sh 
+
+cmake --version
+make clean
+rm CMakeCache.txt 
+rm -r cmake 
+ls -l cmake 
+mv ~/CPM_0.32.1.cmake ./
+
+
+module load cmake/3.22.1
+module load cray-mpich/7.7.19
+module load cray-hdf5-parallel
+module unload PrgEnv-intel
+module load PrgEnv-gnu/6.0.10
+bash buildme.sh 
+make
+
+
+
+
+Create the run_job.sh  
+%-------------------------------------------------------------------------------------------
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH -C haswell
+#SBATCH -q regular
+#SBATCH -J harris_xz_test
+#SBATCH --mail-user=jeffersson.a.agudelo.rueda@dartmouth.edu
+#SBATCH --mail-type=ALL
+#SBATCH -t 00:15:00
+#SBATCH -A m2114
+
+#OpenMP settings:
+#export OMP_NUM_THREADS=25
+#export OMP_PLACES=threads
+#export OMP_PROC_BIND=spread
+
+module unload PrgEnv-intel
+module load PrgEnv-gnu/6.0.10
+module load cmake/3.22.1
+module load cray-mpich/7.7.19
+module load cray-hdf5-parallel
+
+#echo $SCRATCH
+#/global/cscratch1/sd/jagudelo
+
+
+#run the application:
+srun -n 4 -c 1 --cpu_bind=cores psc_harris_xz
+%-------------------------------------------------------------------------------------------
+
+
+Run the job
+%-----------------------------------------
+sbatch run_job.sh 
+%-----------------------------------------
+
+
+Copy files
+%------------------------------------------------------------------------
+# From cori to my local machine:
+
+scp -r jagudelo@cori.nersc.gov:~/Tests_2022/first_test/harrix_xz /Volumes/PSC_DiRAC_DATA/CORI/Harris_xz_test/
+
+# From my local machine to cori:
+scp -r /Volumes/PSC_DiRAC_DATA/CORI/Harris_xz_test/ jagudelo@cori.nersc.gov:~/Tests_2022/first_test/harrix_xz 
+
+
+%------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+% this is in DiRAC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+module purge
+module load shared
+module load cmake/3.11.3
+module load openmpi/gcc/4.0.1
+module load hdf5/gcc_par/1.10.5
+
+which g++
+which gcc
+
+cmake \
+    -DCMAKE_INSTALL_PREFIX=$HOME/PSC_Install \
+    -DCMAKE_CXX_COMPILER=/cm/shared/apps/gcc/6.4/bin/g++ \
+    -DCMAKE_C_COMPILER=/cm/shared/apps/gcc/6.4/bin/gcc \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_C_FLAGS_RELWITHDEBINFO="-g -O2" \
+    -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-g -O2" \
+    -DUSE_CUDA=OFF \
+    -DUSE_VPIC=OFF \
+    ..
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Modules in Kathleen
+% This is in Kathleen
+
+
+cmake/3.19.1
+gcc-libs/4.9.2 
+%%%mpi/openmpi/1.8.4/gnu-4.9.2 
+mpi/openmpi/3.1.6/gnu-4.9.2 
+hdf/5-1.10.5-ompi/gnu-4.9.2 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+module purge
+module load shared # This doesn't work
+module load gcc-libs/4.9.2
+module load compilers/gnu/4.9.2
+module load cmake/3.19.1
+module load mpi/openmpi/3.1.4/gnu-4.9.2 
+module load hdf/5-1.10.5-ompi/gnu-4.9.2 
+
+#module load mpi/openmpi/1.8.4/gnu-4.9.2  # these two did not work
+#module load hdf/5-1.8.15-p1-ompi/gnu-4.9.2
+
+which g++
+
+which gcc
+
+cmake \
+    -DCMAKE_INSTALL_PREFIX=$HOME/PSC_Install \
+    -DCMAKE_CXX_COMPILER=/shared/ucl/apps/gcc/4.9.2/bin/g++ \
+    -DCMAKE_C_COMPILER=/shared/ucl/apps/gcc/4.9.2/bin/gcc \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_C_FLAGS_RELWITHDEBINFO="-g -O2" \
+    -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-g -O2 -fpermissive" \
+    -DUSE_CUDA=OFF \
+    -DUSE_VPIC=OFF \
+    ..
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+cmake \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_C_FLAGS_RELWITHDEBINFO="-g -O2" \
+    -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-g -O2 -fpermissive" \
+    ..
+
+
+n file included from /home/ucasjaa/codes/PSC/psc-dev/src/libpsc/psc_output_particles/psc_output_particles_hdf5_impl.cxx:5:0:
+/home/ucasjaa/codes/PSC/psc-dev/src/libpsc/psc_output_particles/output_particles_hdf5_impl.hxx: In instantiation of 'psc_output_particles_hdf5<Mparticles>::psc_output_particles_hdf5(const Grid_t&, const OutputParticlesParams&) [with Mparticles = Mparticles<psc_particle<float> >; Grid_t = Grid_<double>]':
+/home/ucasjaa/codes/PSC/psc-dev/src/libpsc/../include/output_particles.hxx:66:5:   required from 'static void OutputParticlesWrapper<OutputParticles_t>::setup(psc_output_particles*) [with OutputParticles_t = psc_output_particles_hdf5<Mparticles<psc_particle<float> > >]'
+/home/ucasjaa/codes/PSC/psc-dev/src/libpsc/psc_output_particles/psc_output_particles_hdf5_impl.cxx:15:40:   required from here
+/home/ucasjaa/codes/PSC/psc-dev/src/libpsc/psc_output_particles/output_particles_hdf5_impl.hxx:36:17: error: cannot convert 'const OutputParticlesParams' to 'const char*' in initialization
+       grid_{grid}
+                 ^
+/home/ucasjaa/codes/PSC/psc-dev/src/libpsc/psc_output_particles/output_particles_hdf5_impl.hxx: In instantiation of 'psc_output_particles_hdf5<Mparticles>::psc_output_particles_hdf5(const Grid_t&, const OutputParticlesParams&) [with Mparticles = Mparticles<psc_particle<double> >; Grid_t = Grid_<double>]':
+/home/ucasjaa/codes/PSC/psc-dev/src/libpsc/../include/output_particles.hxx:66:5:   required from 'static void OutputParticlesWrapper<OutputParticles_t>::setup(psc_output_particles*) [with OutputParticles_t = psc_output_particles_hdf5<Mparticles<psc_particle<double> > >]'
+/home/ucasjaa/codes/PSC/psc-dev/src/libpsc/psc_output_particles/psc_output_particles_hdf5_impl.cxx:28:40:   required from here
+/home/ucasjaa/codes/PSC/psc-dev/src/libpsc/psc_output_particles/output_particles_hdf5_impl.hxx:36:17: error: cannot convert 'const OutputParticlesParams' to 'const char*' in initialization
+make[2]: *** [src/libpsc/CMakeFiles/psc.dir/psc_output_particles/psc_output_particles_hdf5_impl.cxx.o] Error 1
+make[1]: *** [src/libpsc/CMakeFiles/psc.dir/all] Error 2
+make: *** [all] Error 2
+
+
+
+Trying with the intel compiler
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+module load gcc-libs/4.9.2
+module load compilers/intel/2018/update3
+module load cmake/3.19.1
+module load mpi/intel/2018
+module load hdf/5-1.10.2-impi/intel-2018 
+
+which mpiicpc
+which mpiicc
+
+cmake \
+    -DCMAKE_INSTALL_PREFIX=$HOME/PSC_Install \
+    -DCMAKE_CXX_COMPILER=/shared/ucl/apps/intel/2018.Update3/impi/2018.3.222/intel64/bin/mpiicpc \
+    -DCMAKE_C_COMPILER=/shared/ucl/apps/intel/2018.Update3/impi/2018.3.222/intel64/bin/mpiicc \
+    -DUSE_CUDA=OFF \
+    -DUSE_VPIC=OFF \
+    ..
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+% this is what 
+
+
+Re-run large job with Intel version /lustre/dirac/scratch/dp126/dc-agud1/JOBS_SCRATCH/TR_RUNS/TR_3/CBNwaves/RUNS2020/CB103_double_real_1_prt
+
+
+
+
+To access Kathleen tunnelling an to copy files here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ssh -o ProxyJump=ucasjaa@socrates.ucl.ac.uk ucasjaa@kathleen.rc.ucl.ac.uk  
+
+
+% This is to copy form the cluster to my local machine
+scp -o ProxyJump=ucasjaa@socrates.ucl.ac.uk ucasjaa@kathleen.rc.ucl.ac.uk:~/Scratch/ELECTRON_PROJECT/electron_P_19_uns/electron_test_190121/prt.000000_p000000.h5 /Volumes/PSC_DiRAC_DATA/ELECTRON_PROJECT/Kathleen/electron_test_190121/
+
+
+This is to copy from my local machine to the cluster
+scp -o ProxyJump=ucasjaa@socrates.ucl.ac.uk /Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Electron_2DVDF.m ucasjaa@kathleen.rc.ucl.ac.uk:~/Scratch 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+% Information of the quotas in cori
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+jagudelo@cori03:~/Tests_2022/Turbulence_test/Langevin> cfsquota m2114
+                  ---------- Space (GB) ---------     ------------- Inode --------------
+Project             Usage      Quota    Percent          Usage       Quota     Percent
+---------------   ---------  ---------  ---------     ----------  ----------  ----------
+m2114                  9141      20480         44           5436    20000000           0
+
+
+
+jagudelo@cori03:~/Tests_2022/Turbulence_test/Langevin> showquota
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+| File system | Space used | Space quota | Space used (%) | Inode used | Inode quota | Inode used (%) |
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+|        home |   35.31GiB |    40.00GiB |          88.3% |     10.64K |       1.00M |       1.1% |
+|    cscratch |    6.98MiB |    20.00TiB |           0.0% |      19.00 |      10.00M |           0.0% |
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#!/bin/bash
+#SBATCH -N 5
+#SBATCH -C haswell
+#SBATCH -q regular
+#SBATCH -J Turb_harris_lange
+#SBATCH --mail-user=jeffersson.a.agudelo.rueda@dartmouth.edu
+#SBATCH --mail-type=ALL
+#SBATCH -t 47:30:00
+#SBATCH -A m2114
+
+#OpenMP settings:
+export OMP_NUM_THREADS=1
+export OMP_PLACES=threads
+export OMP_PROC_BIND=true
+
+module unload PrgEnv-intel
+module load PrgEnv-gnu/6.0.10
+module unload cmake/3.22.1
+module load cmake/3.22.2
+module load cray-mpich/7.7.19
+module load cray-hdf5-parallel/1.12.1.1
+
+#echo $SCRATCH
+#/global/cscratch1/sd/jagudelo/psc_test_cscratch/Langevin
+
+#run the application:
+#applications may performance better with --gpu-bind=none instead of --gpu-bind=single:1 
+srun -n 160 -c 2 --cpu_bind=cores ~/My_codes/lange_harris/psc-main/build/src/psc_turb_harris_yz
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+scp -r /Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra.zip jagudelo@cori.nersc.gov:~/My_codes/matlab_scripts_cori 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+% Commands to run the Langevin and Harris tests
+%------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------
+
+% Copy the file.cxx and the executable into the folder where the run will take place 
+
+mkdir $HOME/My_codes/lange_harris/psc-main/testing_harris_langevin_2022/psc_turb_lange_base
+cp $Home/My_codes/lange_harris/psc-main/build/src/psc_turb_lange_base $HOME/My_codes/lange_harris/psc-main/testing_harris_langevin_2022/psc_turb_lange_base 
+cp $Home/My_codes/lange_harris/psc-main/src/psc_turb_lange_base.cxx $HOME/My_codes/lange_harris/psc-main/testing_harris_langevin_2022/psc_turb_lange_base  
+
+
+rsync -P -e ssh jagudelo@cori.nersc.gov:~/global/cscratch1/sd/jagudelo/Testing_langevin/harris_yz_base /Volumes/PSC_DiRAC_DATA/TESTS_2022/New_V_tests/Harris_yz_base
+
+%------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------
+
+
+
+% Batch commands to read the data from the txt files
+%-------------------------------------------------------------------------------------
+For instance, to get the time step and the wall time of
+
+**** Step 11 / 7001, Code Time 0.54414, Wall Time 1145.84
+
+grep " Step " bigbox_30ppc.txt | cut -d' ' -f3,11 > bigbox_30ppc_step_time.txt
+
+This searches the lines that contain "Step" and finds the strings (/ is also a string) on each line and print them
+
+grep " Step " bigbox_30ppc.txt | cut -d' ' -f3,11  > bigbox_30ppc_step_time.txt | tr -s '[:blank:]' ',' <bigbox_30ppc_step_time.txt > bigbox_30ppc_step_time.txt 
+
+This one replaces the space for comma
+
+%-------------------------------------------------------------------------------------
+
+% batch command to do the same over each folder
+%-------------------------------------------------------------------------------------
+for file in /global/cscratch1/sd/jagudelo/Testing_langevin/*/ ; do file="${file%/}"; echo "${file##*/}"; done     %print the folders
+
+for d in /global/cscratch1/sd/jagudelo/Testing_langevin/*/ ; do echo "$d"run_job_2.sh ; done
+
+for d in /global/cscratch1/sd/jagudelo/Testing_langevin/*/ ; do rm "$d"mem* ; done
+
+%-------------------------------------------------------------------------------------
+
+
+
+% To run interactive jobs
+%-------------------------------------------------------------------------------------
+Select more cores to send more jobs
+
+salloc -N 2 -t 180 -C haswell -q interactive --image=nersc/spark-2.3.0:v2 --volume="/global/cscratch1/sd/jagudelo/tmpfiles:/tmp:perNodeCache=size=200G"
+
+module unload PrgEnv-intel
+module load PrgEnv-gnu/6.0.10
+module unload cmake/3.22.1
+module load cmake/3.22.2
+module load cray-mpich/7.7.19
+module load cray-hdf5-parallel/1.12.1.1
+
+
+To run the job
+srun -n 80 -c 1 --cpu_bind=cores $HOME/My_codes/longe_harris/psc-main/build/src/psc_harris_yz_lange_wavelength_1_2nd > slurm_jeff_wave_1_2nd.out
+
+srun -n 80 -c 1 --cpu_bind=cores ~/My_codes/lange_harris/psc-main/build/src/psc_harris_yz_base_pert_2nd > slurm_jeff_base_pert_2nd.out
+
+export EXEC_CLASSPATH=path_to_any_extra_needed_jars #Only required if you're using external libraries or jarfiles
+
+module load spark/2.3.0
+
+You can start Spark with this command:
+start-all.sh
+
+To connect to the Python Spark Shell, do:
+shifter pyspark
+
+To connect to the Scala Spark Shell, do:
+shifter spark-shell
+
+To shutdown the Spark cluster, do:
+stop-all.sh
+
+
+
+To check his many cores from the requested ones are being used at the time
+squeue --qos=interactive --account=m2114 -O jobid,username,starttime,timelimit,maxnodes,account
+
+
+%------------------------------------------------------------------------------
+
+
+
+% To work with paraview in the cluster
+%------------------------------------------------------------------------------
+
+module unload PrgEnv-gnu/6.0.10
+module load PrgEnv-intel
+module load ParaView/5.10.0
+
+
+Setting up for batch script submission. Use: 
+start_pvbatch.sh NCPUS NNODES CPUARCH TIME ACCOUNT QUEUE SCRIPT
+
+
+start_pvbatch.sh 1 1 haswell 00:05:00 m2114 debug `pwd`/pvbatch-test.py
+
+
+For information about interactive rendering see: 
+https://docs.nersc.gov/applications/paraview/
+
+
+Example for the script /pvbatch-test.py
+%--------------------------------------
+from paraview.simple import *
+
+s = Sphere()
+s.ThetaResolution = 128
+s.PhiResolution = 128
+
+p = ProcessIdScalars()
+
+rep = Show(p)
+Render()
+
+lr = p.PointData.GetArray("ProcessId").GetRange()
+lut = GetLookupTableForArray("ProcessId",
+         1,
+         RGBPoints=[lr[0], 0.0, 0.0, 1.0, lr[1], 1.0, 0.0, 0.0],
+         ColorSpace='Diverging',
+         VectorMode='Magnitude',
+         ScalarRangeInitialized=1.0)
+
+rep.ColorArrayName = 'ProcessId'
+rep.LookupTable = lut
+
+Render()
+
+WriteImage('pvbatch-test.png')
+%--------------------------------------
+
+%------------------------------------------------------------------------------
+
+
+Another script that might be useful to run preview in the cluster
+%-----------------------------------------------------------------------------
+#!/bin/bash
+#SBATCH -N 3
+#SBATCH -C haswell
+#SBATCH -q regular
+#SBATCH -J harris_pert
+#SBATCH --mail-user=jeffersson.a.agudelo.rueda@dartmouth.edu
+#SBATCH --mail-type=ALL
+#SBATCH -t 00:30:00
+#SBATCH -A m2114
+
+module purge
+module load ParaView/5.10.0
+
+#run the application:
+srun -n 1 -c 1 pvbatch-test.py
+%-----------------------------------------------------------------------------
+
+
+
+% This didn't work quite well
+% To run Matlab scripts in the background on Mac
+%------------------------------------------------------------------------------
+nohup matlab -nodisplay -r < Turb_Langevin/Computing_reconnection_rate.m > mft_1.log &
+%------------------------------------------------------------------------------
+
+
+Copying several files at once
+%------------------------------------------------------------------------------
+scp your_username@remote.edu:/some/remote/directory/\{a,b,c\} ./
+
+scp jagudelo@cori.nersc.gov:/global/cscratch1/sd/jagudelo/Testing_langevin/second_set_simulations/harris_base_pert_3nd_L5/\{pfd.008400.xdmf,pfd.008400_p000000.h5,pfd_moments.008400.xdmf,pfd_moments.008400_p000000.h5\} /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/base_pert_lange_3nd/
+
+scp jagudelo@cori.nersc.gov:/global/cscratch1/sd/jagudelo/Testing_langevin/second_set_simulations/harris_base_pert_3nd_L5/\{pfd.000048.xdmf,pfd.000048_p000000.h5,pfd_moments.000048.xdmf,pfd_moments.000048_p000000.h5\} /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/base_pert_lange_3nd/
+
+scp jagudelo@cori.nersc.gov:/global/cscratch1/sd/jagudelo/Testing_langevin/second_set_simulations/harris_base_pert_2nd/\{pfd_moments.000048.xdmf,pfd_moments.000048_p000000.h5\} /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/base_pert_lange_2nd/
+
+
+
+
+scp jagudelo@cori.nersc.gov:/global/cscratch1/sd/jagudelo/Testing_langevin/second_set_simulations/harris_base_4nd/\{pfd.000000.xdmf,pfd.000000_p000000.h5,pfd_moments.000000.xdmf,pfd_moments.000000_p000000.h5,pfd.001000.xdmf,pfd.001000_p000000.h5,pfd_moments.001000.xdmf,pfd_moments.001000_p000000.h5,pfd.002000.xdmf,pfd.002000_p000000.h5,pfd_moments.002000.xdmf,pfd_moments.002000_p000000.h5,pfd.003000.xdmf,pfd.003000_p000000.h5,pfd_moments.003000.xdmf,pfd_moments.003000_p000000.h5,pfd.004000.xdmf,pfd.004000_p000000.h5,pfd_moments.004000.xdmf,pfd_moments.004000_p000000.h5,pfd.005000.xdmf,pfd.005000_p000000.h5,pfd_moments.005000.xdmf,pfd_moments.005000_p000000.h5,pfd.006000.xdmf,pfd.006000_p000000.h5,pfd_moments.006000.xdmf,pfd_moments.006000_p000000.h5,pfd.007000.xdmf,pfd.007000_p000000.h5,pfd_moments.007000.xdmf,pfd_moments.007000_p000000.h5,pfd.008000.xdmf,pfd.008000_p000000.h5,pfd_moments.008000.xdmf,pfd_moments.008000_p000000.h5,pfd.009000.xdmf,pfd.009000_p000000.h5,pfd_moments.009000.xdmf,pfd_moments.009000_p000000.h5,pfd.010000.xdmf,pfd.010000_p000000.h5,pfd_moments.010000.xdmf,pfd_moments.010000_p000000.h5\} /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/harris_base_4nd/
+
+scp jagudelo@cori.nersc.gov:/global/cscratch1/sd/jagudelo/Testing_langevin/second_set_simulations/harris_base_4nd/\{pfd.000500.xdmf,pfd.000500_p000000.h5,pfd_moments.000500.xdmf,pfd_moments.000500_p000000.h5,pfd.001500.xdmf,pfd.001500_p000000.h5,pfd_moments.001500.xdmf,pfd_moments.001500_p000000.h5,pfd.002500.xdmf,pfd.002500_p000000.h5,pfd_moments.002500.xdmf,pfd_moments.002500_p000000.h5,pfd.003500.xdmf,pfd.003500_p000000.h5,pfd_moments.003500.xdmf,pfd_moments.003500_p000000.h5,pfd.004500.xdmf,pfd.004500_p000000.h5,pfd_moments.004500.xdmf,pfd_moments.004500_p000000.h5,pfd.005500.xdmf,pfd.005500_p000000.h5,pfd_moments.005500.xdmf,pfd_moments.005500_p000000.h5,pfd.006500.xdmf,pfd.006500_p000000.h5,pfd_moments.006500.xdmf,pfd_moments.006500_p000000.h5,pfd.007500.xdmf,pfd.007500_p000000.h5,pfd_moments.007500.xdmf,pfd_moments.007500_p000000.h5,pfd.008500.xdmf,pfd.008500_p000000.h5,pfd_moments.008500.xdmf,pfd_moments.008500_p000000.h5,pfd.009500.xdmf,pfd.009500_p000000.h5,pfd_moments.009500.xdmf,pfd_moments.009500_p000000.h5\} /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/harris_base_4nd/
+
+scp jagudelo@cori.nersc.gov:/global/cscratch1/sd/jagudelo/Testing_langevin/second_set_simulations/harris_yz_lange_wavelength_all_4nd/\{pfd.000000.xdmf,pfd.000000_p000000.h5,pfd_moments.000000.xdmf,pfd_moments.000000_p000000.h5,pfd.001000.xdmf,pfd.001000_p000000.h5,pfd_moments.001000.xdmf,pfd_moments.001000_p000000.h5,pfd.002000.xdmf,pfd.002000_p000000.h5,pfd_moments.002000.xdmf,pfd_moments.002000_p000000.h5,pfd.003000.xdmf,pfd.003000_p000000.h5,pfd_moments.003000.xdmf,pfd_moments.003000_p000000.h5,pfd.004000.xdmf,pfd.004000_p000000.h5,pfd_moments.004000.xdmf,pfd_moments.004000_p000000.h5,pfd.005000.xdmf,pfd.005000_p000000.h5,pfd_moments.005000.xdmf,pfd_moments.005000_p000000.h5,pfd.006000.xdmf,pfd.006000_p000000.h5,pfd_moments.006000.xdmf,pfd_moments.006000_p000000.h5,pfd.007000.xdmf,pfd.007000_p000000.h5,pfd_moments.007000.xdmf,pfd_moments.007000_p000000.h5,pfd.008000.xdmf,pfd.008000_p000000.h5,pfd_moments.008000.xdmf,pfd_moments.008000_p000000.h5,pfd.009000.xdmf,pfd.009000_p000000.h5,pfd_moments.009000.xdmf,pfd_moments.009000_p000000.h5,pfd.010000.xdmf,pfd.010000_p000000.h5,pfd_moments.010000.xdmf,pfd_moments.010000_p000000.h5\} /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/harris_yz_lange_wavelength_all_4nd/
+
+scp jagudelo@cori.nersc.gov:/global/cscratch1/sd/jagudelo/Testing_langevin/second_set_simulations/harris_yz_lange_wavelength_all_4nd/\{pfd.000500.xdmf,pfd.000500_p000000.h5,pfd_moments.000500.xdmf,pfd_moments.000500_p000000.h5,pfd.001500.xdmf,pfd.001500_p000000.h5,pfd_moments.001500.xdmf,pfd_moments.001500_p000000.h5,pfd.002500.xdmf,pfd.002500_p000000.h5,pfd_moments.002500.xdmf,pfd_moments.002500_p000000.h5,pfd.003500.xdmf,pfd.003500_p000000.h5,pfd_moments.003500.xdmf,pfd_moments.003500_p000000.h5,pfd.004500.xdmf,pfd.004500_p000000.h5,pfd_moments.004500.xdmf,pfd_moments.004500_p000000.h5,pfd.005500.xdmf,pfd.005500_p000000.h5,pfd_moments.005500.xdmf,pfd_moments.005500_p000000.h5,pfd.006500.xdmf,pfd.006500_p000000.h5,pfd_moments.006500.xdmf,pfd_moments.006500_p000000.h5,pfd.007500.xdmf,pfd.007500_p000000.h5,pfd_moments.007500.xdmf,pfd_moments.007500_p000000.h5,pfd.008500.xdmf,pfd.008500_p000000.h5,pfd_moments.008500.xdmf,pfd_moments.008500_p000000.h5,pfd.009500.xdmf,pfd.009500_p000000.h5,pfd_moments.009500.xdmf,pfd_moments.009500_p000000.h5\} /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/harris_yz_lange_wavelength_all_4nd/
+%------------------------------------------------------------------------------
+
+
+
+To copy more effectively the files with a given extension only. It is a matter of using the single quotes
+%---------------------------------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------------------------------
+scp -r jagudelo@cori.nersc.gov:'/global/cscratch1/sd/jagudelo/Testing_langevin/psc_harris_yz_lange_all_ppc600_ome2_mime1_3D/pfd_moments0*' /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/psc_harris_yz_lange_all_ppc600_ome2_mime1_3D
+
+scp -r jagudelo@cori.nersc.gov:'/global/cscratch1/sd/jagudelo/Testing_langevin/psc_harris_yz_base_ppc1000_ome2_mime1/slurm-63907032.out*' /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/psc_harris_yz_base_ppc1000_ome2_mime1
+
+scp -r jagudelo@cori.nersc.gov:'/global/cscratch1/sd/jagudelo/Testing_langevin/psc_harris_yz_lange_3_ppc1000_ome2_mime1/slurm*' /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_1/psc_harris_yz_lange_3_ppc1000_ome2_mime1
+%---------------------------------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------------------------------
+
+
+%------------------------------------------------------------------------------
+
+
+%------------------------------------------------------------------------------
+% For the image analysis 
+
+Byz = jHat*hy_fc + kHat*hz_fc
+
+Ex_EBx = ex_ec + ((ey_ec*hz_fc - ez_ec*hy_fc)/sqrt(hx_fc^2+hy_fc^2+hz_fc^2))
+%------------------------------------------------------------------------------
+
+
+
+% Title for the Helio-swarm meeting 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Electron energy transport and transfer in PIC simulations of 3D turbulence-driven reconnection.
+
+
+
+% To get the list of files and folders in a given folder.
+
+find Testing_langevin/ -type d -print > list_folders_Testing_cori.txt
+find Testing_langevin/ -type f -print > list_folders_Testing_cori_files.txt
+
+
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+In cori
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+module unload PrgEnv-intel
+module load PrgEnv-gnu/6.0.10
+module unload cmake/3.22.1
+module load cmake/3.22.2
+module load cray-mpich/7.7.19
+module load cray-hdf5-parallel/1.12.1.1
+module load adios2
+
+
+
+
+-rw-r-----  1 jagudelo jagudelo  37K Feb 15 14:58 psc_harris_yz_lange_many_Ax_large_noini_L8di_8_dum.cxx
+
+-rw-r-----  1 jagudelo jagudelo  37K Feb 24 08:48 psc_harris_yz_lange_many_Ax_large_L4di_nb01.cxx
+-rw-r-----  1 jagudelo jagudelo  37K Feb 24 08:49 psc_harris_yz_lange_many_Ax_large_L4di_Bg01.cxx
+-rw-r-----  1 jagudelo jagudelo  37K Feb 24 08:50 psc_harris_yz_lange_many_Ax_large_L4di_0mega09.cxx
+-rw-r-----  1 jagudelo jagudelo  37K Feb 24 08:50 psc_harris_yz_lange_many_Ax_large_L4di_gamma06.cxx
+-rw-r-----  1 jagudelo jagudelo  37K Feb 24 08:51 psc_harris_yz_lange_many_Ax_large_L4di_dB02.cxx
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ssh jagudelo@perlmutter-p1.nersc.gov
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+In perlmutter
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+% this doesn't work anymore
+%-------------------------
+module unload PrgEnv-intel
+module load PrgEnv-gnu/8.3.3
+module unload cmake/3.22.1
+module load cmake/3.22.0
+module load cray-mpich/8.1.17
+module load cray-hdf5-parallel/1.12.1.5
+module load cpu
+%-------------------------
+
+% this is the one that works now
+%-------------------------
+module unload PrgEnv-intel
+module unload cmake/3.22.1
+module load cmake/3.22.0
+module load PrgEnv-cray/8.3.3
+module load cray-mpich/8.1.22
+module load cray-hdf5-parallel/1.12.2.1
+module load cpu
+%-------------------------
+
+
+% this is the one that works now 2
+%-------------------------
+module load cmake/3.22.0
+module load PrgEnv-cray/8.3.3
+module load cray-mpich/8.1.25
+module load cray-hdf5-parallel/1.12.2.3
+module load cpu
+
+module load spack/e4s-22.11
+spack install adios2
+
+
+shifterimg pull ghcr.io/autamus/adios2:2.7.1
+
+
+It is installed here
+/global/homes/j/jagudelo/spack-workspace/perlmutter/software/linux-sles15-zen3/gcc-11.2.0/adios2-2.8.3-pvkd6txwuwwpu2iqsqyervbqi2gtqt4s
+
+export CMAKE_PREFIX_PATH=/global/homes/j/jagudelo/My_codes/lange_harris/psc-main/adios2-build:$CMAKE_PREFIX_PATH
+export LD_LIBRARY_PATH=/global/homes/j/jagudelo/My_codes/lange_harris/psc-main/adios2-build/lib64:$LD_LIBRARY_PATH
+
+
+
+cmake -DADIOS2_USE_Fortran=ON -DCMAKE_INSTALL_PREFIX=/global/homes/j/jagudelo/building/adios2-build -DCMAKE_BUILD_Type=Release ../ADIOS2
+make -j 16
+make
+make install
+%-------------------------
+
+
+
+% This one to trying run the code using adios 2.7.1
+%---------------------------------------------------
+module load cmake/3.22.0
+module load PrgEnv-cray/8.3.3
+module load cray-mpich/8.1.25
+module load cray-hdf5-parallel/1.12.2.3
+module load cpu
+
+module load python
+conda create --name myenv python=3.8
+conda activate myenv
+
+conda install -c conda-forge adios2=2.7.1
+
+module load python
+conda activate myenv
+conda deactivate
+
+
+
+% This is for the adios2. % <----- This is the one that works better
+%---------------------------------------------------
+module load python
+conda create --name my_adios2 python=3.7
+
+
+%---------------------------------------------------
+%---------------------------------------------------
+module load python
+conda activate my_adios2
+conda install -c williamfgc adios2-mpich -c conda-forge
+
+conda install cmake
+
+export LD_LIBRARY_PATH=/lib64:$LD_LIBRARY_PATH
+module load PrgEnv-cray/8.3.3
+module load cray-mpich/8.1.25
+
+module load cray-hdf5-parallel/1.12.2.3
+module load cpu
+
+. cmake.sh
+make
+
+%---------------------------------------------------
+%---------------------------------------------------
+
+
+
+% This is the version that works now in Perlmutter. 26 Feb, 2024
+%----------------------------------------------------
+%----------------------------------------------------
+module load conda
+conda create -n myadios_jeff
+
+module load conda
+conda activate myadios_jeff
+conda install -c williamfgc adios2-mpich -c conda-forge
+
+module load cpu
+
+module load cray-hdf5-parallel/1.12.2.9
+module load PrgEnv-cray/8.5.0
+module load cmake
+
+. cmake.sh
+
+%----------------------------------------------------
+%----------------------------------------------------
+
+To remove several files
+
+ rm -r checkpoint_3500.bp checkpoint_4500.bp checkpoint_5500.bp checkpoint_6500.bp checkpoint_7500.bp checkpoint_8500.bp checkpoint_9500.bp checkpoint_10500.bp checkpoint_11500.bp checkpoint_12500.bp 
+ rm -r checkpoint_13500.bp checkpoint_14500.bp checkpoint_15500.bp checkpoint_16500.bp checkpoint_17500.bp checkpoint_18500.bp checkpoint_19500.bp checkpoint_20500.bp checkpoint_21500.bp checkpoint_22500.bp
+
+
+rm -r checkpoint_200.bp checkpoint_400.bp checkpoint_600.bp checkpoint_800.bp checkpoint_1200.bp checkpoint_1400.bp checkpoint_1600.bp checkpoint_1800.bp checkpoint_2200.bp checkpoint_2400.bp checkpoint_2600.bp checkpoint_2800.bp checkpoint_3200.bp checkpoint_3400.bp checkpoint_3600.bp checkpoint_3800.bp checkpoint_4200.bp checkpoint_4400.bp checkpoint_4600.bp checkpoint_4800.bp checkpoint_5200.bp checkpoint_5400.bp checkpoint_5600.bp checkpoint_5800.bp checkpoint_6200.bp checkpoint_6400.bp checkpoint_6600.bp checkpoint_6800.bp checkpoint_7200.bp checkpoint_7400.bp checkpoint_7600.bp checkpoint_7800.bp checkpoint_8200.bp checkpoint_8400.bp checkpoint_8600.bp checkpoint_8800.bp checkpoint_9200.bp checkpoint_9400.bp checkpoint_9600.bp checkpoint_9800.bp
+
+rm -r checkpoint_10200.bp checkpoint_10400.bp checkpoint_10600.bp checkpoint_10800.bp checkpoint_11200.bp checkpoint_11400.bp checkpoint_11600.bp checkpoint_11800.bp checkpoint_12200.bp checkpoint_12400.bp checkpoint_12600.bp checkpoint_12800.bp checkpoint_13200.bp checkpoint_13400.bp checkpoint_13600.bp checkpoint_13800.bp checkpoint_14200.bp checkpoint_14400.bp checkpoint_14600.bp checkpoint_14800.bp checkpoint_15200.bp checkpoint_15400.bp checkpoint_15600.bp checkpoint_15800.bp checkpoint_16200.bp checkpoint_16400.bp checkpoint_16600.bp checkpoint_16800.bp checkpoint_17200.bp checkpoint_17400.bp checkpoint_17600.bp checkpoint_17800.bp checkpoint_18200.bp checkpoint_18400.bp checkpoint_18600.bp checkpoint_18800.bp checkpoint_19200.bp checkpoint_19400.bp checkpoint_19600.bp checkpoint_19800.bp
+
+rm -r checkpoint_20200.bp checkpoint_20400.bp checkpoint_20600.bp checkpoint_20800.bp checkpoint_21200.bp checkpoint_21400.bp checkpoint_21600.bp checkpoint_21800.bp checkpoint_22200.bp checkpoint_22400.bp checkpoint_22600.bp checkpoint_22800.bp checkpoint_23200.bp checkpoint_23400.bp checkpoint_23600.bp checkpoint_23800.bp checkpoint_24200.bp checkpoint_24400.bp checkpoint_24600.bp checkpoint_24800.bp checkpoint_25200.bp checkpoint_25400.bp checkpoint_25600.bp checkpoint_25800.bp checkpoint_26200.bp checkpoint_26400.bp checkpoint_26600.bp checkpoint_26800.bp checkpoint_27200.bp 
+
+rm -r checkpoint_21200.bp checkpoint_21400.bp checkpoint_21600.bp checkpoint_21800.bp checkpoint_22200.bp checkpoint_22400.bp checkpoint_22600.bp checkpoint_22800.bp checkpoint_23200.bp checkpoint_23400.bp checkpoint_23600.bp checkpoint_23800.bp checkpoint_24200.bp checkpoint_24400.bp checkpoint_24600.bp checkpoint_24800.bp checkpoint_25200.bp checkpoint_25400.bp checkpoint_25600.bp checkpoint_25800.bp checkpoint_26200.bp checkpoint_26400.bp checkpoint_26600.bp checkpoint_26800.bp checkpoint_27200.bp checkpoint_27400.bp checkpoint_27600.bp checkpoint_27800.bp checkpoint_28200.bp checkpoint_28400.bp checkpoint_28600.bp checkpoint_28800.bp
+%---------------------------------------------------
+
+
+
+% This is to install ALPS in Perlmutter
+%--------------------------------------
+module load cmake/3.22.0
+module load PrgEnv-gnu
+module load openmpi/5.0.0rc12
+
+./configure
+make
+%------------------------------------------------
+
+
+To run ALPS in my laptop so it doesn't get the errors
+%------------------------------------------------
+export TMPDIR=/tmp
+%----------------------------------------------
+
+Errors that come along
+
+ftn-2103 ftn: WARNING in command line
+  The -W unused option is not supported or invalid and will be ignored.
+ftn-78 ftn: ERROR in command line
+  The -O option has an invalid argument, "4".
+ftn-78 ftn: ERROR in command line
+  The -f option has an invalid argument, "bounds-check".
+ftn-78 ftn: ERROR in command line
+  The -f option has an invalid argument, "fpe-trap=zero,overflow".
+ftn-78 ftn: ERROR in command line
+  The -f option has an invalid argument, "unroll-loops".
+ftn-78 ftn: ERROR in command line
+  The -f option has an invalid argument, "backtrace".
+
+% vim src/Makefile
+%--------------------------------------
+
+
+
+%-------------------------
+% To store the data in the community file system 
+
+cd /global/cfs/cdirs/m2114/jagudelo
+%-------------------------
+
+
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+% copy files to Perlmutter
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+rsync -av jagudelo@cori.nersc.gov:/global/cscratch1/sd/jagudelo/Testing_langevin/psc_harris_yz_lange_all_par_ppc1000_ome5_mime1/run_job_2.sh /pscratch/sd/j/jagudelo/runs_perlmutter/testing_jobs
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+% copy files from Perlmutter
+scp -r jagudelo@perlmutter-p1.nersc.gov:/pscratch/sd/j/jagudelo/runs_perlmutter/Tests_2023/Runs_June/psc_harris_yz_lange_many_Ax_large_L4di_dB001_omp1_kLd1/\{pfd.016900_p000000.h5,pfd.016900.xdmf\} /Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_lange_many_Ax_large_L4di_dB001_omp1_kLd1
+ 
+
+Zoom with Michael
+920 0380 2034
+702014
+
+
+
+
+Your Check-in Reference number	P8IF8H
+Your booking number:4486377
+
+https://www.condor.com/us/help-contact/contact/customer-relations.jsp
+
+Hi,
+
+On Monday November 14th, my itinerary was completely disrupted by the 24 hours delay of the flight from New York to Frankfurt. The whole purpose of my flight was to give a talk on Wednesday. Had I flight on the 15th of November, I would not have made it on time for my talk. So, there was no point for my to go at all anymore. I want to request back the money that I paid for this flight (869.98 USD) plus a compensation (620 USD) to cover the expenses of the hotel nights that I couldn't cancel without penalty because it was a last minute thing. I am entitle to request my money back and to request the compensation according to the EU261. 24 Hours delay its outrageous and it completely ruined my trip. I lost a great opportunity in my profesional development because of you. I attach the support documents.   
+
+
+
+
+% Notes for the AGU presentation. Divide this by 2 to account for the square
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3D
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+pp =
+
+    0.2188   -3.6381
+    0.3958   -9.1627
+    0.3474   -8.4390
+    0.3554   -8.8927
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2D 
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Lambda 1 
+
+grotwh_rate =
+
+0.02
+
+    0.1141    0.2708
+    0.1047    0.1176
+    0.1283    0.1006
+    0.1175    0.1401
+
+0.05
+    0.0933    0.2125
+    0.1031    0.1122
+    0.1290    0.1012
+    0.1173    0.1411
+
+0.1
+    0.0651    0.1433
+    0.1007    0.1075
+    0.1299    0.1000
+    0.1164    0.1426
+
+0.2
+    0.0463    0.0919
+    0.0908    0.0767
+    0.1332    0.0979
+    0.1133    0.1507
+
+0.4
+    0.0369    0.0888
+    0.0716    0.0755
+    0.1388    0.0902
+    0.1009    0.1747
+
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Lambda 2
+grotwh_rate =
+0.1
+    0.1297    0.2397
+    0.1025    0.1250 <---
+    0.1164    0.1706
+    0.0959    0.2202
+
+Lambda 3
+grotwh_rate =
+0.1
+    0.1231    0.1185
+    0.1002    0.1470
+    0.1111    0.1173 <---
+    0.0719    0.2253
+
+Lambda 4
+grotwh_rate =
+0.1
+    0.1283    0.3176
+    0.0837    0.1385
+    0.1250    0.1029
+    0.1045    0.1183
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+All par
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+pp =
+
+    0.0614    0.1158
+    0.0965    0.1270
+    0.0989    0.0896
+    0.0850    0.2336
+
+%-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Send the 3D runs with the 01 amplitude
+
+
+% The simulations on the folder second_set of simulations correspond to large current sheet. Check this results.
+harris_lange_wave_all_2nd
+
+
+harris_yz_lange_wavelength_all_4nd <--- this one has the particle info. Check it as well.
+Also harris_base_4nd, harris_lange_wave_1_2nd, harris_base_2nd
+
+
+
+
+
+%---------------------------------------------------------------------------------------
+% to count the number of files with a given extension in a folder
+
+find . -mindepth 1 -type f -name "*.h5" -exec printf x \; | wc -c
+for d in */; do set -- "$d"/*; printf '%s\t%d\n' "${d%/}" "$#"; done | column -t
+
+
+% This is the command that works better so far
+for dir in ../testing_dB/*/; do echo "$dir"; find $dir -mindepth 1 -type f -name "pfd.0*" -exec printf x \; | wc -c; done
+
+
+for d in */; do set -- "$d"/*; printf '%s\t%d\n' "${d%/}" "$#"; find "${d%/}" -mindepth 1 -type f -name "*.h5" -exec printf x \; | wc -c ; done | column -t
+
+
+
+find . -mindepth 1 -type f -name "pfd.0*" -exec printf x \; | wc -c
+
+
+psc_harris_yz_lange_many_Ax_large_L4di_dB08 			454
+psc_harris_yz_lange_many_Ax_large_L4di_dB08_ome01 		480
+
+
+%---------------------------------------------------------------------------------------
+
+
+
+
+% To copy all the files that have the same extension (the singles quotes are needed)
+
+rsync -avzh jagudelo@perlmutter-p1.nersc.gov:'/pscratch/sd/j/jagudelo/runs_perlmutter/Tests_2023/Runs_June/psc_lower_hybrid_mime100/pfd.0*' /Volumes/Perlmutterdata/tmp_jeff/psc_lower_hybrid_mime100/ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rm pfd_moments.015*
+rm pfd_moments.016*
+rm pfd_moments.017*
+rm pfd_moments.018*
+rm pfd_moments.019*
+
+rm pfd_moments.020*
+
+rm pfd_moments.021*
+rm pfd_moments.022*
+rm pfd_moments.023*
+rm pfd_moments.024*
+rm pfd_moments.025*
+rm pfd_moments.026*
+rm pfd_moments.027*
+rm pfd_moments.028*
+rm pfd_moments.029*
+
+rm pfd.015*
+rm pfd.016*
+rm pfd.017*
+rm pfd.018*
+rm pfd.019*
+
+rm pfd.020*
+
+rm pfd.021*
+rm pfd.022*
+rm pfd.023*
+rm pfd.024*
+rm pfd.025*
+rm pfd.026*
+rm pfd.027*
+rm pfd.028*
+rm pfd.029*
+
+
+
+
+
+%For Cirrus
+%-----------------------------------------------------------------------
+
+cd /work/tc055/tc055/jaagudeloru1/running_tests
+
+
+scp -r jaagudeloru1@login.cirrus.ac.uk:/work/tc055/tc055/jaagudeloru1/running_tests/turb_alf/\{wall_times_strong_6cuben64.txt,wall_times_strong_6cuben32.txt,wall_times_strong_6cuben16.txt,wall_times_strong_6cuben8.txt,wall_times_strong_6cuben4.txt,wall_times_strong_6cuben2.txt\} /Users/jeffersson_agudelo/Downloads/scaling_times/
+
+%-----------------------------------------------------------------------
+
+
+
+
+To remove the Cache Files
+%------------------------------------------------------------------------
+cd /Users/jeffersson_agudelo/Library/
+find Caches -type f -exec rm {} +   
+
+cd /Users/jeffersson_agudelo/Library
+find Logs -type f -exec rm {} +  
+%------------------------------------------------------------------------
+
+
+
+
+
+Modules cirrus cuda
+%------------------------------------------------------------------------
+
+% This doesn't work
+%------------------------------------------------------------------------
+module load cmake/3.25.2
+
+%module load nvidia/nvhpc-byo-compiler/22.2
+%module load nvidia/nvhpc/22.2
+
+module load nvidia/nvhpc
+
+module load openmpi/4.1.6-cuda-11.6
+module load hdf5parallel/1.12.0-nvhpc-openmpi
+%------------------------------------------------------------------------
+
+
+
+%------------------------------------------------------------------------
+## Colorize the ls output ##
+alias ls='ls --color=auto'
+
+## Use a long listing format ##
+alias ll='ls -la'
+
+## Show hidden files ##
+alias l.='ls -d .* --color=auto'
+%------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+%------------------------------------------------------------------------
+Host *
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_rsa_cirrus
+%------------------------------------------------------------------------
+
+
+Accede a nuestra Demo Week a través del siguiente enlace. Puedes usar el mismo enlace para todas las demostraciones, así que no olvides guardarlo: 
+
+https://meet.google.com/imu-pxaa-qeu
+
+
+
+
+
+
+
+Comments. Meeting
+
+
+Look 
+
+There are consistent variations across the coronal holes changes (some properties of turbulence). Helicity, scaling, 
+
+Are they noodles, are they blobs,
+
+At one AU the parcel has evolve and the different characteristics are lost with radial distance
+
+
+How much of the homogeneity comes from the source and how much is due to the evolution 
+
+The imbalance of turbulence is changing across the coronal hole as the helicity measure shows.
+
+
+
+Measurements. How does things change across the coronal hole
+
+Cross-helicity, correlation length,  
+
+
+Simulation of boundles of flux. Changing the properties across the direction.
+
+Simulation of turbulence in the 
+
+Expanding box simulation. Luca. 
+
+
+
+
+
