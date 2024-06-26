@@ -19,10 +19,11 @@ ode4 = diff(phi_prime, x) == (k^2 + ((s/(gamma*(k^2)))*(tanh(x))^2) )*phi ...
 F = matlabFunction(f, 'Vars', {x, Y, gamma, k, s});
 
 % Set parameters and initial conditions
-gamma = 0.1;
+gamma = 0.5;
 k = 4;
 s = 1;
-conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
+conditions = [0.1, 0.0, 4, 4];
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
 span = [0 1];
 
 % Solve the system of differential equations
@@ -30,6 +31,7 @@ span = [0 1];
 
 % Plot the solutions
 f1=figure(1);
+
 plot(rsol, psol(:,1:4), '-');
 legend('psi(x)', 'phi(x)', 'dpsi/dx', 'dphi/dx');
 xlabel('x');
@@ -38,39 +40,168 @@ grid
 
 %--------------------------------------------------------------------------
 
-
-
+conditions = [0.5*ones(4,1)];
+conditions = [0.1, 0.0, 0, 0];
+% Multiple plots
 %--------------------------------------------------------------------------
+% Set parameters and initial conditions
+f12=figure(2);
 %--------------------------------------------------------------------------
-% %function definitions
-syms psi(x) phi(x) x gamma k s Y
-
-ode1 = diff(psi,x,2) == psi*k^2 + gamma*s*(psi - tanh(x)*phi);
-ode2 = diff(phi,x,2) == (k^2 + ((s/(gamma*(k^2)))*(tanh(x))^2) )*phi ...
-    -(psi/(gamma*(k^2)))*( ((2/gamma)*tanh(x) * (sech(x))^2) + (s*tanh(x)) );
-
-
-
-% %function setup
-[f1, Subs]= odeToVectorField([ode1 ode2]);
-F1= matlabFunction(f1, 'Vars',{x,Y,gamma,k,s})
-% %initial conditions
-
-gamma = 0.1;                                               % Provide Value
-k = 4;                                               % Provide Value
-s = 1; 
-% Provide Value                                             % Provide Value
-%conditions = [rand(4,1)];                               % Three Equations = Three Initial Conditions
-conditions = [0.1*ones(4,1)];                               % Three Equations = Three Initial Conditions
+subplot(3,3,1)
+gamma = 0.1; k = 10; s = 1;
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
 span = [0 1];
-% %solver
-[rsol,psol] = ode45(@(x,Y)F1(x,Y,gamma,k,s),span,conditions);
-
-f2=figure(2)
-plot(rsol, psol)
-legend
+% Solve the system of differential equations
+[rsol, psol] = ode45(@(x,Y) F(x,Y,gamma,k,s), span, conditions);
+plot(rsol, psol(:,1:2), '-');
+legend('psi(x)', 'phi(x)');
+xlabel('x');
+ylabel('Solution');
+title('gamma = 0.1; k = 10; s = 1')
 grid
 %--------------------------------------------------------------------------
+subplot(3,3,2)
+gamma = 1.0; k = 10; s = 1;
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
+span = [0 1];
+% Solve the system of differential equations
+[rsol, psol] = ode45(@(x,Y) F(x,Y,gamma,k,s), span, conditions);
+plot(rsol, psol(:,1:2), '-');
+legend('psi(x)', 'phi(x)');
+xlabel('x');
+ylabel('Solution');
+title('gamma = 1.0; k = 10; s = 1')
+grid
+%--------------------------------------------------------------------------
+subplot(3,3,3)
+gamma = 10.0; k = 10; s = 1;
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
+span = [0 1];
+% Solve the system of differential equations
+[rsol, psol] = ode45(@(x,Y) F(x,Y,gamma,k,s), span, conditions);
+plot(rsol, psol(:,1:2), '-');
+legend('psi(x)', 'phi(x)');
+xlabel('x');
+ylabel('Solution');
+title('gamma = 10; k = 10; s = 1')
+grid
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+subplot(3,3,4)
+gamma = 0.1; k = 0.1; s = 1;
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
+span = [0 1];
+% Solve the system of differential equations
+[rsol, psol] = ode45(@(x,Y) F(x,Y,gamma,k,s), span, conditions);
+plot(rsol, psol(:,1:2), '-');
+legend('psi(x)', 'phi(x)');
+xlabel('x');
+ylabel('Solution');
+title('gamma = 0.1; k = 0.1; s = 1')
+grid
+%--------------------------------------------------------------------------
+subplot(3,3,5)
+gamma = 0.1; k = 1; s = 1;
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
+span = [0 1];
+% Solve the system of differential equations
+[rsol, psol] = ode45(@(x,Y) F(x,Y,gamma,k,s), span, conditions);
+plot(rsol, psol(:,1:2), '-');
+legend('psi(x)', 'phi(x)');
+xlabel('x');
+ylabel('Solution');
+title('gamma = 0.1; k = 1; s = 1')
+grid
+%--------------------------------------------------------------------------
+subplot(3,3,6)
+gamma = 0.1; k = 10; s = 1;
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
+span = [0 1];
+% Solve the system of differential equations
+[rsol, psol] = ode45(@(x,Y) F(x,Y,gamma,k,s), span, conditions);
+plot(rsol, psol(:,1:2), '-');
+legend('psi(x)', 'phi(x)');
+xlabel('x');
+ylabel('Solution');
+title('gamma = 0.1; k = 10; s = 1')
+grid
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+subplot(3,3,7)
+gamma = 0.1; k = 10; s = 0.1;
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
+span = [0 1];
+% Solve the system of differential equations
+[rsol, psol] = ode45(@(x,Y) F(x,Y,gamma,k,s), span, conditions);
+plot(rsol, psol(:,1:2), '-');
+legend('psi(x)', 'phi(x)');
+xlabel('x');
+ylabel('Solution');
+title('gamma = 0.1; k = 10; s = 0.1')
+grid
+%--------------------------------------------------------------------------
+subplot(3,3,8)
+gamma = 0.1; k = 10; s = 1;
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
+span = [0 1];
+% Solve the system of differential equations
+[rsol, psol] = ode45(@(x,Y) F(x,Y,gamma,k,s), span, conditions);
+plot(rsol, psol(:,1:2), '-');
+legend('psi(x)', 'phi(x)');
+xlabel('x');
+ylabel('Solution');
+title('gamma = 0.1; k = 10; s = 1')
+grid
+%--------------------------------------------------------------------------
+subplot(3,3,9)
+gamma = 0.1; k = 10; s = 10;
+%conditions = [0.1*ones(4,1)]; % Four equations = Four initial conditions
+span = [0 1];
+% Solve the system of differential equations
+[rsol, psol] = ode45(@(x,Y) F(x,Y,gamma,k,s), span, conditions);
+plot(rsol, psol(:,1:2), '-');
+legend('psi(x)', 'phi(x)');
+xlabel('x');
+ylabel('Solution');
+title('gamma = 0.1; k = 10; s = 10')
+grid
+%--------------------------------------------------------------------------
+
+
+
+% % %--------------------------------------------------------------------------
+% % %--------------------------------------------------------------------------
+% % % %function definitions
+% % syms psi(x) phi(x) x gamma k s Y
+% % 
+% % ode1 = diff(psi,x,2) == psi*k^2 + gamma*s*(psi - tanh(x)*phi);
+% % ode2 = diff(phi,x,2) == (k^2 + ((s/(gamma*(k^2)))*(tanh(x))^2) )*phi ...
+% %     -(psi/(gamma*(k^2)))*( ((2/gamma)*tanh(x) * (sech(x))^2) + (s*tanh(x)) );
+% % 
+% % 
+% % 
+% % % %function setup
+% % [f1, Subs]= odeToVectorField([ode1 ode2]);
+% % F1= matlabFunction(f1, 'Vars',{x,Y,gamma,k,s})
+% % % %initial conditions
+% % 
+% % gamma = 0.1;                                               % Provide Value
+% % k = 4;                                               % Provide Value
+% % s = 1; 
+% % % Provide Value                                             % Provide Value
+% % %conditions = [rand(4,1)];                               % Three Equations = Three Initial Conditions
+% % conditions = [0.1*ones(4,1)];                               % Three Equations = Three Initial Conditions
+% % span = [0 1];
+% % % %solver
+% % [rsol,psol] = ode45(@(x,Y)F1(x,Y,gamma,k,s),span,conditions);
+% % 
+% % % f2=figure(2)
+% % % plot(rsol, psol)
+% % % legend
+% % % grid
+% % %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 
