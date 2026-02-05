@@ -1,14 +1,23 @@
 % this is for the relatives values in time 
 
 %path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/turb_alf_cam_3D_small';
-path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/psc_turb_alf_2D_xz_be02';
+%path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/psc_turb_alf_2D_xz_be02';
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/psc_turb_alf_2D_xz_be02';
+
+path = '/JAAR-DATA/CIRRUS_DATA_desktop/considering_current/psc_turb_alf_2D_xz_large_current'; % beta 02
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/considering_current/psc_turb_alf_2D_xz_large_05_current'; %beta 05
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/considering_current/psc_turb_alf_2D_xz_extlarge_current'; % beta 02
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/considering_current/psc_turb_alf_2D_xz_extlarge_05_current'; %beta 05
+
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/considering_current/psc_turb_alf_2D_xz_large_current_dB'; %beta 05
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/considering_current/psc_turb_alf_2D_xz_large_current_nodBy';
 %-----------------------------------------------------------------------------------------------------------------------
 
 % For the scripts
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
 path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
 path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
-path_color = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+path_color = '/home/UNN/pfcy6/codes/processing_scripts/Matlab_Scripts_Laptop';
 
 %-----------------------------------------------------------------------------------------------------------------------
 
@@ -31,35 +40,64 @@ n0=1;
 %Vi normalised to the proton alfven speed V_a=0.1c The alfven speed of
 %electrons is Vae=10Vai
 %--------------------------------------------------------------------------
-nb_n0 =0.1;
+mime = input ('mime value ');
+nb_n0 =1;
 kb = 1.; mu0 =1.; c=1; q = 1;
-
 Vai=0.1;
 Vae=0.1;%0.2;
 Va=0.1;%0.2;
-
 Vai_b=Vai/sqrt(nb_n0);
 Vae_b=Vae/sqrt(nb_n0);
-
-mime =100.;
+%mime =100.;
 mi = mime;
 me = 1; eps0=1.;
 m = mi + me;
 %--------------------------------------------------------------------------
 
+absolute = input ('to compute the abs = 1; no absolute = 0   ');
+l_wind_x = input('Window size in di:'  );
+
 %--------------------------------------------------------------------------
+omega_pe_Omega_ce=10;
 omega_pi=1;
 Omega_e=Vai*sqrt(mime)*omega_pi;
 Omega_i=Omega_e / mime;
 TOmega_e=1/Omega_e;
 TOmega_i=1/Omega_i;
-omega_pe_Omega_ce=5;
 %--------------------------------------------------------------------------
+in=1;
+fileID =  S(in).name; %change the 1 per i
+%h5disp(fileID);
+info = h5info(fileID);
+EHJ_1st = info.Groups(16).Name;
+%%%
+Bx=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
+By=squeeze(h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d')));
+Bz=squeeze(h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d')));
+Ns=size(squeeze(Bx));
+grid_length = info.Groups(17).Attributes;
+Lx=grid_length(4).Value(1) - grid_length(3).Value(1); %(This is in de The substraction give the total size of the domain) -Lx0 to Lx0
+Ly=grid_length(4).Value(2) - grid_length(3).Value(2);
+Lz=grid_length(4).Value(3) - grid_length(3).Value(3);
+nx = Ns(1,1);
+nz = Ns(1,2);
+% Generate grid
+xl = linspace(0, Lx, nx);
+zl = linspace(0, Lz, nz);
+xl_di = xl/sqrt(mime);
+zl_di = zl/sqrt(mime);
+[Z, X] = meshgrid(xl_di, zl_di);
+B_mag = sqrt(Bx.^2 + Bz.^2 + (By-B0).^2);
+Tau_nl = xl_di(end)*B0/(mean(B_mag,"all")*Vai_b);
 in=10;
 %--------------------------------------------------------------------------
+
+
 %--------------------------------------------------------------------------
 %in=input('select the time stamp: ');
 
+MHD_E2vxB_mean=zeros(1,N);
+MHD_vxB2vxB_mean=zeros(1,N);
 MHD_JxB2vxB_mean =zeros(1,N);
 MHD_divP2vxB_mean = zeros(1,N);
 MHD_divvJall2vxB_mean = zeros(1,N);
@@ -70,7 +108,7 @@ SGS_tau_JxB_mean2vxB_mean = zeros(1,N);
 SGS_tau_Div_mean2vxB_mean = zeros(1,N);
 SGS_tau_total_mean2vxB_mean = zeros(1,N);
 
-time_in = zeros(1,N);
+time_in = zeros(1,N2);
 
 for in=1:N
 
@@ -162,8 +200,8 @@ resz = Lz/LZs;
 
 % Maybe it is better to define this in terms of the real resolution
 %----------------------------------------------------------------------
-%l_wind_x = input('Window size in de:');
-l_wind_x = 5;
+
+%l_wind_x = 5;
 
 fprintf('\n');
 
@@ -335,10 +373,25 @@ clearvars PPij_i PPij_e
 
 %--------------------------------------------------------------------
 % Apply a filter to the very noisy electric field.
-kx = 2 * pi * [0:nx2/2 -nx2/2+1:-1] / Lx; % Wavenumbers in x
-kz = 2 * pi * [0:nz2/2 -nz2/2+1:-1] / Lz; % Wavenumbers in z
+
+%--------------------------------------------------------------------
+% Apply a filter to the very noisy electric field.
+Lx_di=Lx/sqrt(mime); % Using this thefilter is in terms of di 
+Lz_di=Lz/sqrt(mime);
+
+kx=((0:LXs-1)).*2*pi/Lx_di;%Includes negative wavenumbers and as it is k_max = pi/resx
+kz=((0:LZs-1)).*2*pi/Lz_di; % this is in terms of di
+
 [Kz, Kx] = meshgrid(kz, kx); % Note the order here Kz goes first
-Dx = Lx/nx2;
+Dx = Lx_di/nx2; %<<<---- this considers the ks in terms of di (so it is the resolution in terms of de and this has an impact on how the k filter works)
+
+% % %----------------------------------------------------------------------
+% DEFINE THE Ks JUST ONCE % This is for the filter only
+% % %----------------------------------------------------------------------
+resx = Lx_di/LXs; %in di
+resz = Lz_di/LZs; %in di
+threshold=pi/resx; %in di
+%----------------------------------------------------------------------
 
 n_e0_dt = n_e0;
 n_i0_dt = n_i0;
@@ -503,15 +556,13 @@ sigma_g=1;
 %Grad_Pe
 %----------------------------------------------------------------------
 
-%--------------------------------------------------------------------------
-% Compute wavenumbers for Fourier differentiation
-kx = 2 * pi * [0:nx2/2 -nx2/2+1:-1] / Lx; % Wavenumbers in x
-kz = 2 * pi * [0:nz2/2 -nz2/2+1:-1] / Lz; % Wavenumbers in z
-[Kz, Kx] = meshgrid(kz, kx); % Note the order here Kz goes first
-
-Dx = Lx/nx2; Dz = Lz/nz2;
-
-%--------------------------------------------------------------------------
+% %--------------------------------------------------------------------------
+% % Compute wavenumbers for Fourier differentiation
+% kx = 2 * pi * [0:nx2/2 -nx2/2+1:-1] / Lx; % Wavenumbers in x
+% kz = 2 * pi * [0:nz2/2 -nz2/2+1:-1] / Lz; % Wavenumbers in z
+% [Kz, Kx] = meshgrid(kz, kx); % Note the order here Kz goes first
+% Dx = Lx/nx2; Dz = Lz/nz2;
+% %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 %[dJx_dx, dJx_dz, dJy_dx, dJy_dz, dJz_dx, dJz_dz] = Derivatives_FFT_vector_2Dxz(Dx,Dz,Kx,Kz,Jx_dt,Jy_dt,Jz_dt);
@@ -1119,7 +1170,8 @@ tau_total = -tau_nE_tau -tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
 % The idea fir the new analysis is to plot the <SGSMhD>rms/<MHD>rms 
 % This analysis should be done with the three components not just one
 
-% The idea of this is to compute relative importance
+% The idea of this is to compute relative importance with absolute values
+if absolute==1
 %-----------------------------------------------------------------------
 MHD_E_mean = mean(abs(term1_filt),'all');
 MHD_vxB_mean = mean(abs(term2_filt),'all');
@@ -1133,8 +1185,6 @@ SGS_tau_JxB_mean = mean(abs(tau_J_x_B_tau),'all');
 SGS_tau_Div_mean = mean(abs(tau_Div_tau1),'all');
 SGS_tau_total_mean = mean(abs(tau_total),'all');
 
-% Table of relatives values
-
 
 MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean/MHD_vxB_mean;
 MHD_divP2vxB_mean(1,in) = MHD_divP_mean/MHD_vxB_mean;
@@ -1146,17 +1196,78 @@ SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean/MHD_vxB_mean;
 SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean/MHD_vxB_mean;
 SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean/MHD_vxB_mean;
 
+%-----------------------------------------------------------------------
+elseif absolute==0
+
+% The idea of this is to compute relative importance with NO absolute values
+%-----------------------------------------------------------------------
+MHD_E_mean = mean((term1_filt),'all');
+MHD_vxB_mean = mean((term2_filt),'all');
+MHD_JxB_mean = mean((term3_filt),'all');
+MHD_divP_mean = mean((term4_filt),'all');
+MHD_divvJall_mean = mean((term5_filt),'all');
+
+SGS_tau_nE_mean = mean((tau_nE_tau),'all');
+SGS_tau_vxB_mean = mean((tau_v_x_B_tau),'all');
+SGS_tau_JxB_mean = mean((tau_J_x_B_tau),'all');
+SGS_tau_Div_mean = mean((tau_Div_tau1),'all');
+SGS_tau_total_mean = mean((tau_total),'all');
+
+MHD_E2vxB_mean(1,in) = MHD_E_mean;
+MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean;
+MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean;
+MHD_divP2vxB_mean(1,in) = MHD_divP_mean;
+MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean;
+
+SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean;
+SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean;
+SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean;
+SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean;
+SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean;
+%-----------------------------------------------------------------------
+end
+
+% Table of relatives values
+
+% clearvars MHD_E_mean MHD_vxB_mean... 
+%     MHD_JxB_mean MHD_divP_mean ...
+% MHD_divvJall_mean SGS_tau_nE_mean ... 
+% SGS_tau_vxB_mean SGS_tau_JxB_mean...
+% SGS_tau_Div_mean SGS_tau_total_mean 
+
 disp(in)
 
 end
+
+%--------------------------------------------------------------------------
+    grid_dt = info.Groups(20).Attributes;
+    dt = double(grid_dt(15).Value); %this is in omega_pe
+    str = string(S(in).name);
+    newstr = extractBetween(str,"pfd.","_p000000.h5");
+    N_steps = str2double(newstr);
+    time = dt*N_steps/sqrt(mime); % This is in omega pi^-1
+    time_nl = time/Tau_nl; % This time nonlinear
+
+    %--------------------------------------------------------------------------
+
+time_in = linspace(0,time_nl,N2);
 
 
 legendsgsmhd = {'$<J \times B>/<u \times B>$','$<\nabla \cdot P>/<u \times B>$','$<\nabla \cdot (uJ+Ju-JJ/ne)>/<u \times B>$',...
     '$<\tau_{nE}>/<u \times B>$','$<\tau_{u \times B}>/<ux \times B>$','$<\tau_{Jx \times B}>/<u \times B>$',...
     '$<\tau_{\nabla\cdot(uJ+Ju-JJ/ne)}>/<u \times B>$','$<\Sigma \tau>/<u \times B>$'}; 
 
-time_in = linspace(1,21,Nf);
+legendsgsmhd_0 = {'$<E>$','$<u \times B>$','$<J \times B>$','$<\nabla \cdot P>$','$<\nabla \cdot (uJ+Ju-JJ/ne)>$',...
+    '$<\tau_{nE}>$','$<\tau_{u \times B}>$','$<\tau_{Jx \times B}>$',...
+    '$<\tau_{\nabla\cdot(uJ+Ju-JJ/ne)}>$','$<\Sigma \tau>$'}; 
+
+%time_in = linspace(1,21,Nf);
+fs=18;
+
+fs=16; x0=45;y0=54;xx1=1000;yy1=400;
+if absolute==1
 f34 = figure(34);
+set(gcf,'position',[x0,y0,xx1,yy1])
 plot(time_in,MHD_JxB2vxB_mean,'og',LineWidth=2)
 hold on
 plot(time_in,MHD_divP2vxB_mean,'om',LineWidth=2)
@@ -1166,10 +1277,12 @@ plot(time_in,SGS_tau_vxB_mean2vxB_mean,'+b',LineWidth=2)
 plot(time_in,SGS_tau_JxB_mean2vxB_mean,'+g',LineWidth=2)
 plot(time_in,SGS_tau_Div_mean2vxB_mean,'+c',LineWidth=2)
 plot(time_in,SGS_tau_total_mean2vxB_mean,'*k',LineWidth=2)
-legend(legendsgsmhd,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+legend(legendsgsmhd,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$t/t_{nl}$','FontSize',fs,Interpreter='latex')
 hold off
 
 f35 = figure(35);
+set(gcf,'position',[x0,y0,xx1,yy1])
 semilogy(time_in,MHD_JxB2vxB_mean,'og',LineWidth=2)
 hold on
 semilogy(time_in,MHD_divP2vxB_mean,'om',LineWidth=2)
@@ -1179,23 +1292,209 @@ semilogy(time_in,SGS_tau_vxB_mean2vxB_mean,'+b',LineWidth=2)
 semilogy(time_in,SGS_tau_JxB_mean2vxB_mean,'+g',LineWidth=2)
 semilogy(time_in,SGS_tau_Div_mean2vxB_mean,'+c',LineWidth=2)
 semilogy(time_in,SGS_tau_total_mean2vxB_mean,'*k',LineWidth=2)
-legend(legendsgsmhd,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+legend(legendsgsmhd,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$t/t_{nl}$','FontSize',fs,Interpreter='latex')
+hold off
+elseif absolute==0
+
+f34 = figure(34);
+set(gcf,'position',[x0,y0,xx1,yy1])
+dummy = (MHD_E2vxB_mean);
+plot(time_in,dummy,'or',LineWidth=2)
+hold on
+
+dummy = (MHD_vxB2vxB_mean);
+plot(time_in,dummy,'ob',LineWidth=2)
+
+dummy = (MHD_JxB2vxB_mean);
+plot(time_in,dummy,'og',LineWidth=2)
+
+dummy = (MHD_divP2vxB_mean);
+plot(time_in,dummy,'om',LineWidth=2)
+
+dummy = (MHD_divvJall2vxB_mean);
+plot(time_in,dummy,'oc',LineWidth=2)
+
+dummy = (SGS_tau_nE_mean2vxB_mean);
+plot(time_in,dummy,'+r',LineWidth=2)
+
+dummy = (SGS_tau_vxB_mean2vxB_mean);
+plot(time_in,dummy,'+b',LineWidth=2)
+
+dummy = (SGS_tau_JxB_mean2vxB_mean);
+plot(time_in,dummy,'+g',LineWidth=2)
+
+dummy = (SGS_tau_Div_mean2vxB_mean);
+plot(time_in,dummy,'+c',LineWidth=2)
+
+dummy = (SGS_tau_total_mean2vxB_mean);
+plot(time_in,dummy,'*k',LineWidth=2)
+
+legend(legendsgsmhd_0,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$t/t_{nl}$','FontSize',fs,Interpreter='latex')
+%ylabel('$log (1 - |<.>|)$','FontSize',fs,Interpreter='latex')
+ylim([-5e-6, 5e-6])
 hold off
 
 
+    f35 = figure(35);
+set(gcf,'position',[x0,y0,xx1,yy1])
+dummy = (MHD_E2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'or',LineWidth=2)
+hold on
+
+dummy = (MHD_vxB2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'ob',LineWidth=2)
+
+dummy = (MHD_JxB2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'og',LineWidth=2)
+
+dummy = (MHD_divP2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'om',LineWidth=2)
+
+dummy = (MHD_divvJall2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'oc',LineWidth=2)
+
+dummy = (SGS_tau_nE_mean2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'+r',LineWidth=2)
+
+dummy = (SGS_tau_vxB_mean2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'+b',LineWidth=2)
+
+dummy = (SGS_tau_JxB_mean2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'+g',LineWidth=2)
+
+dummy = (SGS_tau_Div_mean2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'+c',LineWidth=2)
+
+dummy = (SGS_tau_total_mean2vxB_mean);
+plot(time_in,sign(dummy).*log10(abs(dummy)),'*k',LineWidth=2)
+
+legend(legendsgsmhd_0,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$t/t_{nl}$','FontSize',fs,Interpreter='latex')
+ylabel('$sgn(|<.>|) * log (|<.>|)$','FontSize',fs,Interpreter='latex')
+%ylim([-10, 10])
+hold off
+
+end
+
+
+cd(path)
+
+if absolute==1
+    saveas(f34,strcat(num2str(i),'relatives_terms_time_abs.png'));
+    saveas(f35,strcat(num2str(i),'relatives_terms_time_abs_log.png'));
+elseif absolute==0
+    saveas(f34,strcat(num2str(i),'relatives_terms_time.png'));
+    saveas(f35,strcat(num2str(i),'relatives_terms_time_log.png'));
+end
 %T = table([1;5],[2;6],[3;7],[4;8],[],'VariableNames',{'JxB','divP','C','D'},'RowName',{'MHD','SGS/MHD'}); 
 
 
 %-----------------------------------------------------------------------
 
+%MAKE THIS A SCRIPT FOR THE THREE COMPONENTS
 
 
 
 
+%-----------------------------------------------------------------------
+% Checking the filter effect on the spectrum
+%{
+% %-----------------------------------------------------------------------
+% Apply a low-pass Gaussian filter to remove high frequencies
+%----------------------------
+B{1,1}=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'),start,count);
+B{1,2}=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'),start,count);
+B{1,3}=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'),start,count);
 
+Bx_dt = squeeze(B{1,1});
+By_dt = squeeze(B{1,2});
+Bz_dt = squeeze(B{1,3});
+%----------------------------
 
+%----------------------------
+Lx_di=Lx/sqrt(mime); % Using this thefilter is in terms of di 
+Lz_di=Lz/sqrt(mime);
+resx = Lx_di/length(Bx(:,1)); %in di
+resz = Lz_di/length(Bx(1,:)); %in di
+threshold=pi/resx; %in di
 
+kx=((0:length(Bx(:,1))-1)).*2*pi/Lx_di;%Includes negative wavenumbers and as it is k_max = pi/resx
+kz=((0:length(Bx(1,:))-1)).*2*pi/Lz_di; % this is in terms of di
 
+%kx = 2 * pi * [0:nx2/2 -nx2/2+1:-1] / Lx_di; % Wavenumbers in x
+%kz = 2 * pi * [0:nz2/2 -nz2/2+1:-1] / Lz_di; 
+
+[KX, KZ] = meshgrid(kx, kz);
+
+dk = 2 * pi / Lx_di; % Bin width in k-space
+% Calculate the radial wavenumber k
+K = sqrt(KX.^2 + KZ.^2);
+k_max = threshold;%max(K(:)); % Maximum wavenumber
+k_bins = 0:dk:k_max; % Radial wavenumber bins
+
+l_wind_x=resx;% this is in de now
+sigma = 1*l_wind_x; % Adjust as needed for filtering strength
+
+filter = exp(-(Kx.^2 + Kz.^2) * 0.5 * sigma^2);
+% Fourier transforms of vector-field components
+
+Bx_hat = fft2(Bx_dt) ;
+By_hat = fft2(By_dt) ;
+Bz_hat = fft2(Bz_dt) ;
+
+Bx_filt = real(ifft2(Bx_hat .* filter));
+By_filt = real(ifft2(By_hat .* filter));
+Bz_filt = real(ifft2(Bz_hat .* filter));
+
+% Initialize the omnidirectional spectrum
+E_k_1 = zeros(size(k_bins));
+E_k_2 = zeros(size(k_bins));
+
+% Calculate the energy spectrum
+F_Bx = Bx_hat;
+F_By = By_hat;
+F_Bz = Bz_hat;
+
+F_Bx2 = fft2(Bx_filt);
+F_By2 = fft2(By_filt);
+F_Bz2 = fft2(Bz_filt);
+
+energy_1 = abs(F_Bx).^2 + abs(F_By).^2 + abs(F_Bz).^2;
+energy_2 = abs(F_Bx2).^2 + abs(F_By2).^2 + abs(F_Bz2).^2;
+
+% Bin the energy into the radial wavenumber bins
+for i = 1:length(k_bins)-1
+    k_min = k_bins(i);
+    k_max = k_bins(i+1);
+    % Find the indices of the Fourier modes that fall within the current bin
+    indices = (K >= k_min) & (K < k_max);
+    % Sum the energy of these modes
+    E_k_1(i) = sum(energy_1(indices));
+    E_k_2(i) = sum(energy_2(indices));
+end
+
+% Normalize the spectrum by the bin width
+E_k_1 = E_k_1 / dk;
+E_k_2 = E_k_2 / dk;
+%----------------------------
+% Plot the omnidirectional spectrum
+%------------------------------------------------------------------
+f21=figure(21);
+CM = jet(N);
+loglog(k_bins(1:end-1), E_k_1(1:end-1), 'r','LineWidth', 1.5);
+hold on
+loglog(k_bins(1:end-1), E_k_2(1:end-1), 'c','LineWidth', 1.5); % this is the filt
+title('1D Omnidirectional Spectrum');
+xlabel('kdi');
+ylabel('E(k)');
+legend('Bmag','Bfilt')
+ylim([10^2, 10^12])
+xlim([3*10^(-1), 10^2])
+%------------------------------------------------------------------
+%}
+%-----------------------------------------------------------------------
 
 
 
@@ -1209,7 +1508,7 @@ hold off
 %----------------------------------------------------------------------
 function[Jx_filt] = Gauss_filter_2D_xz(Dx,Kx,Kz,Jx_dt) 
 % Apply a low-pass Gaussian filter to remove high frequencies
-sigma = 2*Dx; % Adjust as needed for filtering strength
+sigma = 1*Dx; % Adjust as needed for filtering strength
 filter = exp(-(Kx.^2 + Kz.^2) * 0.5 * sigma^2);
 % Fourier transforms of vector-field components
 Jx_hat = fft2(Jx_dt) .* filter;

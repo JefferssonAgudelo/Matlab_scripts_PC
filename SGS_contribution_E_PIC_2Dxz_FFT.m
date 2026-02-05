@@ -1,14 +1,21 @@
 %-----------------------------------------------------------------------------------------------------------------------
 %path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/turb_alf_cam_3D_small';
-path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/psc_turb_alf_2D_xz_be02';
+
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/psc_turb_alf_2D_xz_be02';
+
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/considering_current/psc_turb_alf_2D_xz_large_current';
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/considering_current/psc_turb_alf_2D_xz_large_current_dB';
+
+%path = '/JAAR-DATA/CIRRUS_DATA_desktop/testing_E';
+
+path = '/JAAR-DATA/CIRRUS_DATA_desktop/considering_current/testing_E';
 %-----------------------------------------------------------------------------------------------------------------------
 
 % For the scripts
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
 path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
 path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
-path_color = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
-
+path_color = '/home/UNN/pfcy6/codes/processing_scripts/Matlab_Scripts_Laptop';
 %-----------------------------------------------------------------------------------------------------------------------
 
 cd(path)
@@ -147,7 +154,7 @@ resz = Lz/LZs;
 
 % Maybe it is better to define this in terms of the real resolution
 %----------------------------------------------------------------------
-l_wind_x = input('Window size in de:');
+l_wind_x = input('Window size in di:');
 fprintf('\n');
 
 l_wind_y = l_wind_x;
@@ -315,11 +322,24 @@ clearvars PPij_i PPij_e
 
 %--------------------------------------------------------------------
 % Apply a filter to the very noisy electric field.
-kx = 2 * pi * [0:nx2/2 -nx2/2+1:-1] / Lx; % Wavenumbers in x
-kz = 2 * pi * [0:nz2/2 -nz2/2+1:-1] / Lz; % Wavenumbers in z
-[Kz, Kx] = meshgrid(kz, kx); % Note the order here Kz goes first
-Dx = Lx/nx2;
+Lx_di=Lx/sqrt(mime); % Using this thefilter is in terms of di 
+Lz_di=Lz/sqrt(mime);
 
+kx=((0:LXs-1)).*2*pi/Lx_di;%Includes negative wavenumbers and as it is k_max = pi/resx
+kz=((0:LZs-1)).*2*pi/Lz_di; % this is in terms of di
+
+[Kz, Kx] = meshgrid(kz, kx); % Note the order here Kz goes first
+Dx = Lx_di/nx2; %<<<---- this considers the ks in terms of di (so it is the resolution in terms of de and this has an impact on how the k filter works)
+
+% % %----------------------------------------------------------------------
+% DEFINE THE Ks JUST ONCE % This is for the filter only
+% % %----------------------------------------------------------------------
+resx = Lx_di/LXs; %in di
+resz = Lz_di/LZs; %in di
+threshold=pi/resx; %in di
+%----------------------------------------------------------------------
+
+%--------------------------------------------------------------------
 n_e0_dt = n_e0;
 n_i0_dt = n_i0;
 n_0_dt = (n_e0_dt.*me + n_i0_dt.*mi)./(me + mi);
@@ -483,11 +503,10 @@ sigma_g=1;
 
 %--------------------------------------------------------------------------
 % Compute wavenumbers for Fourier differentiation
-kx = 2 * pi * [0:nx2/2 -nx2/2+1:-1] / Lx; % Wavenumbers in x
-kz = 2 * pi * [0:nz2/2 -nz2/2+1:-1] / Lz; % Wavenumbers in z
-[Kz, Kx] = meshgrid(kz, kx); % Note the order here Kz goes first
-
-Dx = Lx/nx2; Dz = Lz/nz2;
+% kx = 2 * pi * [0:nx2/2 -nx2/2+1:-1] / Lx; % Wavenumbers in x
+% kz = 2 * pi * [0:nz2/2 -nz2/2+1:-1] / Lz; % Wavenumbers in z
+% [Kz, Kx] = meshgrid(kz, kx); % Note the order here Kz goes first
+% Dx = Lx/nx2; Dz = Lz/nz2;
 
 %--------------------------------------------------------------------------
 
@@ -674,7 +693,9 @@ sub_tau1_zz = v_J_zz_dt + J_v_zz_dt - J_J_2n_zz_dt;
 clearvars v_J_* J_v_* J_J_*
 
 % These four lines are the filtering
-% here l_wind_x is in terms of de as a resolution
+% here l_wind_x is in terms of di
+
+
 %----------------------------------------------------------------------
 Bx_filt = Gauss_filter_2D_xz(l_wind_x,Kx,Kz,Bx_dt);
 By_filt = Gauss_filter_2D_xz(l_wind_x,Kx,Kz,By_dt);
@@ -955,6 +976,8 @@ mu0 = 1;
 v_a = B0./sqrt(mu0 * n0);
 c = v_a;
 me = 1;
+
+%%c=1;
 %----------------------------------------------------------------------
 
 
@@ -1054,23 +1077,32 @@ clearvars Pe_dt_*
 clearvars Pe_filt_*
 %--------------------------------------------------------------------------
 
+B0 = 0.1;
+Va = B0;
+c = 1;
+E0 = B0*Va/c;
+n0 = 1;
+di = sqrt(mime);
+J0 = n0*Va/di;
+P0 = n0*me*Va^2;
+
 %----------------------------------------------------------------------
 % terms from the owns law with no signs
 %----------------------------------------------------------------------
 if (component == 1)
-term1_dt = B0*v_a*(Ex_dt);
-term2_dt = B0*v_a*(v_x_B_x_dt);
-term3_dt = B0*v_a*J_x_B_x_dt./n_0_dt;
-term4_dt = v_a*v_a*(Div_Pe_dt_x./n_0_dt); 
-term5_dt = me*v_a*v_a*((Div_vJ_dt_x + Div_Jv_dt_x - Div_JJ_dt_x)./n_0_dt);
+term1_dt = E0*(Ex_dt);
+term2_dt = c*B0*(v_x_B_x_dt);
+term3_dt = J0*B0*J_x_B_x_dt./n_0_dt;
+term4_dt = P0*(Div_Pe_dt_x./n_0_dt); % isd thi in di or de?
+term5_dt = me*((Div_vJ_dt_x + Div_Jv_dt_x - Div_JJ_dt_x)./n_0_dt);
 %----------------------------------------------------------------------
 % This is for the filtered quantities
 %----------------------------------------------------------------------
-term1_filt = B0*v_a*(Ex_filt);
-term2_filt = B0*v_a*(v_filt_x_B_filt_x);
-term3_filt = B0*v_a*J_filt_x_B_filt_x./n_filt;
-term4_filt = v_a*v_a*(Div_Pe_filt_x./n_filt);
-term5_filt = me*v_a*v_a*((Div_vJ_filt_x + Div_Jv_filt_x - Div_JJ_filt_2n_x)./n_filt);
+term1_filt = E0*(Ex_filt);
+term2_filt = c*B0*(v_filt_x_B_filt_x);
+term3_filt = J0*B0*J_filt_x_B_filt_x./n_filt;
+term4_filt = P0*(Div_Pe_filt_x./n_filt);
+term5_filt = me*((Div_vJ_filt_x + Div_Jv_filt_x - Div_JJ_filt_2n_x)./n_filt);
 elseif (component == 2)
 term1_dt = B0*v_a*(Ey_dt);
 term2_dt = B0*v_a*(v_x_B_y_dt);
@@ -1105,14 +1137,14 @@ end
 
 Pe_scalar_filt = (Pij_exx_filt + Pij_eyy_filt + Pij_ezz_filt)/3;
 Pi_scalar_filt = (Pij_ixx_filt + Pij_iyy_filt + Pij_izz_filt)/3;
-P_scalar_filt = Pe_scalar_filt + Pi_scalar_filt;
+P_scalar_filt = Pe_scalar_filt ;%+ Pi_scalar_filt;
 
 Energy_scalar_filt = 0.5 *(Ex_filt.^2 + Ey_filt.^2 + Ez_filt.^2 + ...
     Bx_filt.^2 + By_filt.^2 + Bz_filt.^2);
 
 tau_total = -tau_nE_tau -tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
 
-% The idea fir the new analysis is to plot the <SGSMhD>rms/<MHD>rms 
+% The idea for the new analysis is to plot the <SGSMhD>rms/<MHD>rms 
 % This analysis should be done with the three components not just one
 
 % The idea of this is to compute relative importance
@@ -1735,7 +1767,7 @@ hold off
 
 
 
-stop=stop0;
+%stop=stop0;
 
 
 
@@ -1923,6 +1955,380 @@ hold off
 %-----------------------------------------------------------------------
 
 
+
+
+
+% Thi swhole part is trying to make the normalization right
+%{
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt = (Ex_filt);
+term2_filt = (v_filt_x_B_filt_x);
+term3_filt = J_filt_x_B_filt_x./n_filt;
+term4_filt = (Div_Pe_filt_x./n_filt);
+term5_filt = me*((Div_vJ_filt_x + Div_Jv_filt_x - Div_JJ_filt_2n_x)./n_filt);
+
+term1_dt = (Ex_dt);
+term2_dt = (v_x_B_x_dt);
+term3_dt = J_x_B_x_dt./n_0_dt;
+term4_dt = (Div_Pe_dt_x./n_0_dt); % isd thi in di or de?
+term5_dt = me*((Div_vJ_dt_x + Div_Jv_dt_x - Div_JJ_dt_x)./n_0_dt);
+
+B0 = 0.1;
+Va = B0;
+c = 1;
+E0 = B0*Va/c;
+n0 = 1;
+di = sqrt(mime);
+J0 = n0*Va/di;
+P0 = n0*me*Va^2;
+legends_x = {'$E$', '$-u \times B$','$\frac{J \times B}{ne}$',...
+    '$-\frac{\nabla \cdot P_{e}}{ne}$','$\frac{m_{e}\nabla \cdot (uJ + Ju - JJ/ne)}{ne^{2}}$',...
+    '$RHS$'};
+
+% term1_filt = (Ex_filt)*E0;
+% term2_filt = (v_filt_x_B_filt_x)*c*B0;
+% term3_filt = J0*B0*J_filt_x_B_filt_x./n_filt;
+% term4_filt = P0*(Div_Pe_filt_x./n_filt);
+% term5_filt = me*(1)*((Div_vJ_filt_x + Div_Jv_filt_x - Div_JJ_filt_2n_x)./n_filt);
+
+B0 = mean(sqrt(Bx_filt.^2 + By_filt.^2 + Bz_filt.^2),'all');
+Va = B0;
+c = 1;
+E0 = B0;
+n0 = 1;
+di = 10;
+J0 = Va;
+P0 = 1/sqrt(100);
+
+%other possible normalization
+vth0 = mean(sqrt(1*(Pij_exx_filt + Pij_eyy_filt + Pij_ezz_filt))/3,'all');
+
+vth0 = 0.1;
+E0 = B0*vth0;
+n0 = 1;
+di = 10;
+J0 = vth0;
+P0 = vth0^2;
+
+term1_filt = E0*(Ex_filt);
+term2_filt = E0*(v_filt_x_B_filt_x);
+term3_filt = (J0)*B0*J_filt_x_B_filt_x./n_filt;
+term4_filt = me*vth0*(Div_Pe_filt_x./n_filt);
+term5_filt = (vth0/100)*((Div_vJ_filt_x + Div_Jv_filt_x - Div_JJ_filt_2n_x)./n_filt);
+
+j=10;
+
+f133=figure(133);
+set(gcf,'position',[x0,y0,xx1,yy1])
+dum = term1_filt;
+dump1 = squeeze(dum(:,j));
+plot(xl,dump1/max(dump1)^0,'-r',LineWidth=1.5)
+hold on
+dum = -term2_filt;
+dump2 = squeeze(dum(:,j));
+plot(xl,dump2/max(dump2)^0,'-b',LineWidth=1.5)
+dum = term3_filt;
+dump3 = squeeze(dum(:,j));
+plot(xl,dump3/max(dump3)^0,'-g',LineWidth=1.5)
+dum = -term4_filt;
+dump4 = squeeze(dum(:,j));
+plot(xl,dump4/max(dump4)^0,'-m',LineWidth=1.5)
+dum = term5_filt;
+dump5 = squeeze(dum(:,j));
+plot(xl,dump5/max(dump5)^0,'-c',LineWidth=1.5)
+%dum = -term2_filt+ term3_filt-term4_filt + term5_filt;
+%dum = term2to5_filt;
+%dum = squeeze(dum(:,j));
+dump6 = dump2/max(dump2)^0 + dump3/max(dump3)^0 + dump4/max(dump4)^0 + dump5/max(dump5)^0;
+plot(xl,dump6,'--k',LineWidth=1.5)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$x/d_e$';
+ax.YLabel.String = '$E$';
+legend(legends_x ,'Interpreter','latex','NumColumns',1,'Location','southwestoutside')
+title('Filterd','Interpreter','latex')
+xlim([min(xl),max(xl)])
+hold off
+
+
+
+
+cd(path_color)
+f3=figure(3);
+subplot(1,4,1)
+dum = term1_filt; dump = squeeze(dum(:,:));
+y_lim = max(max(max(abs(dump))));
+hc=pcolor(xl,zl,dump');
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]); xlabel('$x/d_{i}$');ylabel('$y/d_{i}$')
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(BWR)
+hold off
+subplot(1,4,2)
+dum = term2_filt; dump = squeeze(dum(:,:));
+y_lim = max(max(max(abs(dump))));
+hc=pcolor(xl,zl,dump');
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]); xlabel('$x/d_{i}$');ylabel('$y/d_{i}$')
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(BWR)
+hold off
+subplot(1,4,3)
+dum = term3_filt; dump = squeeze(dum(:,:));
+y_lim = max(max(max(abs(dump))));
+hc=pcolor(xl,zl,dump');
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]); xlabel('$x/d_{i}$');ylabel('$y/d_{i}$')
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(BWR)
+hold off
+subplot(1,4,4)
+dum = term4_filt; dump = squeeze(dum(:,:));
+y_lim = max(max(max(abs(dump))));
+hc=pcolor(xl,zl,dump');
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]); xlabel('$x/d_{i}$');ylabel('$y/d_{i}$')
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(BWR)
+hold off
+
+
+
+aaa=stoppp;
+%}
+%----------------------------------------------------------------------
+
+
+
+
+cd(path_color)
+%----------------------------------------------------------------------
+i=300;j=300;
+%----------------------------------------------------------------------
+f11=figure(11);
+set(gcf,'position',[x0,y0,xx1,yy1])
+subplot(2,5,1)
+%dum = LHD_filt_x;
+dum = term1_filt;
+dump = squeeze(dum(:,j));
+y_lim = max(max(max(abs(dump))));
+plot(xl,dump,'LineWidth',2);
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.YAxis.Exponent = 0;
+ylim([-y_lim, y_lim]);
+%title('LHS')
+title('$E$',Interpreter='latex')
+hold off
+
+subplot(2,5,2)
+%dum = RHD_filt_x;
+dum = -term2_filt;
+dump = squeeze(dum(:,j));
+y_lim = max(max(max(abs(dump))));
+plot(xl,dump,'LineWidth',2);
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.YAxis.Exponent = 0;
+ylim([-y_lim, y_lim]);
+%title('RHS')
+title('$-u \times B$',Interpreter='latex')
+hold off
+
+subplot(2,5,3)
+dum = term3_filt;
+dump = squeeze(dum(:,j));
+plot(xl,dump,'LineWidth',2);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.YAxis.Exponent = 0;
+ylim([-y_lim, y_lim]);
+title('$J \times B/ne$',Interpreter='latex')
+hold off
+
+subplot(2,5,4)
+dum = -term4_filt;
+dump = squeeze(dum(:,j));
+plot(xl,dump,'LineWidth',2);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.YAxis.Exponent = 0;
+%if(pressure_on==1)
+    ylim([-y_lim, y_lim]);
+%end
+title('$-\nabla \cdot P_{e}/ne $',Interpreter='latex')
+hold off
+
+subplot(2,5,5)
+dum = term5_filt;
+dump = squeeze(dum(:,j));
+plot(xl,dump,'LineWidth',2);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.YAxis.Exponent = 0;
+ylim([-y_lim, y_lim]);
+title('$\nabla \cdot (uJ+Ju-JJ/ne)m_{e}/ne^{2}$',Interpreter='latex')
+hold off
+%--------------------------------------------------------------------------
+
+%f11=figure(11);
+subplot(2,5,6)
+%dum = LHD_filt_x;
+dum = term1_filt;
+dump = squeeze(dum(:,:));
+y_lim = max(max(max(abs(dump))));
+hc=pcolor(xl,zl,dump);
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]);
+%title('LHS')
+%title('$E$',Interpreter='latex')
+xlabel('$x/d_{i}$')
+ylabel('$y/d_{i}$')
+%pbaspect([1 1 1])
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(BWR)
+hold off
+
+subplot(2,5,7)
+%dum = RHD_filt_x;
+dum = -term2_filt;
+dump = squeeze(dum(:,:));
+y_lim = max(max(max(abs(dump))));
+hc=pcolor(xl,zl,dump);
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]);
+%title('RHS')
+%title('$-u \times B$',Interpreter='latex')
+xline(xl(1,j),'--k','LineWidth',1.5)
+xlabel('$x/d_{i}$')
+ylabel('$y/d_{i}$')
+%pbaspect([1 1 1])
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(BWR)
+hold off
+
+subplot(2,5,8)
+dum = term3_filt;
+dump = squeeze(dum(:,:));
+hc=pcolor(xl,zl,dump);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]);
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(BWR)
+xline(xl(1,j),'--k','LineWidth',1.5)
+%title('$J \times B/ ne$',Interpreter='latex')
+xlabel('$x/d_{i}$')
+ylabel('$y/d_{i}$')
+%pbaspect([1 1 1])
+hold off
+
+subplot(2,5,9)
+dum = -term4_filt;
+dump = squeeze(dum(:,:));
+hc=pcolor(xl,zl,dump);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+%if(pressure_on == 1)
+    clim([-y_lim y_lim]);
+%end
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(BWR)
+xline(xl(1,j),'--k','LineWidth',1.5)
+%title('$- \nabla \cdot P_{e}/ne $',Interpreter='latex')
+xlabel('$x/d_{i}$')
+ylabel('$y/d_{i}$')
+%pbaspect([1 1 1])
+hold off
+
+subplot(2,5,10)
+dum = term5_filt;
+dump = squeeze(dum(:,:));
+hc=pcolor(xl,zl,dump);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]);
+cb = colorbar; cb.TickLabelInterpresubplot(2,5,6)
+%dum = LHD_filt_x;
+dum = term1_filt;
+dump = squeeze(dum(:,:));
+y_lim = max(max(max(abs(dump))));
+hc=pcolor(xl,zl,dump);
+hold on
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]);
+%title('LHS')
+%title('$E$',Interpreter='latex')
+xlabel('$x/d_{i}$')
+ylabel('$y/d_{i}$')
+%pbaspect([1 1 1])
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(BWR)
+hold offter = 'Latex';
+colormap(BWR)
+xline(xl(1,j),'--k','LineWidth',1.5)
+%title('$\nabla \cdot (uJ+Ju-JJ/en)m_{e}/ne^{2}$',Interpreter='latex')
+xlabel('$x/d_{i}$')
+ylabel('$y/d_{i}$')
+%pbaspect([1 1 1])
+hold off
+sgtitle('$$ Filtered $$','Interpreter','latex','FontSize',fs)
+
+
+
+
+
+
+%----------------------------------------------------------------------
+
+
+
 %----------------------------------------------------------------------
 % plot of the component x of the electric field
 %----------------------------------------------------------------------
@@ -1969,7 +2375,7 @@ ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLa
 ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$x/d_e$';
 ax.YLabel.String = '$E$';
-legend(legends_x ,'Interpreter','latex','NumColumns',1,'Location','southwest')
+legend(legends_x ,'Interpreter','latex','NumColumns',1,'Location','southwestoutside')
 title('Unfilterd','Interpreter','latex')
 xlim([min(xl),max(xl)])
 hold off
@@ -1979,19 +2385,19 @@ dum = term1_filt;
 dump = squeeze(dum(:,j));
 plot(xl,dump,'-r',LineWidth=1.5)
 hold on
-dum = -term2_filt;
+dum = -term2_filt*sqrt(E0);
 dump = squeeze(dum(:,j));
 plot(xl,dump,'-b',LineWidth=1.5)
-dum = term3_filt;
+dum = term3_filt*sqrt(E0);
 dump = squeeze(dum(:,j));
 plot(xl,dump,'-g',LineWidth=1.5)
 dum = -term4_filt;
 dump = squeeze(dum(:,j));
 plot(xl,dump,'-m',LineWidth=1.5)
-dum = term5_filt;
+dum = term5_filt/mime;
 dump = squeeze(dum(:,j));
 plot(xl,dump,'-c',LineWidth=1.5)
-dum = -term2_filt + term3_filt -term4_filt + term5_filt;
+dum = -term2_filt*sqrt(E0) + term3_filt*sqrt(E0) -term4_filt + term5_filt/mime;
 %dum = term2to5_filt;
 dump = squeeze(dum(:,j));
 plot(xl,dump,'--k',LineWidth=1.5)
@@ -2000,7 +2406,7 @@ ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLa
 ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$x/d_e$';
 ax.YLabel.String = '$E$';
-legend(legends_x ,'Interpreter','latex','NumColumns',1,'Location','southwest')
+legend(legends_x ,'Interpreter','latex','NumColumns',1,'Location','southwestoutside')
 title('Filterd','Interpreter','latex')
 xlim([min(xl),max(xl)])
 hold off
@@ -2040,7 +2446,7 @@ legend('$-\tau_{nE}$','$-\tau_{nu \times B}$', ...
     '$\tau_{J \times B}$',...
     '$\tau_{\nabla \cdot (uJ+Ju-JJ/ne)}$',...
     '$\Sigma \tau$',...
-    'Interpreter','latex','NumColumns',1,'Location','southwest')
+    'Interpreter','latex','NumColumns',1,'Location','southwestoutside')
 %title('Unfilterd','Interpreter','latex')
 xlim([min(xl),max(xl)])
 hold off
@@ -2094,7 +2500,7 @@ legend( '$\overline{E}$', '$-\overline{u} \times \overline{B}$',...
     '$\tau_{J \times B}$',...
     '$\tau_{\nabla \cdot(uJ+Ju-JJ/ne)}$',...
     '$\Sigma \tau$',...
-    'Interpreter','latex','NumColumns',2,'Location','southwest')
+    'Interpreter','latex','NumColumns',2,'Location','southwestoutside')
 xlim([min(xl),max(xl)])
 hold off
 %--------------------------------------------------------------------------
@@ -2107,11 +2513,11 @@ saveas(f101,strcat(num2str(component),'ohmslaw_filtered_taus_de_2.png'));
 %--------------------------------------------------------------------------
 
 
-aa=aatostop;
+%aa=aatostop;
 
 
 % This is the BWR
-path_color = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+%path_color = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
 
 cd(path_color)
 % This is the plot of the tensors
@@ -2405,7 +2811,7 @@ hold off
 % These are the Plots showing the filter and unfilterd terms in the ohms
 % law
 %----------------------------------------------------------------------
-%{
+%
 %----------------------------------------------------------------------
 % This is for the unfiltered case
 fs=20; x0=45;y0=54;xx1=1400;yy1=500;
@@ -2605,9 +3011,9 @@ sgtitle('$$ Unfiltered $$','Interpreter','latex','FontSize',fs)
 %----------------------------------------------------------------------
 
 %%%
-
+cd(path_color)
 %----------------------------------------------------------------------
-%i=30;j=30;
+i=300;j=300;
 %----------------------------------------------------------------------
 f11=figure(11);
 set(gcf,'position',[x0,y0,xx1,yy1])
@@ -2699,7 +3105,7 @@ clim([-y_lim y_lim]);
 %title('$E$',Interpreter='latex')
 xlabel('$x/d_{i}$')
 ylabel('$y/d_{i}$')
-pbaspect([1 1 1])
+%pbaspect([1 1 1])
 xline(xl(1,j),'--k','LineWidth',1.5)
 cb = colorbar; cb.TickLabelInterpreter = 'Latex';
 colormap(BWR)
@@ -2721,7 +3127,7 @@ clim([-y_lim y_lim]);
 xline(xl(1,j),'--k','LineWidth',1.5)
 xlabel('$x/d_{i}$')
 ylabel('$y/d_{i}$')
-pbaspect([1 1 1])
+%pbaspect([1 1 1])
 cb = colorbar; cb.TickLabelInterpreter = 'Latex';
 colormap(BWR)
 hold off
@@ -2742,7 +3148,7 @@ xline(xl(1,j),'--k','LineWidth',1.5)
 %title('$J \times B/ ne$',Interpreter='latex')
 xlabel('$x/d_{i}$')
 ylabel('$y/d_{i}$')
-pbaspect([1 1 1])
+%pbaspect([1 1 1])
 hold off
 
 subplot(2,5,9)
@@ -2763,7 +3169,7 @@ xline(xl(1,j),'--k','LineWidth',1.5)
 %title('$- \nabla \cdot P_{e}/ne $',Interpreter='latex')
 xlabel('$x/d_{i}$')
 ylabel('$y/d_{i}$')
-pbaspect([1 1 1])
+%pbaspect([1 1 1])
 hold off
 
 subplot(2,5,10)
@@ -2782,12 +3188,14 @@ xline(xl(1,j),'--k','LineWidth',1.5)
 %title('$\nabla \cdot (uJ+Ju-JJ/en)m_{e}/ne^{2}$',Interpreter='latex')
 xlabel('$x/d_{i}$')
 ylabel('$y/d_{i}$')
-pbaspect([1 1 1])
+%pbaspect([1 1 1])
 hold off
 sgtitle('$$ Filtered $$','Interpreter','latex','FontSize',fs)
 %--------------------------------------------------------------------------
 %}
 %----------------------------------------------------------------------
+
+aa=aatostop;
 
 %%
 
@@ -2983,7 +3391,7 @@ fs=20; x0=45;y0=54;xx1=1000;yy1=900;
 
 % This is testing the three different fits 
 %-----------------------------------------------------------------------
-%{
+%
 f153=figure(153);
 set(gcf,'position',[x0,y0,xx1,yy1])
 %-----------------------------------------------------------------------
@@ -3430,6 +3838,9 @@ title(bb,'Interpreter','Latex')
 xlabel('$W \Omega$')
 hold off
 %--------------------------------------------------------------------------
+
+saveas(f153,strcat(num2str(component),'scatter_terms_rush.png'));
+saveas(f154,strcat(num2str(component),'scatter_terms_rush_2.png'));
 
 %}
 %--------------------------------------------------------------------------
@@ -4765,7 +5176,7 @@ saveas(f12,strcat(num2str(i),'Ohms_terms_taus_10.png'));
 %----------------------------------------------------------------------
 function[Jx_filt] = Gauss_filter_2D_xz(Dx,Kx,Kz,Jx_dt) 
 % Apply a low-pass Gaussian filter to remove high frequencies
-sigma = 2*Dx; % Adjust as needed for filtering strength
+sigma = 1*Dx; % Adjust as needed for filtering strength
 filter = exp(-(Kx.^2 + Kz.^2) * 0.5 * sigma^2);
 % Fourier transforms of vector-field components
 Jx_hat = fft2(Jx_dt) .* filter;

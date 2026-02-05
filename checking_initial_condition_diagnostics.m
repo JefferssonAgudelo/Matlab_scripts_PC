@@ -1,10 +1,8 @@
 %
 %-----------------------------------------------------------------------------------------------------------------------
-%path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/turb_alf_cam_3D';
+path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/turb_alf_cam_3D';
 %path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/turb_alf_cam_3D/dvdB';
-%path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/turb_alf_cam_3D_beta1';
-
-path = '/home/UNN/pfcy6/DATA_CIRRUS/turb_alf_jeff_2D_beta1_test';
+path = '/Volumes/PSC_DiRAC_DATA/Data_Cirrus/turb_alf_cam_3D_beta1';
 %-----------------------------------------------------------------------------------------------------------------------
 
 % For the scripts
@@ -17,30 +15,33 @@ path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_h
 cd(path)
 %--------------------------------------------------------------------------
 
-% %load data
-% %--------------------------------------------------------------------------
-% time1 = load("turb_alf_cam_3D_step_time.txt");
-% time2 = load("turb_alf_cam_3D_step_time_2.txt");
-% 
-% time11 = time1(:,2);
-% time22 = time11(end) + time2(:,2);
-% 
-% f1=figure(1);
-% subplot(1,2,1)
-% semilogy(time1(:,1),time11/60,'linewidth',2)
-% hold on
-% semilogy(time2(:,1),time22/60,'linewidth',2)
-% xlabel('Step')
-% ylabel('Time (min)')
-% hold off
-% subplot(1,2,2)
-% plot(time1(1:end-1,1),(time11(2:end) - time11(1:end-1))/60,'linewidth',2)
-% hold on
-% plot(time2(1:end-1,1),(time22(2:end) - time22(1:end-1))/60,'linewidth',2)
-% xlabel('Step')
-% ylabel('Time difference (min)')
-% hold off
-% %--------------------------------------------------------------------------
+%load data
+%--------------------------------------------------------------------------
+time1 = load("turb_alf_cam_3D_step_time.txt");
+time2 = load("turb_alf_cam_3D_step_time_2.txt");
+
+time11 = time1(:,2);
+time22 = time11(end) + time2(:,2);
+
+
+f1=figure(1);
+subplot(1,2,1)
+semilogy(time1(:,1),time11/60,'linewidth',2)
+hold on
+semilogy(time2(:,1),time22/60,'linewidth',2)
+xlabel('Step')
+ylabel('Time (min)')
+hold off
+subplot(1,2,2)
+plot(time1(1:end-1,1),(time11(2:end) - time11(1:end-1))/60,'linewidth',2)
+hold on
+plot(time2(1:end-1,1),(time22(2:end) - time22(1:end-1))/60,'linewidth',2)
+xlabel('Step')
+ylabel('Time difference (min)')
+hold off
+
+
+%--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 S = dir(fullfile(path,'pfd.*.h5'));
@@ -247,14 +248,13 @@ end
 %--------------------------------------------------------------------------
 
 
-
 % To compute the magnetic helicity
 %--------------------------------------------------------------------------
 HM_1_t= zeros(1,N);
 HM_2_t= zeros(1,N);
 %--------------------------------------------------------------------------
 for in=1:N
-    %in=9;
+    in=9;
     disp(strcat('Computing step ...',S(in).name))
     fileID =  S(in).name; %change the 1 per i
     %h5disp(fileID);
