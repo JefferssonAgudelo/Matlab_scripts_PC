@@ -1,7 +1,12 @@
 % This is to get the energy 
 
-cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
-path = '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
+cd '/media/pfcy6/PSC_DiRAC_DATA/DATACB104/raw_data';
+path = '/media/pfcy6/PSC_DiRAC_DATA/DATACB104/raw_data';
+
+%cd '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
+%path = '/Volumes/PSC_DiRAC_DATA/DATACB104/raw_data';
+
+
 
 % useful parameters used in the simulation
 %--------------------------------------------------------------------------

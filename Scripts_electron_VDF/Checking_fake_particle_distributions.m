@@ -30,7 +30,6 @@
     
     figure42=figure(42);
     plot(edges3,N2./(edges3*2*pi))
-  
     
     [N3,Xedges,Redges] = histcounts2(Rz,Rper,80);
     N3=N3(1:79,1:79)';    

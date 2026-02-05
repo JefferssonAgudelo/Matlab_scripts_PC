@@ -1,11 +1,12 @@
 %-----------------------------------------------------------------------------------------------------------------------
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/Cirrus_folders/6cube';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/Cirrus_folders/6cube';
+path = '/home/UNN/pfcy6/codes/psc_harris_turb/build/mytest_jeff'
 %-----------------------------------------------------------------------------------------------------------------------
 
 % For the scripts
 path_comp = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/Data_comparison';
-path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
-path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+path_s  = '/home/UNN/pfcy6/codes/processing_scripts/Matlab_Scripts_Laptop/Scripts_spectra';
+path_s2 = '/home/UNN/pfcy6/codes/processing_scripts/Matlab_Scripts_Laptop';
 %-----------------------------------------------------------------------------------------------------------------------
 
 cd(path)

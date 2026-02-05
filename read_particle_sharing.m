@@ -8,28 +8,28 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_prt';
-%path = '/Volumes/Perlmutterdata/Data_P1/psc_harris_yz_lange_short_L4di';
-%path = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/psc_injecting_Ex';
-%path = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/checking_prt_id';
-
-%path = '/Users/jeffersson_agudelo/Documents/New_psc/second_try_version/build_2/testing_jeff/checking_prt_tag';
-
-%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/testing_dB/psc_harris_yz_cpinch_sSR_prt';
-
-path = '/Volumes/PSC_CORI_DATA/TESTS_2022/Cirrus_folders/elongated_box';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/Cirrus_folders/elongated_box';
+path = '/home/UNN/pfcy6/codes/PSC/psc-main/build_noGPU/Testing_no_GPU/testing_kappa_nomagnetic_field/kappa_rejection';
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 cd(path)
 
-mime =1.;
+% It is important to put the correct values here
+%--------------------------------------------------------------------------
+mime =100.;
 omega_pe_Omega_ce=5;
+% This has to be put by hand
+%--------------------------------------------------------------------------
+ppc = 50;
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 
 S = dir(fullfile(path,'prt.*'));
 N=numel(S); % number of files to use
 %H=zeros(N);
 
 % chose the particle file to work on.
-i=1;
+i=2;
 
 % read the particle output
 %--------------------------------------------------------------------------
@@ -38,9 +38,6 @@ fileID =  S(i).name; %change the 1 per i
 %h5disp(fileID); %this is the command to show the information in the file
 info = h5info(fileID);
 %info = h5info(fileID,'TextEncoding','UTF-8');
-
-% This has to be put by hand
-ppc = 50;
 
 aa = info.Groups(1).Groups.Datasets;
 MyMatrix = vertcat(aa.Dataspace);
@@ -59,6 +56,8 @@ count = 2*Lzp*ppc;
 stride = 30;
 
 prt = info.Groups(1).Name;
+
+% This way using start and count allows to load only a subset of the data
 %read the information from the fields of the struct
 prtfields=h5read(fileID,strcat(prt,'/p0/1d'),start,count,stride);
 x = prtfields.x;
@@ -73,7 +72,6 @@ subplot(1,3,2)
 plot(y)
 subplot(1,3,3)
 plot(z)
-
 
 x_max=max(x);
 x_min = min(x);
@@ -117,10 +115,13 @@ clearvars px py pz q
 % Second part, Doing a selection of 4 sub-regions and a coordinate transformation the local magnetic field.
 %--------------------------------------------------------------------------
 % To get the particle info in a sub-region
-% This is for the 4 plots in one
+% This is to get even a sub sub region. You need to define the limits
+% accordingly
 %----------------------------------------------------------------------
-xii1 = x_min; xii2 = x_max; yii1 = y_min; yii2 = y_max; zii1=z_min; zii2=z_max; 
-cond_y1 = find((xi>xii1) & (xii2>xi) & (yi>yii1) & (yii2>yi) & (zi>zii1) & (zii2>zi) );  
+xii1 = x_min; xii2 = x_max; 
+yii1 = y_min; yii2 = y_max; 
+zii1=z_min; zii2=z_max; 
+cond_y1 = find((xi>=xii1) & (xii2>=xi) & (yi>=yii1) & (yii2>=yi) & (zi>=zii1) & (zii2>=zi) );  
 %----------------------------------------------------------------------
 pxi_sub1=pxi(cond_y1);
 pyi_sub1=pxi(cond_y1);
@@ -213,24 +214,31 @@ Bx=h5read(fileID,strcat(EHJ_1st,'/hx_fc/p0/3d'));
 By=h5read(fileID,strcat(EHJ_1st,'/hy_fc/p0/3d'));
 Bz=h5read(fileID,strcat(EHJ_1st,'/hz_fc/p0/3d'));
 
+% in case it is in 3D
 sli_x = 1;
-Bx = squeeze(Bx(sli_x,:,:));
-By = squeeze(By(sli_x,:,:));
-Bz = squeeze(Bz(sli_x,:,:));
+Bx = squeeze(Bx(:,sli_x,:));
+By = squeeze(By(:,sli_x,:));
+Bz = squeeze(Bz(:,sli_x,:));
 
 sss=size(Bx);
 size_X=sss;
 zll=linspace(-Lz,Lz,size_X(2)); %Jeff flag it works with (1,size_x(2))
-yll=linspace(-Ly,Ly,size_X(1));
+yll=linspace(-Lx,Lx,size_X(1));
 [ZLL, YLL] = meshgrid(zll,yll);
 
 % out
-cond_ii = (YLL>yii1).*(YLL<yii2).*(ZLL>zii1).*(ZLL<zii2);
-Bxout = Bx.*cond_ii; Bxout(Bxout==0)=NaN;
-Byout = By.*cond_ii; Byout(Byout==0)=NaN;
-Bzout = Bz.*cond_ii; Bzout(Bzout==0)=NaN;
+Bxout = Bx; Bxout(Bxout==0)=NaN;
+Byout = By; Byout(Byout==0)=NaN;
+Bzout = Bz; Bzout(Bzout==0)=NaN;
+
+% 5 this has to be accordingly
+% cond_ii = (YLL>=xii1).*(YLL<=xii2).*(ZLL>=zii1).*(ZLL<=zii2);
+% Bxout = Bx.*cond_ii; Bxout(Bxout==0)=NaN;
+% Byout = By.*cond_ii; Byout(Byout==0)=NaN;
+% Bzout = Bz.*cond_ii; Bzout(Bzout==0)=NaN;
 
 % in
+%{
 cond_jj = (YLL>yjj1).*(YLL<yjj2).*(ZLL>zjj1).*(ZLL<zjj2);
 Bxin = Bx.*cond_jj; Bxin(Bxin==0)=NaN;
 Byin = By.*cond_jj; Byin(Byin==0)=NaN;
@@ -247,20 +255,24 @@ cond_ll = (YLL>yll1).*(YLL<yll2).*(ZLL>zll1).*(ZLL<zll2);
 Bxtop = Bx.*cond_ll; Bxtop(Bxtop==0)=NaN;
 Bytop = By.*cond_ll; Bytop(Bytop==0)=NaN;
 Bztop = Bz.*cond_ll; Bztop(Bztop==0)=NaN;
+%}
 %----------------------------------------------------------------------
 
 
 % Now lets compute the averages to get the parallel and perpendicular
 
-% remove the NaNs
-Bxin(isnan(Bxin)) = []; Byin(isnan(Byin)) = [];  Bzin(isnan(Bzin)) = [];
-Bxin_av = mean(Bxin,'all'); Byin_av = mean(Byin,'all'); Bzin_av = mean(Bzin,'all');
-Bin_m_av = sqrt(Bxin_av.^2 + Byin_av.^2 + Bzin_av.^2);
 
+% It seems there are many NaNs
 % remove the NaNs
 Bxout(isnan(Bxout)) = []; Byout(isnan(Byout)) = [];  Bzout(isnan(Bzout)) = [];
 Bxout_av = mean(Bxout,'all'); Byout_av = mean(Byout,'all'); Bzout_av = mean(Bzout,'all');
 Bout_m_av = sqrt(Bxout_av.^2 + Byout_av.^2 + Bzout_av.^2);
+
+%{
+% remove the NaNs
+Bxin(isnan(Bxin)) = []; Byin(isnan(Byin)) = [];  Bzin(isnan(Bzin)) = [];
+Bxin_av = mean(Bxin,'all'); Byin_av = mean(Byin,'all'); Bzin_av = mean(Bzin,'all');
+Bin_m_av = sqrt(Bxin_av.^2 + Byin_av.^2 + Bzin_av.^2);
 
 % remove the NaNs
 Bx_x(isnan(Bx_x)) = []; By_x(isnan(By_x)) = [];  Bz_x(isnan(Bz_x)) = [];
@@ -271,6 +283,7 @@ B_x_m_av = sqrt(Bx_x_av.^2 + By_x_av.^2 + Bz_x_av.^2);
 Bxtop(isnan(Bxtop)) = []; Bytop(isnan(Bytop)) = [];  Bztop(isnan(Bztop)) = [];
 Bxtop_av = mean(Bxtop,'all'); Bytop_av = mean(Bytop,'all'); Bztop_av = mean(Bztop,'all');
 Btop_m_av = sqrt(Bxtop_av.^2 + Bytop_av.^2 + Bztop_av.^2);
+%}
 
 
 %----------------------------------------------------------------------
@@ -281,38 +294,58 @@ zz = [0; 0; 1]; % Example z-coordinate
 
 % this only uses the in vector and not the out. I need to repeat this
 % because the magnetic field vector is different.
-% Define the magnetic field vector
 
-B_in = [Bxin_av; Byin_av; Bzin_av]; % Example magnetic field vector
+% Define the magnetic field vector
 B_out = [Bxout_av; Byout_av; Bzout_av]; % Example magnetic field vector
+% Normalize the magnetic field vector
+B_normalized_out = B_out / norm(B_out);
+% Calculate the rotation axis
+R_out = cross(B_normalized_out, [1; 0; 0]); % Cross product with x-axis
+% Calculate the rotation angle
+theta_out = acos(dot(B_normalized_out, [1; 0; 0])); % Dot product with x-axis
+% Create the rotation matrix
+K_out = [0 -R_out(3) R_out(2); R_out(3) 0 -R_out(1); -R_out(2) R_out(1) 0]; % Skew-symmetric matrix
+R_matrix_out = eye(3) + sin(theta_out) * K_out + (1 - cos(theta_out)) * K_out^2; % Rodrigues' rotation formula
+% Perform the coordinate transformation
+transformed_coords_out = R_matrix_out * [xx'; yy'; zz'];
+% Extract the transformed coordinates
+x_prime_out = transformed_coords_out(1, :)';
+y_prime_out = transformed_coords_out(2, :)';
+z_prime_out = transformed_coords_out(3, :)';
+% Define the vector in the initial reference frame
+v_initial_2 = [pxi_sub1, pyi_sub1, pzi_sub1]'; % Example vector in the initial reference frame
+% Express the vector in the new reference frame
+v_new_2 = R_matrix_out \ v_initial_2;
+v_new_par_2 = v_new_2(1,:);
+v_new_per_2 = sqrt(v_new_2(2,:).^2 + v_new_2(3,:).^2);
+
+
+%--------------------------------------------------------------------------
+% This part is for the other regions
+% Define the magnetic field vector
+%{
+B_in = [Bxin_av; Byin_av; Bzin_av]; % Example magnetic field vector
 B_x = [Bx_x_av; By_x_av; Bz_x_av]; % Example magnetic field vector
 B_top = [Bxtop_av; Bytop_av; Bztop_av]; % Example magnetic field vector
 
-
 % Normalize the magnetic field vector
 B_normalized_in = B_in / norm(B_in);
-B_normalized_out = B_out / norm(B_out);
 B_normalized_x = B_x / norm(B_x);
 B_normalized_top = B_top / norm(B_top);
 
 % Calculate the rotation axis
 R_in = cross(B_normalized_in, [1; 0; 0]); % Cross product with x-axis
-R_out = cross(B_normalized_out, [1; 0; 0]); % Cross product with x-axis
 R_x = cross(B_normalized_x, [1; 0; 0]); % Cross product with x-axis
 R_top = cross(B_normalized_top, [1; 0; 0]); % Cross product with x-axis
 
 % Calculate the rotation angle
 theta_in = acos(dot(B_normalized_in, [1; 0; 0])); % Dot product with x-axis
-theta_out = acos(dot(B_normalized_out, [1; 0; 0])); % Dot product with x-axis
 theta_x = acos(dot(B_normalized_x, [1; 0; 0])); % Dot product with x-axis
 theta_top = acos(dot(B_normalized_top, [1; 0; 0])); % Dot product with x-axis
 
 % Create the rotation matrix
 K_in = [0 -R_in(3) R_in(2); R_in(3) 0 -R_in(1); -R_in(2) R_in(1) 0]; % Skew-symmetric matrix
 R_matrix_in = eye(3) + sin(theta_in) * K_in + (1 - cos(theta_in)) * K_in^2; % Rodrigues' rotation formula
-
-K_out = [0 -R_out(3) R_out(2); R_out(3) 0 -R_out(1); -R_out(2) R_out(1) 0]; % Skew-symmetric matrix
-R_matrix_out = eye(3) + sin(theta_out) * K_out + (1 - cos(theta_out)) * K_out^2; % Rodrigues' rotation formula
 
 K_x = [0 -R_x(3) R_x(2); R_x(3) 0 -R_x(1); -R_x(2) R_x(1) 0]; % Skew-symmetric matrix
 R_matrix_x = eye(3) + sin(theta_x) * K_x + (1 - cos(theta_x)) * K_x^2; % Rodrigues' rotation formula
@@ -322,7 +355,6 @@ R_matrix_top = eye(3) + sin(theta_top) * K_top + (1 - cos(theta_top)) * K_top^2;
 
 % Perform the coordinate transformation
 transformed_coords_in = R_matrix_in * [xx'; yy'; zz'];
-transformed_coords_out = R_matrix_out * [xx'; yy'; zz'];
 transformed_coords_x = R_matrix_x * [xx'; yy'; zz'];
 transformed_coords_top = R_matrix_top * [xx'; yy'; zz'];
 
@@ -330,11 +362,6 @@ transformed_coords_top = R_matrix_top * [xx'; yy'; zz'];
 x_prime_in = transformed_coords_in(1, :)';
 y_prime_in = transformed_coords_in(2, :)';
 z_prime_in = transformed_coords_in(3, :)';
-
-% Extract the transformed coordinates
-x_prime_out = transformed_coords_out(1, :)';
-y_prime_out = transformed_coords_out(2, :)';
-z_prime_out = transformed_coords_out(3, :)';
 
 % Extract the transformed coordinates
 x_prime_x = transformed_coords_x(1, :)';
@@ -347,7 +374,6 @@ y_prime_top = transformed_coords_top(2, :)';
 z_prime_top = transformed_coords_top(3, :)';
 
 % Define the vector in the initial reference frame
-v_initial_1 = [pxi_sub1, pyi_sub1, pzi_sub1]'; % Example vector in the initial reference frame
 v_initial_2 = [pxi_sub2, pyi_sub2, pzi_sub2]'; % Example vector in the initial reference frame
 v_initial_3 = [pxi_sub3, pyi_sub3, pzi_sub3]'; % Example vector in the initial reference frame
 v_initial_4 = [pxi_sub4, pyi_sub4, pzi_sub4]'; % Example vector in the initial reference frame
@@ -358,21 +384,18 @@ v_initial_4 = [pxi_sub4, pyi_sub4, pzi_sub4]'; % Example vector in the initial r
 
 % Express the vector in the new reference frame
 v_new_1 = R_matrix_out \ v_initial_1;
-v_new_2 = R_matrix_in \ v_initial_2;
 v_new_3 = R_matrix_x \ v_initial_3;
 v_new_4 = R_matrix_top \ v_initial_4;
 
 v_new_par_1 = v_new_1(1,:);
 v_new_per_1 = sqrt(v_new_1(2,:).^2 + v_new_1(3,:).^2);
 
-v_new_par_2 = v_new_2(1,:);
-v_new_per_2 = sqrt(v_new_2(2,:).^2 + v_new_2(3,:).^2);
-
 v_new_par_3 = v_new_3(1,:);
 v_new_per_3 = sqrt(v_new_3(2,:).^2 + v_new_3(3,:).^2);
 
 v_new_par_4 = v_new_4(1,:);
 v_new_per_4 = sqrt(v_new_4(2,:).^2 + v_new_4(3,:).^2);
+%}
 %----------------------------------------------------------------------
 
 
@@ -387,12 +410,19 @@ time_t_2_Omega=time_t./omega_pe_Omega_ce;
 
 % limits
 %----------------------------------------------------------------------
-xspace_par = [-1.0, -0.5, 0, 0.5, 1.0];
-yspace_per = [0, 0.5, 1.0];
-xlims = [-1.0, 1.0];
-ylims = [0.0, 1.0];
-Xedges2D = linspace(-1.0,1.0);
-Yedges2D = linspace(0.0,1.0);
+xspace_par = [-.1, -0.05, 0, 0.05, .1];
+yspace_per = [0, 0.05, .1];
+xlims = [-.1, .1];
+ylims = [0.0, 0.1];
+Xedges2D = linspace(-.1,.1);
+Yedges2D = linspace(0.0,.1);
+
+% xspace_par = [-1.0, -0.5, 0, 0.5, 1.0];
+% yspace_per = [0, 0.5, 1.0];
+% xlims = [-1.0, 1.0];
+% ylims = [0.0, 1.0];
+% Xedges2D = linspace(-1.0,1.0);
+% Yedges2D = linspace(0.0,1.0);
 %----------------------------------------------------------------------
 
 %----------------------------------------------------------------------
@@ -401,6 +431,54 @@ no_le=1;
 %----------------------------------------------------------------------
 
 
+
+cll=5;
+% plots in the par per plane with 4 plots
+%----------------------------------------------------------------------
+%cd(path_s)
+fs=18;  x0=45;  y0=54;  xx1=1000;    yy1=300;
+%----------------------------------------------------------------------
+f12=figure(12);
+%----------------------------------------------------------------------
+dum1 = v_new_par_2; dum2 = v_new_per_2;
+[Ni,Xedgesi,Redgesi] = histcounts2(dum1,dum2,Xedges2D,Yedges2D);
+Ni=Ni(1:99,1:99)';    Xedges2i=Xedgesi(2:100)'; Redges2i=Redgesi(2:100)';
+Xedges2i=Xedges2i-(Xedges2i(2)-Xedges2i(1))/2;
+Redges2i=Redges2i-(Redges2i(2)-Redges2i(1))/2;
+[Ci,Di]=meshgrid(Xedges2i,Redges2i);
+c_lim=0.5*10^6;
+Ni(Ni<=no_le)=NaN;
+Ni_2_0 = Ni;
+hc=pcolor(Xedges2i,Redges2i, Ni./Di);
+%hc=contourf(Xedges2i,Redges2i,Ni./Di,cll);
+hold on
+set(hc,'edgecolor','none');
+set(gca,'ColorScale','log','FontSize',fs)
+set(gca,'XScale','lin','YScale','lin','FontSize',fs)
+colormap('jet');
+caxis([1 (c_lim)]);
+hcb=colorbar; hcb.Location = 'northoutside';
+hcb.Label.FontSize=fs; hcb.Label.Interpreter = 'latex';hcb.TickLabelInterpreter = 'latex';
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.XLabel.String = '$v_{\parallel}/c$'; ax.XTick = xspace_par;
+%ax.YLabel.String = '$v_{\perp}$';
+ax.YTick = [];
+xline(0,'--k'); yline(0,'--k');
+xlim(xlims); ylim(ylims);
+title('R2','Interpreter','latex','FontSize',fs);
+pbaspect([2 1 1])
+hold off
+%----------------------------------------------------------------------
+sgtitle('$$log(f_{i}) \ ; \ t = \ $$'+string(round(time_t_2_Omega,2))+'$$\ \Omega_{e}^{-1}$$','Interpreter','latex','FontSize',fs)
+%----------------------------------------------------------------------
+% cd(path)
+% saveas(f12,strcat('large_vper_par_R1R2R3R4' + string(round(time_t_2_Omega,2)) +'.png'));
+%----------------------------------------------------------------------
+
+
+
+% This is the plot for the four regions
+%{
 cll=5;
 % plots in the par per plane with 4 plots
 %----------------------------------------------------------------------
@@ -537,7 +615,7 @@ sgtitle('$$log(f_{i}) \ ; \ t = \ $$'+string(round(time_t_2_Omega,2))+'$$\ \Omeg
 % cd(path)
 % saveas(f12,strcat('large_vper_par_R1R2R3R4' + string(round(time_t_2_Omega,2)) +'.png'));
 %----------------------------------------------------------------------
-
+%}
 
 
 
