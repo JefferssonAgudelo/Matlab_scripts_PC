@@ -4,6 +4,8 @@
 
 %dir = '/JAAR-DATA/DATA_HVM/betai=4';
 dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
+dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
+
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;
@@ -1151,6 +1153,8 @@ tau_total_y = -tau_nE_tau_y -tau_v_x_B_tau_y + tau_J_x_B_tau_y + tau_Div_tau1_y;
 tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 %--------------------------------------------------------------------------
 
+stopp
+
 % lets Compute the Curl
 %--------------------------------------------------------------------------
 [tau_nE_tau_x_y, tau_nE_tau_x_x, tau_nE_tau_x_z] = gradient(tau_nE_tau_x);
@@ -1244,11 +1248,11 @@ edges2=edges(1:end-1);
 acosedges = linspace(0,180,101);
 acosedges2=acosedges(1:end-1);
 
-[N_acos_tau_nE,edges] = histcounts(acos_B_filt_dot_curl_tau_nE,acosedges);
-[N_acos_tau_v_x_B,edges] = histcounts(acos_B_filt_dot_curl_tau_v_x_B,acosedges);
-[N_acos_tau_J_x_B,edges] = histcounts(acos_B_filt_dot_curl_tau_J_x_B,edges);
-[N_acos_tau_Div,edges] = histcounts(acos_B_filt_dot_curl_tau_Div,edges);
-[N_acos_tau_total,edges] = histcounts(acos_B_filt_dot_curl_tau_total,edges);
+[N_acos_tau_nE,acosedges] = histcounts(acos_B_filt_dot_curl_tau_nE,acosedges);
+[N_acos_tau_v_x_B,acosedges] = histcounts(acos_B_filt_dot_curl_tau_v_x_B,acosedges);
+[N_acos_tau_J_x_B,acosedges] = histcounts(acos_B_filt_dot_curl_tau_J_x_B,acosedges);
+[N_acos_tau_Div,acosedges] = histcounts(acos_B_filt_dot_curl_tau_Div,acosedges);
+[N_acos_tau_total,acosedges] = histcounts(acos_B_filt_dot_curl_tau_total,acosedges);
 
 
  My_colors = [ 204, 121, 167;
@@ -1280,7 +1284,7 @@ acosedges2=acosedges(1:end-1);
      '$\tau_{\nabla \cdot (u_{i}J + Ju_{i} - JJ/ne)}$', '$\Sigma\tau$','Interpreter','latex','FontSize',20)
  hold off
 
- f555=figure(555);
+ f557=figure(557);
  plot(acosedges2,N_acos_tau_nE/sum(N_acos_tau_nE),color=My_colors(1,:),LineWidth=1.5) %plot(edges(2:100),Nc,'r')
  hold on
  plot(acosedges2,N_acos_tau_v_x_B/sum(N_acos_tau_v_x_B),color=My_colors(2,:),LineWidth=1.5)
@@ -1288,15 +1292,17 @@ acosedges2=acosedges(1:end-1);
  plot(acosedges2,N_acos_tau_Div/sum(N_acos_tau_Div),color=My_colors(5,:),LineWidth=1.5)
  plot(acosedges2,N_acos_tau_total/sum(N_acos_tau_total),color=My_colors(6,:),LineWidth=1.5)
  xline(0,'--k')
- ylim([0, 0.06])
+ ylim([0, 0.03])
  ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; 
- xlabel('$\theta_{-\overline{B} \cdot \nabla \times \tau_{j}})$','Interpreter','latex','FontSize',20)
+ xlabel('$\theta^{\circ}_{-\overline{B} \cdot \nabla \times \tau_{j}}$','Interpreter','latex','FontSize',20)
  ylabel('Normalised Counts','Interpreter','latex','FontSize',fs)
- title('$\beta_{i} = 0.25$','Interpreter','latex','FontSize',fs)
+ title('$\beta_{i} = 4$','Interpreter','latex','FontSize',fs)
  legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$',...
      '$\tau_{\nabla \cdot (u_{i}J + Ju_{i} - JJ/ne)}$', '$\Sigma\tau$','Interpreter','latex','FontSize',20)
  hold off
+
+ %stoppp
 
  %Do an analysis by quartiles
 Q1_nE = sum(N_tau_nE(1,1:25))/(256*256*256);
@@ -1479,7 +1485,7 @@ threshold =pi/resx;
     %-------------------------
 
 %--------------------------------------------------------------------------
-stoopp
+%stoopp
 %--------------------------------------------------------------------------
 
 % Now this is to compute the total amplitude

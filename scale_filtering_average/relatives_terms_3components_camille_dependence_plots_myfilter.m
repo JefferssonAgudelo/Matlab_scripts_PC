@@ -1,8 +1,8 @@
 %% FILE PATH
 %dir = input('Name of the directory? (Like ./low_amplitude/12 or ./large_amplitude/01): ', 's');
-%dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
 
-dir = '/JAAR-DATA/DATA_HVM/betai=4';
+dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
+%dir = '/JAAR-DATA/DATA_HVM/betai=4';
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;

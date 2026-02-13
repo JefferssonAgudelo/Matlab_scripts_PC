@@ -2,8 +2,10 @@
 %dir = input('Name of the directory? (Like ./low_amplitude/12 or ./large_amplitude/01): ', 's');
 %dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
 
-dir = '/JAAR-DATA/DATA_HVM/betai=4';
-%dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
+%dir = '/JAAR-DATA/DATA_HVM/betai=4';
+%dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
+dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
+
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;
@@ -12,11 +14,11 @@ outformat = 0;
 %ns = 5; tt = 5;
 %beta_i = 0.25; Ti02Te0 = 2.5;
 
-%ns = 6; tt = 6;
-%beta_i = 1; Ti02Te0 = 10;
+ns = 6; tt = 6;
+beta_i = 1; Ti02Te0 = 10;
 
-ns = 10; tt = 10;
-beta_i = 4; Ti02Te0 = 40;
+%ns = 10; tt = 10;
+%beta_i = 4; Ti02Te0 = 40;
 
 pressure_on = 0;
 l_wind = 8;
@@ -1151,6 +1153,8 @@ tau_total_y = -tau_nE_tau_y -tau_v_x_B_tau_y + tau_J_x_B_tau_y + tau_Div_tau1_y;
 tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 %--------------------------------------------------------------------------
 
+stopp
+
 % lets Compute the Curl
 %--------------------------------------------------------------------------
 [tau_nE_tau_x_y, tau_nE_tau_x_x, tau_nE_tau_x_z] = gradient(tau_nE_tau_x);
@@ -1298,7 +1302,7 @@ acosedges2=acosedges(1:end-1);
      '$\tau_{\nabla \cdot (u_{i}J + Ju_{i} - JJ/ne)}$', '$\Sigma\tau$','Interpreter','latex','FontSize',20)
  hold off
 
- stoppp
+ %stoppp
 
  %Do an analysis by quartiles
 Q1_nE = sum(N_tau_nE(1,1:25))/(256*256*256);
@@ -1481,7 +1485,7 @@ threshold =pi/resx;
     %-------------------------
 
 %--------------------------------------------------------------------------
-stoopp
+%stoopp
 %--------------------------------------------------------------------------
 
 % Now this is to compute the total amplitude
