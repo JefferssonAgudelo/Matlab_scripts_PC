@@ -3,19 +3,20 @@
 %dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
 
 %dir = '/JAAR-DATA/DATA_HVM/betai=4';
-%dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
-dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
+dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
+%dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
 
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;
 outformat = 0;
 
-%ns = 5; tt = 5;
-%beta_i = 0.25; Ti02Te0 = 2.5;
+%ns = 4; tt = 4;
+ns = 5; tt = 5;
+beta_i = 0.25; Ti02Te0 = 2.5;
 
-ns = 6; tt = 6;
-beta_i = 1; Ti02Te0 = 10;
+%ns = 6; tt = 6;
+%beta_i = 1; Ti02Te0 = 10;
 
 %ns = 10; tt = 10;
 %beta_i = 4; Ti02Te0 = 40;
@@ -558,9 +559,11 @@ L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
 [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y); [~, Ez_dt_xx, ~] = gradient(Ez_dt_x); [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
 L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
 
-Ex_dt = Ex_dt - L2Ex_dt;
-Ey_dt = Ey_dt - L2Ey_dt;
-Ez_dt = Ez_dt - L2Ez_dt;
+%Correction (electron inertia) (I should not substract the )
+%----------------------------------------------------------------------
+%Ex_dt = Ex_dt - L2Ex_dt;
+%Ey_dt = Ey_dt - L2Ey_dt;
+%Ez_dt = Ez_dt - L2Ez_dt;
 %----------------------------------------------------------------------
 
 

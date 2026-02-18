@@ -1849,7 +1849,7 @@ sgtitle('$$ Unfiltered $$','Interpreter','latex','FontSize',fs)
 cd(path_color)
 fs=15; x0=45;y0=54;xx1=1400;yy1=500;
 f345=figure(345)
-dum = term1_dt -(-term2_dt + term3_dt - term4_dt + term5_dt + term6_dt);
+dum = term1_dt -(-term2_dt + term3_dt - term4_dt + term5_dt + 0.*term6_dt);
 dump = squeeze(dum(:,:,i));
 hc=pcolor(xl,yl,dump);
 y_lim = max(max(max(abs(dump))));
@@ -1869,6 +1869,17 @@ pbaspect([1 1 1])
 hold off
 sgtitle('$$ Unfiltered $$','Interpreter','latex','FontSize',fs)
 
+
+%--------------------------------------------------------------------------
+My_colors = [ 204, 121, 167; 
+0, 114, 178; 
+128, 128, 128
+213, 94, 0; 
+230, 159, 0; 
+0, 0, 0;
+86, 180, 233; 
+0, 158, 115; 
+]/256;
 lwm=2;
 
 fs=15; x0=45;y0=54;xx1=1400;yy1=500;
@@ -1930,7 +1941,7 @@ plot(xl,dump,'-',color=My_colors(4,:),LineWidth=lwm)
 dum = term5_filt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(5,:),LineWidth=lwm)
-sum_filt = - term2_filt + term3_filt - term4_filt + term5_filt + term6_filt;
+sum_filt = - term2_filt + term3_filt - term4_filt + term5_filt + 0.*term6_filt;
 dum = sum_filt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(6,:),LineWidth=lwm)
@@ -1970,6 +1981,8 @@ legend( '$\overline{E}$', '$-\overline{u} \times \overline{B}$',...
     '$\Sigma \tau$',...
     'Interpreter','latex','NumColumns',2,'Location','southoutside')
 hold off
+%-----------------------------------------------------------------------
+
 
 fs=15; x0=45;y0=54;xx1=1200;yy1=250;
 %----------------------------------------------------------------------

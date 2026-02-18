@@ -68,6 +68,14 @@ if(rho_terms == 0)
     threshold =pi/resx; %
 
     %
+    [Ek_B_dt,~]=Omni1DSpectra3c(Bx_dt,By_dt,Bz_dt,Lx,threshold);
+
+    term1_prime_x = term1_dt_x - term1_filt_x;
+    term1_prime_y = term1_dt_y - term1_filt_y;
+    term1_prime_z = term1_dt_z - term1_filt_z;
+
+    [Ek_prime,~]=Omni1DSpectra3c(term1_prime_x,term1_prime_y,term1_prime_z,Lx,threshold);
+
     [Ek_term1_dt,~]=Omni1DSpectra3c(term1_dt_x,term1_dt_y,term1_dt_z,Lx,threshold);
     [Ek_term2_dt,~]=Omni1DSpectra3c(term2_dt_x,term2_dt_y,term2_dt_z,Lx,threshold);
     [Ek_term3_dt,~]=Omni1DSpectra3c(term3_dt_x,term3_dt_y,term3_dt_z,Lx,threshold);
@@ -126,9 +134,52 @@ if(rho_terms == 0)
     %----------------------------------------------------------------------
 
   sp = 0; % This is for E
-    f1001=figure(1001);
-    set(gcf,'position',[x0,y0,xx1/2,yy1*2])
-    subplot(3,1,1)
+    f10013=figure(10013);
+    set(gcf,'position',[x0,y0,2*xx1,yy1*2])
+
+    subplot(2,2,1)
+    dump = Ek_term1_dt.*(k_bins.^(sp));
+    loglog(k_bins,dump,'--',color=My_colors(1,:),LineWidth=lwm)
+    hold on
+    dump = Ek_term1_filt.*(k_bins.^(sp));
+    loglog(k_bins,dump,'r--',LineWidth=lwm)
+    dump = Ek_prime.*(k_bins.^(sp));
+    loglog(k_bins,dump,'b--',LineWidth=lwm)
+    dump = Ek_B_dt.*(k_bins.^(sp));
+    loglog(k_bins,dump,'-k',LineWidth=lwm)
+    set(gca,'FontSize',fs)
+
+     x2 = log10([2 10]); y2 = x2.*(-8/3) -1.5;
+     loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
+     x2 = log10([0.5 1.6]); y2 = x2.*(-11/3) - 2.2;
+     loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
+     x2 = log10([2 10]); y2 = x2.*(-5/3) - 1.2;
+     loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
+    txt1 = '$$ k^{-5/3}$$';
+    txt2 = '$$ k^{-8/3}$$';
+    txt3 = '$$ k^{-11/3}$$';
+    text(10 , 1e-2,txt1,'Interpreter','latex','FontSize',0.7*fs);
+    text(6 , 1e-3,txt2,'Interpreter','latex','FontSize',0.7*fs);
+    text(6 , 1e-4,txt3,'Interpreter','latex','FontSize',0.7*fs)
+
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ylim([10^(-7),10^(0)])
+    xlim([min(k_bins),threshold])
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P1D$';
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    ax.YTick = [10^-9 10^-6, 10^-3];
+    ax.XTick = [10^0, 10^1];
+       set(gca,'FontSize',fs)
+    legend( '$E$', '$\overline{E}$',...
+         '$E` $','$B $',...
+         'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    hold off
+
+    subplot(2,2,2)
     dump = Ek_term1_dt.*(k_bins.^(sp));
     loglog(k_bins,dump,'--',color=My_colors(1,:),LineWidth=lwm)
     hold on
@@ -140,37 +191,40 @@ if(rho_terms == 0)
     loglog(k_bins,dump,'--',color=My_colors(4,:),LineWidth=lwm)
     dump = Ek_term5_dt.*(k_bins.^(sp));
     loglog(k_bins,dump,'--',color=My_colors(5,:),LineWidth=lwm)
-    dump = Ek_term7_dt.*(k_bins.^(sp));
-    loglog(k_bins,dump,'--',color=My_colors(6,:),LineWidth=lwm)
+    % dump = Ek_term7_dt.*(k_bins.^(sp));
+    % loglog(k_bins,dump,'--',color=My_colors(6,:),LineWidth=lwm)
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    %ax.XLabel.String = '$kd_i$';
-    %ax.YLabel.String = '$k^{5/3} P1D_{x}$';
-    ax.YLabel.String = '$P1D$';
-
-    %ylim([10^(-),10^(8)])
-    %yline(1*10^9,'--')
-    %xline(2,'--')
-    %xline(5,'-')
-
+    ylim([10^(-7),10^(0)])
     xlim([min(k_bins),threshold])
-    %xlim([0.5,threshold])
-
-    ax.YTick = [10^5, 10^10];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P1D$';
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),threshold])
+    ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
 
-    %%x2 = log10([1 10]); y2 = x2.*(-8/3) + 12.7;
-    %loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
-    x2 = log10([1 10]); y2 = x2.*(-11/3) + 13;
-    loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
-    x2 = log10([1 10]); y2 = x2.*(-5/3) + 13;
-    loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
-    txt1 = '$$ k^{-8/3}$$';
-    txt2 = '$$ k^{-11/3}$$';
-    txt3 = '$$ k^{-5/3}$$';
-    %text(10 , 10^10,txt1,'Interpreter','latex','FontSize',0.7*fs);
-    text(6 , 10^6,txt2,'Interpreter','latex','FontSize',0.7*fs);
-    text(6 , 10^13,txt3,'Interpreter','latex','FontSize',0.7*fs)
+         x2 = log10([2 10]); y2 = x2.*(-8/3) -1.5;
+     loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
+     x2 = log10([0.5 1.6]); y2 = x2.*(-11/3) - 2.2;
+     loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
+     x2 = log10([2 10]); y2 = x2.*(-5/3) - 1.2;
+     loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
+
+    %  x2 = log10([0.5 15]); y2 = x2.*(-8/3) -1.5;
+    %  loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
+    %  x2 = log10([0.5 15]); y2 = x2.*(-11/3) - 2.2;
+    %  loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
+    %  x2 = log10([0.5 15]); y2 = x2.*(-5/3) - 1.2;
+    %  loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
+    % txt1 = '$$ k^{-5/3}$$';
+    % txt2 = '$$ k^{-8/3}$$';
+    % txt3 = '$$ k^{-11/3}$$';
+    % text(10 , 1e-2,txt1,'Interpreter','latex','FontSize',0.7*fs);
+    % text(6 , 1e-3,txt2,'Interpreter','latex','FontSize',0.7*fs);
+    % text(6 , 1e-4,txt3,'Interpreter','latex','FontSize',0.7*fs)
 
     % legend( '$E$', '$u \times B$',...
     %     '$\frac{m^{*}J \times B}{m_{e}ne}$',...
@@ -180,12 +234,11 @@ if(rho_terms == 0)
     %     '$\overline{E}$', '$-\overline{u} \times \overline{B}$',...
     %     'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
     % %ylim([-0.045,0.045])
-    ylim([10^(2),10^(14)])
     set(gca,'FontSize',fs)
     hold off
 
 
-    subplot(3,1,2)
+    subplot(2,2,3)
     dump = Ek_term1_filt.*(k_bins.^(sp));
     loglog(k_bins,dump,'-',color=My_colors(1,:),LineWidth=1.5)
     hold on
@@ -197,19 +250,13 @@ if(rho_terms == 0)
     loglog(k_bins,dump,'-',color=My_colors(4,:),LineWidth=1.5)
     dump = Ek_term5_filt.*(k_bins.^(sp));
     loglog(k_bins,dump,'-',color=My_colors(5,:),LineWidth=1.5)
-    dump = Ek_term7_filt.*(k_bins.^(sp));
-    loglog(k_bins,dump,'-',color=My_colors(6,:),LineWidth=1.5)
+    %dump = Ek_term7_filt.*(k_bins.^(sp));
+    %loglog(k_bins,dump,'-',color=My_colors(6,:),LineWidth=1.5)
 
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    %ax.XLabel.String = '$kd_i$';
-    %ax.YLabel.String = '$k^{5/3} P1D_{x}$';
-    ax.YLabel.String = '$P1D$';
-    xlim([min(k_bins),threshold])
-
-    %ax.YTick = [10^5, 10^10];
-    ax.XTick = [10^0, 10^1];
-    xline(2*pi/0.59,'--')
+    %ax.YTick = [10^5, 10^11];
+    %ax.XTick = [10^0, 10^1];
     %yline(1*10^4,'--')
 
     % legend('$\overline{E}$', ...
@@ -220,11 +267,19 @@ if(rho_terms == 0)
     %     '$\overline{RHS}$',...
     %     'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
     % %ylim([-0.045,0.045])
+    ylim([10^(-7),10^(0)])
+    xlim([min(k_bins),threshold])
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P1D$';
+    ax.YTick = [10^-9 10^-6, 10^-3];   
+    ax.XTick = [10^0, 10^1];
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     set(gca,'FontSize',fs)
-    ylim([10^(2),10^(14)])
     hold off
 
-    subplot(3,1,3)
+    subplot(2,2,4)
     dump = Ek_tau_nE_tau.*(k_bins.^(sp));
     loglog(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=lwm)
     hold on
@@ -240,16 +295,9 @@ if(rho_terms == 0)
 
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D$';
-    ax.YTick = [10^5, 10^10];
+    %ax.YTick = [10^5, 10^10];
     %ax.YLabel.String = '$k^{5/3} P1D_{x}$';
-    %xlim([10^(0),1.1*10^(1)])
-    xlim([min(k_bins),threshold])
-    %ylim([10^(-5),10^(8)])
-    %
-    ax.XTick = [10^0, 10^1];
-    xline(2*pi/0.59,'--')
+    %ax.XTick = [10^0, 10^1];
 
     %ylim([-0.6,0.3])
     % legend('$-\tau_{nE}$', ...
@@ -258,7 +306,15 @@ if(rho_terms == 0)
     %     '$\tau_{\nabla \cdot(uJ+Ju-JJ/ne)}$',...
     %     '$\Sigma \tau$',...
     %     'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
-    ylim([10^(2),10^(14)])
+    ylim([10^(-11),10^(-3)])
+    xlim([min(k_bins),threshold])
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P1D$';
+    ax.YTick = [10^-9 10^-6, 10^-3];   
+    ax.XTick = [10^0, 10^1];    
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     hold off
 
     stopp
@@ -1104,7 +1160,9 @@ By_dt_DT = By_dt - mean(By_dt,'all');
 Bz_dt_DT = Bz_dt - mean(Bz_dt,'all');
 
 % Perform the FFT of the 3D field B
-F_B = fftn(Bx_dt_DT) + fftn(By_dt_DT) + fftn(Bz_dt_DT);
+F_Bx = fftn(Bx_dt_DT);
+F_By = fftn(By_dt_DT);
+F_Bz = fftn(Bz_dt_DT);
 
 Ns=size(Bx_dt);
 % Compute the wavenumbers
@@ -1115,7 +1173,7 @@ kz = kx;
 % Calculate the radial wavenumber k
 K = sqrt(KX.^2 + KY.^2 + KZ.^2);
 % Calculate the energy spectrum
-energy = abs(F_B).^2;
+energy = (abs(F_Bx).^2 + abs(F_By).^2 + abs(F_Bz).^2) / (prod(Ns)^2);
 % Define the bins for the radial wavenumber
 dk = 2 * pi / Lx; % Bin width in k-space
 k_max = threshold;%max(K(:)); % Maximum wavenumber
