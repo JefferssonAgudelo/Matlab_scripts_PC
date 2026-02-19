@@ -752,7 +752,7 @@ end
     [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y);
     [~, Ex_dt_xx, ~] = gradient(Ex_dt_x);
     [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
-    L2Ex_dt = (Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+    L2Ex_dt = me*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ex_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ex_dt);
     %----------------------------------------------------------------------
@@ -761,7 +761,7 @@ end
     [Ey_dt_yy, ~, ~] = gradient(Ey_dt_y);
     [~, Ey_dt_xx, ~] = gradient(Ey_dt_x);
     [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
-    L2Ey_dt = (Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
+    L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ey_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ey_dt);
     %----------------------------------------------------------------------
@@ -770,7 +770,7 @@ end
     [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y);
     [~, Ez_dt_xx, ~] = gradient(Ez_dt_x);
     [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
-    L2Ez_dt = (Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
+    L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ez_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ez_dt);
     %----------------------------------------------------------------------

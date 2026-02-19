@@ -82,7 +82,7 @@ if(rho_terms == 0)
     [Ek_term4_dt,~]=Omni1DSpectra3c(term4_dt_x,term4_dt_y,term4_dt_z,Lx,threshold);
 
     [Ek_term5_dt,~]=Omni1DSpectra3c(term5_dt_x,term5_dt_y, term5_dt_z,Lx,threshold);
- 
+    %[Ek_term6_dt,~]=Omni1DSpectra3c(term6_dt_x,term6_dt_y, term6_dt_z,Lx,threshold);
     [Ek_term7_dt,~] = Omni1DSpectra3c(term7_dt_x,term7_dt_y,term7_dt_z,Lx,threshold);
 
     [Ek_term1_filt,~]=Omni1DSpectra3c(term1_filt_x,term1_filt_y,term1_filt_z,Lx,threshold);
@@ -91,9 +91,8 @@ if(rho_terms == 0)
     [Ek_term4_filt,~]=Omni1DSpectra3c(term4_filt_x,term4_filt_y,term4_filt_z,Lx,threshold);
 
     [Ek_term5_filt,~]=Omni1DSpectra3c(term5_filt_x ,term5_filt_y,term5_filt_z,Lx,threshold);
-    
+    %[Ek_term6_filt,~]=Omni1DSpectra3c(term6_filt_x ,term6_filt_y,term6_filt_z,Lx,threshold);    
     [Ek_term7_filt,~] = Omni1DSpectra3c(term7_filt_x,term7_filt_y,term7_filt_z,Lx,threshold);
-
 
     [Ek_tau_nE_tau,~]=Omni1DSpectra3c(tau_nE_tau_x,tau_nE_tau_y,tau_nE_tau_z,Lx,threshold);
     [Ek_tau_v_x_B_tau,~]=Omni1DSpectra3c(tau_v_x_B_tau_x,tau_v_x_B_tau_y,tau_v_x_B_tau_z,Lx,threshold);
@@ -104,35 +103,38 @@ if(rho_terms == 0)
     sum_tau_y = -tau_nE_tau_y -tau_v_x_B_tau_y + tau_J_x_B_tau_y + tau_Div_tau1_y;
     sum_tau_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 
-    sum_tau01_x = -term4_filt_x + term5_filt_x + 0.*term6_filt_x + sum_tau_x;
-    sum_tau01_y = -term4_filt_y + term5_filt_y + 0.*term6_filt_y + sum_tau_y;    
-    sum_tau01_z = -term4_filt_z + term5_filt_z + 0.*term6_filt_z + sum_tau_z;
+    [Ek_sum_tau,k_bins]=Omni1DSpectra3c(sum_tau_x,sum_tau_y,sum_tau_z,Lx,threshold);
 
-    sum_tau02_x = term3_filt_x + sum_tau01_x;
-    sum_tau02_y = term3_filt_y + sum_tau01_y;
-    sum_tau02_z = term3_filt_z + sum_tau01_z;    
-
-    [Ek_sum_tau01,~]=Omni1DSpectra3c(sum_tau01_x,sum_tau01_y,sum_tau01_z,Lx,threshold);
-    [Ek_sum_tau02,~]=Omni1DSpectra3c(sum_tau02_x,sum_tau02_y,sum_tau02_z,Lx,threshold);
-    [Ek_sum_tau,~]=Omni1DSpectra3c(sum_tau_x,sum_tau_y,sum_tau_z,Lx,threshold);
+    % sum_tau01_x = -term4_filt_x + term5_filt_x + 1.*term6_filt_x + sum_tau_x;
+    % sum_tau01_y = -term4_filt_y + term5_filt_y + 1.*term6_filt_y + sum_tau_y;    
+    % sum_tau01_z = -term4_filt_z + term5_filt_z + 1.*term6_filt_z + sum_tau_z;
+    % 
+    % sum_tau02_x = term3_filt_x + sum_tau01_x;
+    % sum_tau02_y = term3_filt_y + sum_tau01_y;
+    % sum_tau02_z = term3_filt_z + sum_tau01_z;    
+    % 
+    % [Ek_sum_tau01,~]=Omni1DSpectra3c(sum_tau01_x,sum_tau01_y,sum_tau01_z,Lx,threshold);
+    % [Ek_sum_tau02,~]=Omni1DSpectra3c(sum_tau02_x,sum_tau02_y,sum_tau02_z,Lx,threshold);
     
-    [phase_diff_sum_tau_01,~] = Phase_difference(sum_tau01_x,sum_tau_x,Lx,threshold);
-    [phase_diff_sum_tau_02,k_bins] = Phase_difference(sum_tau02_x,sum_tau_x,Lx,threshold);
-    
-    if (curls == 1)
-    [Ek_sum_tau_M1, ~]=Omni1DSpectra(sum_tau_model1,x,threshold);
-    [Ek_sum_tau_M2, ~]=Omni1DSpectra(sum_tau_model2,Lx,threshold);
-
-    % These phase difference also need to be modified (this ony has x so far)
-    [phase_diff_sum_tau_01_M2,~] = Phase_difference(sum_tau01_x, sum_tau_model2,Lx,threshold);
-    [phase_diff_sum_tau_02_M1,~] = Phase_difference(sum_tau02_x, sum_tau_model1,Lx,threshold);
-
-    [phase_diff_sum_tau_M1,~] = Phase_difference(sum_tau_model1,sum_tau,Lx,threshold);
-    [phase_diff_sum_tau_M2,k_bins] = Phase_difference(sum_tau_model2,sum_tau,Lx,threshold);
-    end
+    % 
+    % [phase_diff_sum_tau_01,~] = Phase_difference(sum_tau01_x,sum_tau_x,Lx,threshold);
+    % [phase_diff_sum_tau_02,k_bins] = Phase_difference(sum_tau02_x,sum_tau_x,Lx,threshold);
+    % 
+    % if (curls == 1)
+    % [Ek_sum_tau_M1, ~]=Omni1DSpectra(sum_tau_model1,x,threshold);
+    % [Ek_sum_tau_M2, ~]=Omni1DSpectra(sum_tau_model2,Lx,threshold);
+    % 
+    % % These phase difference also need to be modified (this ony has x so far)
+    % [phase_diff_sum_tau_01_M2,~] = Phase_difference(sum_tau01_x, sum_tau_model2,Lx,threshold);
+    % [phase_diff_sum_tau_02_M1,~] = Phase_difference(sum_tau02_x, sum_tau_model1,Lx,threshold);
+    % 
+    % [phase_diff_sum_tau_M1,~] = Phase_difference(sum_tau_model1,sum_tau,Lx,threshold);
+    % [phase_diff_sum_tau_M2,k_bins] = Phase_difference(sum_tau_model2,sum_tau,Lx,threshold);
+    % end
     %}
     %----------------------------------------------------------------------
 
+    fs=20;
   sp = 0; % This is for E
     f10013=figure(10013);
     set(gcf,'position',[x0,y0,2*xx1,yy1*2])
@@ -149,18 +151,16 @@ if(rho_terms == 0)
     loglog(k_bins,dump,'-k',LineWidth=lwm)
     set(gca,'FontSize',fs)
 
-     x2 = log10([2 10]); y2 = x2.*(-8/3) -1.5;
-     loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
-     x2 = log10([0.5 1.6]); y2 = x2.*(-11/3) - 2.2;
-     loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
-     x2 = log10([2 10]); y2 = x2.*(-5/3) - 1.2;
+     x2 = log10([1 10]); y2 = x2.*(-8/3) -1.3;
+     loglog(10.^x2, 10.^y2,'k--',LineWidth=1.2);
+     x2 = log10([2 10]); y2 = x2.*(-5/3) - 1.5;
      loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
     txt1 = '$$ k^{-5/3}$$';
     txt2 = '$$ k^{-8/3}$$';
-    txt3 = '$$ k^{-11/3}$$';
-    text(10 , 1e-2,txt1,'Interpreter','latex','FontSize',0.7*fs);
-    text(6 , 1e-3,txt2,'Interpreter','latex','FontSize',0.7*fs);
-    text(6 , 1e-4,txt3,'Interpreter','latex','FontSize',0.7*fs)
+    txt3 = '$$ k_{c}$$';
+    text(10 , 1e-2,txt1,'Interpreter','latex','FontSize',0.9*fs);
+    text(6 , 1e-3,txt2,'Interpreter','latex','FontSize',0.9*fs);
+    text(2 , 1e-6,txt3,'Interpreter','latex','FontSize',0.9*fs)
 
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
@@ -175,7 +175,7 @@ if(rho_terms == 0)
     ax.XTick = [10^0, 10^1];
        set(gca,'FontSize',fs)
     legend( '$E$', '$\overline{E}$',...
-         '$E` $','$B $',...
+         '$E^{\prime}$','$B $',...
          'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
     hold off
 
@@ -191,8 +191,8 @@ if(rho_terms == 0)
     loglog(k_bins,dump,'--',color=My_colors(4,:),LineWidth=lwm)
     dump = Ek_term5_dt.*(k_bins.^(sp));
     loglog(k_bins,dump,'--',color=My_colors(5,:),LineWidth=lwm)
-    % dump = Ek_term7_dt.*(k_bins.^(sp));
-    % loglog(k_bins,dump,'--',color=My_colors(6,:),LineWidth=lwm)
+    dump = Ek_term7_dt.*(k_bins.^(sp));
+    loglog(k_bins,dump,'--',color=My_colors(6,:),LineWidth=lwm)
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ylim([10^(-7),10^(0)])
@@ -206,34 +206,27 @@ if(rho_terms == 0)
     ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
 
-         x2 = log10([2 10]); y2 = x2.*(-8/3) -1.5;
+     x2 = log10([2 10]); y2 = x2.*(-8/3) -1.3;
      loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
-     x2 = log10([0.5 1.6]); y2 = x2.*(-11/3) - 2.2;
+     x2 = log10([1 5]); y2 = x2.*(-11/3) - 1.6;
      loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
      x2 = log10([2 10]); y2 = x2.*(-5/3) - 1.2;
      loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
+    
+    txt1 = '$$ k^{-5/3}$$';
+    txt2 = '$$ k^{-8/3}$$';
+    txt3 = '$$ k^{-11/3}$$';
+    text(10 , 1e-2,txt1,'Interpreter','latex','FontSize',0.9*fs);
+    text(10 , 1e-4,txt2,'Interpreter','latex','FontSize',0.9*fs);
+    text(3 , 1e-3,txt3,'Interpreter','latex','FontSize',0.9*fs)
 
-    %  x2 = log10([0.5 15]); y2 = x2.*(-8/3) -1.5;
-    %  loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
-    %  x2 = log10([0.5 15]); y2 = x2.*(-11/3) - 2.2;
-    %  loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
-    %  x2 = log10([0.5 15]); y2 = x2.*(-5/3) - 1.2;
-    %  loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
-    % txt1 = '$$ k^{-5/3}$$';
-    % txt2 = '$$ k^{-8/3}$$';
-    % txt3 = '$$ k^{-11/3}$$';
-    % text(10 , 1e-2,txt1,'Interpreter','latex','FontSize',0.7*fs);
-    % text(6 , 1e-3,txt2,'Interpreter','latex','FontSize',0.7*fs);
-    % text(6 , 1e-4,txt3,'Interpreter','latex','FontSize',0.7*fs)
-
-    % legend( '$E$', '$u \times B$',...
-    %     '$\frac{m^{*}J \times B}{m_{e}ne}$',...
-    %     '$-\frac{\nabla \cdot P}{ne}$', ...
-    %     '$\frac{m^{*}\nabla \cdot (uJ + Ju - JJ/ne) + \nabla^{2}E/\mu_{0}}{ne^{2}}$',...
-    %     '$RHS$',...
-    %     '$\overline{E}$', '$-\overline{u} \times \overline{B}$',...
-    %     'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
-    % %ylim([-0.045,0.045])
+legend( '${\mathbf{E}}$', ...
+    '${\mathbf{E}}_{MHD}$',...
+    '${\mathbf{E}}_{Hall}$',...
+    '${\mathbf{E}}_{Pe}$', ...
+    '${\mathbf{E}}_{Ine}$',...
+    '${\mathbf{E}}_{RHS}$',...
+    'Interpreter','latex','NumColumns',1,'Location','southoutside')
     set(gca,'FontSize',fs)
     hold off
 
@@ -250,25 +243,16 @@ if(rho_terms == 0)
     loglog(k_bins,dump,'-',color=My_colors(4,:),LineWidth=1.5)
     dump = Ek_term5_filt.*(k_bins.^(sp));
     loglog(k_bins,dump,'-',color=My_colors(5,:),LineWidth=1.5)
-    %dump = Ek_term7_filt.*(k_bins.^(sp));
-    %loglog(k_bins,dump,'-',color=My_colors(6,:),LineWidth=1.5)
+    dump = Ek_term7_filt.*(k_bins.^(sp));
+    loglog(k_bins,dump,'-',color=My_colors(6,:),LineWidth=1.5)
 
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     %ax.YTick = [10^5, 10^11];
     %ax.XTick = [10^0, 10^1];
     %yline(1*10^4,'--')
-
-    % legend('$\overline{E}$', ...
-    %     '$-\overline{u} \times \overline{B}$',...
-    %     '$\frac{m^{*}\overline{J} \times \overline{B}}{m_{e}\overline{n}e}$',...
-    %     '$-\frac{\nabla \cdot \overline{P}}{\overline{n}e}$', ...
-    %     '$\frac{m^{*}[\nabla \cdot (\overline{u}\overline{J} + \overline{J}\overline{u} - \overline{J}\overline{J}/ne) + \nabla^{2}\overline{E}/\mu_{0}]}{\overline{n}e^{2}}$',...
-    %     '$\overline{RHS}$',...
-    %     'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
-    % %ylim([-0.045,0.045])
     ylim([10^(-7),10^(0)])
-    xlim([min(k_bins),threshold])
+    xlim([min(k_bins),10])
     ax.XLabel.String = '$kd_i$';
     ax.YLabel.String = '$P1D$';
     ax.YTick = [10^-9 10^-6, 10^-3];   
@@ -277,6 +261,13 @@ if(rho_terms == 0)
     xline(1,'--')
     xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     set(gca,'FontSize',fs)
+    legend( '$\overline{\mathbf{E}}$', ...
+    '$\overline{\mathbf{E}}_{MHD}$',...
+    '$\overline{\mathbf{E}}_{Hall}$',...
+    '$\overline{\mathbf{E}}_{Pe}$', ...
+    '$\overline{\mathbf{E}}_{Ine}$',...
+    '$\overline{\mathbf{E}}_{RHS}$',...
+    'Interpreter','latex','NumColumns',1,'Location','southoutside')
     hold off
 
     subplot(2,2,4)
@@ -306,8 +297,9 @@ if(rho_terms == 0)
     %     '$\tau_{\nabla \cdot(uJ+Ju-JJ/ne)}$',...
     %     '$\Sigma \tau$',...
     %     'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+
     ylim([10^(-11),10^(-3)])
-    xlim([min(k_bins),threshold])
+    xlim([min(k_bins),10])
     ax.XLabel.String = '$kd_i$';
     ax.YLabel.String = '$P1D$';
     ax.YTick = [10^-9 10^-6, 10^-3];   
@@ -315,6 +307,12 @@ if(rho_terms == 0)
     xline(10,'--')
     xline(1,'--')
     xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+        legend( '${\tau}_{nE}$', ...
+    '$\tau_{nu \times B}$', ...
+    '$\tau_{J \times B}$',...
+    '$\tau_{Ine}$',...
+    '$\Sigma \tau$',...
+    'Interpreter','latex','NumColumns',1,'Location','southoutside')
     hold off
 
     stopp

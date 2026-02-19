@@ -11,7 +11,7 @@ yl = 3.0;
 zl = 3.0;
 outformat = 0;
 
-%ns = 4; tt = 4;
+%ns = 1; tt = 1;
 ns = 5; tt = 5;
 beta_i = 0.25; Ti02Te0 = 2.5;
 
@@ -549,17 +549,17 @@ me = 1/100;
 
 [Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
 [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y); [~, Ex_dt_xx, ~] = gradient(Ex_dt_x); [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
-L2Ex_dt = me*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+L2Ex_dt = (me^1)*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
 
 [Ey_dt_y, Ey_dt_x, Ey_dt_z] = gradient(Ey_dt);
 [Ey_dt_yy, ~, ~] = gradient(Ey_dt_y); [~, Ey_dt_xx, ~] = gradient(Ey_dt_x); [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
-L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
+L2Ey_dt = (me^1)*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
 
 [Ez_dt_y, Ez_dt_x, Ez_dt_z] = gradient(Ez_dt);
 [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y); [~, Ez_dt_xx, ~] = gradient(Ez_dt_x); [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
-L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
+L2Ez_dt = (me^1)*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
 
-%Correction (electron inertia) (I should not substract the )
+%Correction (electron inertia) (I should not substract this )
 %----------------------------------------------------------------------
 %Ex_dt = Ex_dt - L2Ex_dt;
 %Ey_dt = Ey_dt - L2Ey_dt;
@@ -763,7 +763,7 @@ end
     [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y);
     [~, Ex_dt_xx, ~] = gradient(Ex_dt_x);
     [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
-    L2Ex_dt = (Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+    L2Ex_dt = (me^0)*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ex_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ex_dt);
     %----------------------------------------------------------------------
@@ -772,7 +772,7 @@ end
     [Ey_dt_yy, ~, ~] = gradient(Ey_dt_y);
     [~, Ey_dt_xx, ~] = gradient(Ey_dt_x);
     [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
-    L2Ey_dt = (Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
+    L2Ey_dt = (me^0)*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ey_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ey_dt);
     %----------------------------------------------------------------------
@@ -781,7 +781,7 @@ end
     [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y);
     [~, Ez_dt_xx, ~] = gradient(Ez_dt_x);
     [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
-    L2Ez_dt = (Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
+    L2Ez_dt = (me^0)*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ez_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ez_dt);
     %----------------------------------------------------------------------
@@ -1155,6 +1155,141 @@ tau_total_x = -tau_nE_tau_x -tau_v_x_B_tau_x + tau_J_x_B_tau_x + tau_Div_tau1_x;
 tau_total_y = -tau_nE_tau_y -tau_v_x_B_tau_y + tau_J_x_B_tau_y + tau_Div_tau1_y;
 tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 %--------------------------------------------------------------------------
+
+
+%--------------------------------------------------------------------------
+My_colors = [ 204, 121, 167; 
+0, 114, 178; 
+128, 128, 128
+213, 94, 0; 
+230, 159, 0; 
+0, 0, 0;
+86, 180, 233; 
+0, 158, 115; 
+]/256;
+lwm=2;
+
+
+% Plot for the magnitude instead of the x  component
+
+
+
+fs=15; x0=45;y0=54;xx1=1400;yy1=500;
+i = 50;
+j = 50;
+%this is for the x-component
+%--------------------------------------------------------------------------
+f100=figure(100)
+set(gcf,'position',[x0,y0,xx1,yy1])
+subplot(1,2,2)
+dum = -tau_nE_tau_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(1,:),LineWidth=lwm)
+hold on
+dum = -tau_v_x_B_tau_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(2,:),LineWidth=lwm)
+dum = tau_J_x_B_tau_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(3,:),LineWidth=lwm)
+dum = tau_Div_tau1_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(5,:),LineWidth=lwm)
+set(gca,'FontSize',fs)
+dum = -tau_nE_tau_x -tau_v_x_B_tau_x + tau_J_x_B_tau_x + tau_Div_tau1_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(6,:),LineWidth=lwm)
+set(gca,'FontSize',fs)
+
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$y/d_i$';
+%ax.YLabel.String = '$E$';
+% legend('$-\tau_{nE}$','$-\tau_{nu \times B}$', ...
+%      '$\tau_{J \times B}$',...
+%      '$\tau_{\nabla \cdot (uJ+Ju-JJ/ne)}$',...
+%      '$\Sigma \tau$',...
+%      'Interpreter','latex','NumColumns',1,'Location','southoutside')
+%title('Unfilterd','Interpreter','latex')
+xlim([min(xl),max(xl)])
+%legend( '$\overline{E}$', '$-\overline{u} \times \overline{B}$',...
+%    '$\frac{\overline{J} \times \overline{B}}{\overline{n}e}$',...
+%    '$-\frac{\nabla \cdot \overline{P}_{e}}{\overline{n}e}$', ...
+%    '$\frac{m_{e}\nabla \cdot (\overline{u}\overline{J} + \overline{J}\overline{u} - \overline{J}\overline{J}/ne)}{\overline{n}e^{2}}$',...
+%    'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+%ylim([-0.045,0.045])
+hold off
+
+subplot(1,2,1)
+dum = term1_filt_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-',color=My_colors(1,:),LineWidth=lwm)
+hold on
+dum = -term2_filt_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-',color=My_colors(2,:),LineWidth=lwm)
+dum = term3_filt_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-',color=My_colors(3,:),LineWidth=lwm)
+dum = -term4_filt_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-',color=My_colors(4,:),LineWidth=lwm)
+dum = term5_filt_x ;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-',color=My_colors(5,:),LineWidth=lwm)
+sum_filt_x = term7_filt_x ;
+dum = sum_filt_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-',color=My_colors(6,:),LineWidth=lwm)
+
+dum = -tau_nE_tau_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(1,:),LineWidth=lwm)
+dum = -tau_v_x_B_tau_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(2,:),LineWidth=lwm)
+dum = tau_J_x_B_tau_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(3,:),LineWidth=lwm)
+dum = tau_Div_tau1_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(5,:),LineWidth=lwm)
+set(gca,'FontSize',fs)
+dum = -tau_nE_tau_x -tau_v_x_B_tau_x + tau_J_x_B_tau_x + tau_Div_tau1_x;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-.',color=My_colors(6,:),LineWidth=lwm)
+set(gca,'FontSize',fs)
+
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$y/d_i$';
+ax.YLabel.String = '$\mathbf{E}_{x}$';
+xlim([min(xl),max(xl)])
+%ylim([-0.6,0.3])
+legend( '$\overline{\mathbf{E}}$', '$-\overline{\mathbf{E}}_{MHD}$',...
+    '$\overline{\mathbf{E}}_{Hall}$',...
+    '$-\overline{\mathbf{E}}_{Pe}$', ...
+    '$\overline{\mathbf{E}}_{Ine}$',...
+    '$\overline{\mathbf{E}}_{RHS}$',...
+    '$-\mathbf{\tau}_{nE}$', ...
+    '$-\tau_{nu \times B}$', ...
+    '$\tau_{J \times B}$',...
+    '$\tau_{Ine}$',...
+    '$\Sigma \tau$',...
+    'Interpreter','latex','NumColumns',1,'Location','southoutside')
+
+% legend( '$\overline{E}$', '$-\overline{u} \times \overline{B}$',...
+%     '$\frac{m^{*}\overline{J} \times \overline{B}}{m_{e}\overline{n}e}$',...
+%     '$-\frac{\nabla \cdot \overline{P}}{\overline{n}e}$', ...
+%     '$\frac{m^{*}[\nabla \cdot (\overline{u}\overline{J} + \overline{J}\overline{u} - \overline{J}\overline{J}/ne) + \nabla^{2}\overline{E}/\mu_{0}]}{\overline{n}e^{2}}$',...
+%     '$\overline{RHS}$',...
+%     '$-\tau_{nE}$','$-\tau_{nu \times B}$', ...
+%     '$\tau_{J \times B}$',...
+%     '$\tau_{\nabla \cdot(uJ+Ju-JJ/ne)}$',...
+%     '$\Sigma \tau$',...
+%     'Interpreter','latex','NumColumns',2,'Location','southoutside')
+hold off
+
 
 stopp
 

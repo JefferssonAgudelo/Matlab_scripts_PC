@@ -1,9 +1,8 @@
-
-+%% FILE PATH
+%% FILE PATH
 %dir = input('Name of the directory? (Like ./low_amplitude/12 or ./large_amplitude/01): ', 's');
-%dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
 
-dir = '/JAAR-DATA/DATA_HVM/betai=4';
+dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
+%dir = '/JAAR-DATA/DATA_HVM/betai=4';
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;
@@ -540,6 +539,13 @@ me = 1/100;
 %L2Ex_dt = me*4*del2(Ex_dt)/(grad_fact.*resx)^2;
 %L2Ey_dt = me*4*del2(Ey_dt)/(grad_fact.*resx)^2;
 %L2Ez_dt = me*4*del2(Ez_dt)/(grad_fact.*resx)^2;
+
+    [Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
+    [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y);
+    [~, Ex_dt_xx, ~] = gradient(Ex_dt_x);
+    [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
+    L2Ex_dt = (Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+
 
 [Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
 [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y); [~, Ex_dt_xx, ~] = gradient(Ex_dt_x); [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
