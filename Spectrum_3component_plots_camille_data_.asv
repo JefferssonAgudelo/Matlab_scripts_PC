@@ -1,8 +1,5 @@
 %cd ('/Users/jeffersson_agudelo/Downloads/New_images_may/')
 %load('beta025_scatter.mat')
-
-
-
 % Reddish Purple+6	(204, 121, 167)
 % Blue	(0, 114, 178)
 % Grey	(128, 128, 128)
@@ -27,12 +24,11 @@ i=50; j=50;
 fs=18; x0=45;y0=54;xx1=900;yy1=500;
 %--------------------------------------------------------------------------
 
-
 %--------------------------------------------------------------------------
 %sp = 7/3;
 %sp = 1/3; % This is for JxB/n
 %sp = 11/3; % This is for the uxB term
-sp = 5/3; % This is for E
+%sp = 5/3; % This is for E
 %sp = 0;
 rho_terms = 0;
 %--------------------------------------------------------------------------
@@ -42,23 +38,23 @@ rho_terms = 0;
 %--------------------------------------------------------------------------
 curls = 0;
 if (curls == 1)
-term1_dt = term1_dt_x;
-term2_dt = term2_dt_x;
-term3_dt = term3_dt_x;
-term4_dt = term4_dt_x;
-term5_dt = term5_dt_x;
-term6_dt = term6_dt_x;
+    term1_dt = term1_dt_x;
+    term2_dt = term2_dt_x;
+    term3_dt = term3_dt_x;
+    term4_dt = term4_dt_x;
+    term5_dt = term5_dt_x;
+    term6_dt = term6_dt_x;
 
-tau_total = tau_total_x;
-tau_nE_tau = tau_nE_tau_x;
-tau_v_x_B_tau = tau_v_x_B_tau_x;
-tau_J_x_B_tau = tau_J_x_B_tau_x;
-tau_Div_tau1 = tau_Div_tau1_x;
+    tau_total = tau_total_x;
+    tau_nE_tau = tau_nE_tau_x;
+    tau_v_x_B_tau = tau_v_x_B_tau_x;
+    tau_J_x_B_tau = tau_J_x_B_tau_x;
+    tau_Div_tau1 = tau_Div_tau1_x;
 
-% I don't know where is the file where I define this. but it has to do with
-%  using K, H Omega vs not using them
-sum_tau_model1 = tau_M1_x;
-sum_tau_model2 = tau_M2_x;
+    % I don't know where is the file where I define this. but it has to do with
+    %  using K, H Omega vs not using them
+    sum_tau_model1 = tau_M1_x;
+    sum_tau_model2 = tau_M2_x;
 end
 
 if(rho_terms == 0)
@@ -66,6 +62,7 @@ if(rho_terms == 0)
 
     fs=20;
     threshold =pi/resx; %
+
 
     %
     [Ek_B_dt,~]=Omni1DSpectra3c(Bx_dt,By_dt,Bz_dt,Lx,threshold);
@@ -91,7 +88,7 @@ if(rho_terms == 0)
     [Ek_term4_filt,~]=Omni1DSpectra3c(term4_filt_x,term4_filt_y,term4_filt_z,Lx,threshold);
 
     [Ek_term5_filt,~]=Omni1DSpectra3c(term5_filt_x ,term5_filt_y,term5_filt_z,Lx,threshold);
-    %[Ek_term6_filt,~]=Omni1DSpectra3c(term6_filt_x ,term6_filt_y,term6_filt_z,Lx,threshold);    
+    %[Ek_term6_filt,~]=Omni1DSpectra3c(term6_filt_x ,term6_filt_y,term6_filt_z,Lx,threshold);
     [Ek_term7_filt,~] = Omni1DSpectra3c(term7_filt_x,term7_filt_y,term7_filt_z,Lx,threshold);
 
     [Ek_tau_nE_tau,~]=Omni1DSpectra3c(tau_nE_tau_x,tau_nE_tau_y,tau_nE_tau_z,Lx,threshold);
@@ -106,28 +103,28 @@ if(rho_terms == 0)
     [Ek_sum_tau,k_bins]=Omni1DSpectra3c(sum_tau_x,sum_tau_y,sum_tau_z,Lx,threshold);
 
     % sum_tau01_x = -term4_filt_x + term5_filt_x + 1.*term6_filt_x + sum_tau_x;
-    % sum_tau01_y = -term4_filt_y + term5_filt_y + 1.*term6_filt_y + sum_tau_y;    
+    % sum_tau01_y = -term4_filt_y + term5_filt_y + 1.*term6_filt_y + sum_tau_y;
     % sum_tau01_z = -term4_filt_z + term5_filt_z + 1.*term6_filt_z + sum_tau_z;
-    % 
+    %
     % sum_tau02_x = term3_filt_x + sum_tau01_x;
     % sum_tau02_y = term3_filt_y + sum_tau01_y;
-    % sum_tau02_z = term3_filt_z + sum_tau01_z;    
-    % 
+    % sum_tau02_z = term3_filt_z + sum_tau01_z;
+    %
     % [Ek_sum_tau01,~]=Omni1DSpectra3c(sum_tau01_x,sum_tau01_y,sum_tau01_z,Lx,threshold);
     % [Ek_sum_tau02,~]=Omni1DSpectra3c(sum_tau02_x,sum_tau02_y,sum_tau02_z,Lx,threshold);
-    
-    % 
+
+    %
     % [phase_diff_sum_tau_01,~] = Phase_difference(sum_tau01_x,sum_tau_x,Lx,threshold);
     % [phase_diff_sum_tau_02,k_bins] = Phase_difference(sum_tau02_x,sum_tau_x,Lx,threshold);
-    % 
+    %
     % if (curls == 1)
     % [Ek_sum_tau_M1, ~]=Omni1DSpectra(sum_tau_model1,x,threshold);
     % [Ek_sum_tau_M2, ~]=Omni1DSpectra(sum_tau_model2,Lx,threshold);
-    % 
+    %
     % % These phase difference also need to be modified (this ony has x so far)
     % [phase_diff_sum_tau_01_M2,~] = Phase_difference(sum_tau01_x, sum_tau_model2,Lx,threshold);
     % [phase_diff_sum_tau_02_M1,~] = Phase_difference(sum_tau02_x, sum_tau_model1,Lx,threshold);
-    % 
+    %
     % [phase_diff_sum_tau_M1,~] = Phase_difference(sum_tau_model1,sum_tau,Lx,threshold);
     % [phase_diff_sum_tau_M2,k_bins] = Phase_difference(sum_tau_model2,sum_tau,Lx,threshold);
     % end
@@ -135,7 +132,7 @@ if(rho_terms == 0)
     %----------------------------------------------------------------------
 
     fs=20;
-  sp = 0; % This is for E
+    sp = 0; % This is for E
     f10013=figure(10013);
     set(gcf,'position',[x0,y0,2*xx1,yy1*2])
 
@@ -151,10 +148,10 @@ if(rho_terms == 0)
     loglog(k_bins,dump,'-k',LineWidth=lwm)
     set(gca,'FontSize',fs)
 
-     x2 = log10([1 10]); y2 = x2.*(-8/3) -1.4;
-     loglog(10.^x2, 10.^y2,'k--',LineWidth=1.2);
-     x2 = log10([2 10]); y2 = x2.*(-5/3) - 1.4;
-     loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
+    x2 = log10([1 10]); y2 = x2.*(-8/3) -1.3;
+    loglog(10.^x2, 10.^y2,'k--',LineWidth=1.2);
+    x2 = log10([2 10]); y2 = x2.*(-5/3) - 1.5;
+    loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
     txt1 = '$$ k^{-5/3}$$';
     txt2 = '$$ k^{-8/3}$$';
     txt3 = '$$ k_{c}$$';
@@ -173,10 +170,10 @@ if(rho_terms == 0)
     xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
-       set(gca,'FontSize',fs)
+    set(gca,'FontSize',fs)
     legend( '$E$', '$\overline{E}$',...
-         '$E^{\prime}$','$B $',...
-         'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+        '$E^{\prime}$','$B $',...
+        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
     hold off
 
     subplot(2,2,2)
@@ -206,34 +203,27 @@ if(rho_terms == 0)
     ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
 
-     x2 = log10([2 10]); y2 = x2.*(-8/3) -1.5;
-     loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
-     x2 = log10([1 5]); y2 = x2.*(-11/3) - 1.6;
-     loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
-     x2 = log10([2 10]); y2 = x2.*(-5/3) - 0.8;
-     loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
+    x2 = log10([2 10]); y2 = x2.*(-8/3) -1.3;
+    loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
+    x2 = log10([1 5]); y2 = x2.*(-11/3) - 1.6;
+    loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
+    x2 = log10([2 10]); y2 = x2.*(-5/3) - 1.2;
+    loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
 
-    %  x2 = log10([0.5 15]); y2 = x2.*(-8/3) -1.5;
-    %  loglog(10.^x2, 10.^y2,'-',color=My_colors(1,:),LineWidth=1.5);
-    %  x2 = log10([0.5 15]); y2 = x2.*(-11/3) - 2.2;
-    %  loglog(10.^x2, 10.^y2,'-',color=My_colors(2,:),LineWidth=1.5);
-    %  x2 = log10([0.5 15]); y2 = x2.*(-5/3) - 1.2;
-    %  loglog(10.^x2, 10.^y2,'-',color=My_colors(3,:),LineWidth=1.5);
-    
     txt1 = '$$ k^{-5/3}$$';
     txt2 = '$$ k^{-8/3}$$';
     txt3 = '$$ k^{-11/3}$$';
     text(10 , 1e-2,txt1,'Interpreter','latex','FontSize',0.9*fs);
-    text(6 , 1e-3,txt2,'Interpreter','latex','FontSize',0.9*fs);
-    text(1 , 1e-3,txt3,'Interpreter','latex','FontSize',0.9*fs)
+    text(10 , 1e-4,txt2,'Interpreter','latex','FontSize',0.9*fs);
+    text(3 , 1e-3,txt3,'Interpreter','latex','FontSize',0.9*fs)
 
-legend( '${\mathbf{E}}$', ...
-    '${\mathbf{E}}_{MHD}$',...
-    '${\mathbf{E}}_{Hall}$',...
-    '${\mathbf{E}}_{Pe}$', ...
-    '${\mathbf{E}}_{Ine}$',...
-    '${\mathbf{E}}_{RHS}$',...
-    'Interpreter','latex','NumColumns',1,'Location','southoutside')
+    legend( '${\mathbf{E}}$', ...
+        '${\mathbf{E}}_{MHD}$',...
+        '${\mathbf{E}}_{Hall}$',...
+        '${\mathbf{E}}_{Pe}$', ...
+        '${\mathbf{E}}_{Ine}$',...
+        '${\mathbf{E}}_{RHS}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southoutside')
     set(gca,'FontSize',fs)
     hold off
 
@@ -262,19 +252,19 @@ legend( '${\mathbf{E}}$', ...
     xlim([min(k_bins),10])
     ax.XLabel.String = '$kd_i$';
     ax.YLabel.String = '$P1D$';
-    ax.YTick = [10^-9 10^-6, 10^-3];   
+    ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
     xline(10,'--')
     xline(1,'--')
     xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     set(gca,'FontSize',fs)
     legend( '$\overline{\mathbf{E}}$', ...
-    '$\overline{\mathbf{E}}_{MHD}$',...
-    '$\overline{\mathbf{E}}_{Hall}$',...
-    '$\overline{\mathbf{E}}_{Pe}$', ...
-    '$\overline{\mathbf{E}}_{Ine}$',...
-    '$\overline{\mathbf{E}}_{RHS}$',...
-    'Interpreter','latex','NumColumns',1,'Location','southoutside')
+        '$\overline{\mathbf{E}}_{MHD}$',...
+        '$\overline{\mathbf{E}}_{Hall}$',...
+        '$\overline{\mathbf{E}}_{Pe}$', ...
+        '$\overline{\mathbf{E}}_{Ine}$',...
+        '$\overline{\mathbf{E}}_{RHS}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southoutside')
     hold off
 
     subplot(2,2,4)
@@ -309,18 +299,309 @@ legend( '${\mathbf{E}}$', ...
     xlim([min(k_bins),10])
     ax.XLabel.String = '$kd_i$';
     ax.YLabel.String = '$P1D$';
-    ax.YTick = [10^-9 10^-6, 10^-3];   
-    ax.XTick = [10^0, 10^1];    
+    ax.YTick = [10^-9 10^-6, 10^-3];
+    ax.XTick = [10^0, 10^1];
     xline(10,'--')
     xline(1,'--')
     xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
-        legend( '$-{\tau}_{nE}$', ...
-    '$-\tau_{nu \times B}$', ...
-    '$\tau_{J \times B}$',...
-    '$\tau_{Ine}$',...
-    '$\Sigma \tau$',...
-    'Interpreter','latex','NumColumns',1,'Location','southoutside')
+    legend( '${\tau}_{nE}$', ...
+        '$\tau_{nu \times B}$', ...
+        '$\tau_{J \times B}$',...
+        '$\tau_{Ine}$',...
+        '$\Sigma \tau$',...
+        'Interpreter','latex','NumColumns',1,'Location','southoutside')
     hold off
+
+
+
+
+    % Lets make also plots for the ratios julia style fo
+
+    %--------------------------------------------------------------------------
+    fs=20;
+    sp = 0; % This is for E
+    f10014=figure(10014);
+    set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    dump = Ek_term3_dt./Ek_term2_dt;
+    loglog(k_bins,dump,'-',color=My_colors(3,:),LineWidth=lwm)
+    hold on
+    dump = Ek_term4_dt./Ek_term3_dt;
+    loglog(k_bins,dump,'-',color=My_colors(4,:),LineWidth=lwm)
+    dump = Ek_term5_dt./Ek_term4_dt;
+    loglog(k_bins,dump,'-',color=My_colors(5,:),LineWidth=lwm)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    %ylim([10^(-7),10^(0)])
+    xlim([min(k_bins),threshold])
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$Ratio \ P1D$';
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),threshold])
+    %ax.YTick = [10^-9 10^-6, 10^-3];
+    ax.XTick = [10^0, 10^1];
+
+    txt1 = '$$ k^{-5/3}$$';
+    txt2 = '$$ k^{-8/3}$$';
+    txt3 = '$$ k^{-11/3}$$';
+    text(10 , 1e-2,txt1,'Interpreter','latex','FontSize',0.9*fs);
+    text(10 , 1e-4,txt2,'Interpreter','latex','FontSize',0.9*fs);
+    text(3 , 1e-3,txt3,'Interpreter','latex','FontSize',0.9*fs)
+
+    legend( '$\mathbf{E}_{Hall}/\mathbf{E}_{MHD}$',...
+        '$\mathbf{E}_{Pe}/\mathbf{E}_{Hall}$',...
+        '$\mathbf{E}_{Ine} / \mathbf{E}_{Pe}$', ...
+        'Interpreter','latex','NumColumns',1,'Location','southoutside')
+    set(gca,'FontSize',fs)
+    hold off
+    %--------------------------------------------------------------------------
+
+
+        % This is for the plot of the phase differences
+    %----------------------------------------------------------------------
+    % [phase_diff_uxB,~] = Phase_difference(term2_filt_x,tau_v_x_B_tau_x,Lx,threshold);
+    % [phase_diff_JxB,~] = Phase_difference(term3_filt_x,tau_J_x_B_tau_x,Lx,threshold);
+    % [phase_diff_div,~] = Phase_difference(term5_filt_x,tau_Div_tau1_x,Lx,threshold);
+    % [phase_diff_sumtau,k_bins] = Phase_difference(term7_filt_x,sum_tau_x,Lx,threshold);
+
+    %for the three components
+    [phase_diff_uxB_x,~] = Phase_difference(term2_filt_x,tau_v_x_B_tau_x,Lx,threshold);
+    [phase_diff_JxB_x,~] = Phase_difference(term3_filt_x,tau_J_x_B_tau_x,Lx,threshold);
+    [phase_diff_div_x,~] = Phase_difference(term5_filt_x,tau_Div_tau1_x,Lx,threshold);
+    [phase_diff_sumtau_x,~] = Phase_difference(term7_filt_x,sum_tau_x,Lx,threshold);
+
+    [phase_diff_uxB_y,~] = Phase_difference(term2_filt_y,tau_v_x_B_tau_y,Lx,threshold);
+    [phase_diff_JxB_y,~] = Phase_difference(term3_filt_y,tau_J_x_B_tau_y,Lx,threshold);
+    [phase_diff_div_y,~] = Phase_difference(term5_filt_y,tau_Div_tau1_y,Lx,threshold);
+    [phase_diff_sumtau_y,~] = Phase_difference(term7_filt_y,sum_tau_y,Lx,threshold);
+
+    [phase_diff_uxB_z,~] = Phase_difference(term2_filt_z,tau_v_x_B_tau_z,Lx,threshold);
+    [phase_diff_JxB_z,~] = Phase_difference(term3_filt_z,tau_J_x_B_tau_z,Lx,threshold);
+    [phase_diff_div_z,~] = Phase_difference(term5_filt_z,tau_Div_tau1_z,Lx,threshold);
+    [phase_diff_sumtau_z,k_bins] = Phase_difference(term7_filt_z,sum_tau_z,Lx,threshold);
+
+    phase_diff_uxB = sqrt(phase_diff_uxB_x.^2 + phase_diff_uxB_y.^2 + phase_diff_uxB_z.^2);
+    phase_diff_JxB = sqrt(phase_diff_JxB_x.^2 + phase_diff_JxB_y.^2 + phase_diff_JxB_z.^2);
+    phase_diff_div = sqrt(phase_diff_div_x.^2 + phase_diff_div_y.^2 + phase_diff_div_z.^2);
+    phase_diff_sumtau = sqrt(phase_diff_sumtau_x.^2 + phase_diff_sumtau_y.^2 + phase_diff_sumtau_z.^2);
+
+
+    f1005=figure(1005);
+    set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    subplot(2,1,1)
+    dump = Ek_tau_v_x_B_tau./Ek_term2_filt;
+    loglog(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    hold on
+    dump = Ek_tau_J_x_B_tau./Ek_term3_filt;
+    loglog(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=4)
+    dump = Ek_tau_Div_tau1./Ek_term5_filt;
+    loglog(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = Ek_sum_tau./Ek_term7_filt;
+    loglog(k_bins,dump,'-.',color=My_colors(6,:),LineWidth=2)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$Ratio \ P1D_{x}$';
+    %xlim([10^(0),1.1*10^(1)])
+    %xlim([min(sqrt(beta_i)*k_bins),threshold])
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    ax.XTick = [10^0, 10^1];
+    ax.YTick = [10^-1, 10^2];
+    ylim([10^(-5),1*10^(3)])
+    %ylim([-0.6,0.3])
+    legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
+        '$\tau_{J \times B} / \overline{\mathbf{E}}_{Hall}$',...
+        '$\tau_{Ine} / \overline{\mathbf{E}}_{Ine}$',...
+        '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    title('$\Delta_{l} = 0.59 d_{i}$','Interpreter','latex')
+    hold off
+
+    subplot(2,1,2)
+    dump = phase_diff_uxB;
+    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    hold on
+    dump = phase_diff_JxB;
+    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+    dump = phase_diff_div;
+    semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = phase_diff_sumtau;
+    semilogx(k_bins,dump,'-.',color=My_colors(6,:),LineWidth=2)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$\Delta \phi^{\circ}_{x}$';
+    %xlim([10^(0),1.1*10^(1)])
+    %xlim([min(sqrt(beta_i)*k_bins),threshold])
+    %ylim([10^(0),10^(14)])
+    xlim([0.3,threshold])
+    ax.XTick = [10^0, 10^1];
+    ax.YTick = [0, 90, 180];
+    yline(135,'--')
+    yline(90,'--')
+    ylim([0,180])
+
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    %ax.YTick = [10^-9 10^-6, 10^-3];
+    ax.XTick = [10^0, 10^1];
+
+    %ylim([-0.6,0.3])
+    legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
+        '$\tau_{J \times B} / \overline{\mathbf{E}}_{Hall}$',...
+        '$\tau_{Ine} / \overline{\mathbf{E}}_{Ine}$',...
+        '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    %title('$\Delta_{l} = 0.59 d_{i}$','Interpreter','latex')
+    hold off
+
+
+  f1006=figure(1006);
+    set(gcf,'position',[x0,y0,1*xx1,yy1*2])
+
+
+    subplot(4,1,1)
+    dump = phase_diff_uxB_x;
+    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    hold on
+    dump = phase_diff_JxB_x;
+    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+    dump = phase_diff_div_x;
+    semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = phase_diff_sumtau_x;
+    semilogx(k_bins,dump,'-.',color=My_colors(6,:),LineWidth=2)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$\Delta \phi^{\circ}_{x}$';
+    xlim([0.3,threshold])
+    ax.YTick = [0, 90, 180];
+    yline(135,'--')
+    yline(90,'--')
+    ylim([0,180])
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    ax.XTick = [10^0, 10^1];
+    legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
+        '$\tau_{J \times B} / \overline{\mathbf{E}}_{Hall}$',...
+        '$\tau_{Ine} / \overline{\mathbf{E}}_{Ine}$',...
+        '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    hold off
+
+
+    subplot(4,1,4)
+    dump = phase_diff_uxB_y;
+    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    hold on
+    dump = phase_diff_JxB_y;
+    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+    dump = phase_diff_div_y;
+    semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = phase_diff_sumtau_y;
+    semilogx(k_bins,dump,'-.',color=My_colors(6,:),LineWidth=2)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$\Delta \phi^{\circ}_{y}$';
+    xlim([0.3,threshold])
+    ax.YTick = [0, 90, 180];
+    yline(135,'--')
+    yline(90,'--')
+    ylim([0,180])
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    ax.XTick = [10^0, 10^1];
+    legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
+        '$\tau_{J \times B} / \overline{\mathbf{E}}_{Hall}$',...
+        '$\tau_{Ine} / \overline{\mathbf{E}}_{Ine}$',...
+        '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    hold off
+
+    subplot(4,1,4)
+    dump = phase_diff_uxB_z;
+    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    hold on
+    dump = phase_diff_JxB;
+    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+    dump = phase_diff_div;
+    semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = phase_diff_sumtau;
+    semilogx(k_bins,dump,'-.',color=My_colors(6,:),LineWidth=2)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$\Delta \phi^{\circ}_{x}$';
+    xlim([0.3,threshold])
+    ax.YTick = [0, 90, 180];
+    yline(135,'--')
+    yline(90,'--')
+    ylim([0,180])
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    ax.XTick = [10^0, 10^1];
+    legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
+        '$\tau_{J \times B} / \overline{\mathbf{E}}_{Hall}$',...
+        '$\tau_{Ine} / \overline{\mathbf{E}}_{Ine}$',...
+        '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    hold off
+
+    subplot(4,1,4)
+    dump = phase_diff_uxB;
+    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    hold on
+    dump = phase_diff_JxB;
+    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+    dump = phase_diff_div;
+    semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = phase_diff_sumtau;
+    semilogx(k_bins,dump,'-.',color=My_colors(6,:),LineWidth=2)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$\Delta \phi^{\circ}_{x}$';
+    xlim([0.3,threshold])
+    ax.YTick = [0, 90, 180];
+    yline(135,'--')
+    yline(90,'--')
+    ylim([0,180])
+    xline(10,'--')
+    xline(1,'--')
+    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    ax.XTick = [10^0, 10^1];
+    legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
+        '$\tau_{J \times B} / \overline{\mathbf{E}}_{Hall}$',...
+        '$\tau_{Ine} / \overline{\mathbf{E}}_{Ine}$',...
+        '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    hold off
+
+
+stopp
+
+
+    %----------------------------------------------------------------------
 
     stopp
 
@@ -540,7 +821,7 @@ legend( '${\mathbf{E}}$', ...
 
     %----------------------------------------------------------------------
     sp = 0; % This is for E
-    
+
     f1000=figure(1000);
     set(gcf,'position',[x0,y0,xx1,yy1/2])
     subplot(1,1,1)

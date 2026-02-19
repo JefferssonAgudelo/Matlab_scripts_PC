@@ -11,7 +11,7 @@ yl = 3.0;
 zl = 3.0;
 outformat = 0;
 
-%ns = 1; tt = 1;
+%ns = 4; tt = 4;
 ns = 5; tt = 5;
 beta_i = 0.25; Ti02Te0 = 2.5;
 
@@ -21,8 +21,8 @@ beta_i = 0.25; Ti02Te0 = 2.5;
 %ns = 10; tt = 10;
 %beta_i = 4; Ti02Te0 = 40;
 
-pressure_on = 0;
-l_wind = 8;
+pressure_on = 0; % This is ion pressure correction (dosen't actually add mutch)
+l_wind = 4;
 rms_value = 1;
 absolute = 1;
 
@@ -1131,6 +1131,7 @@ term6_filt_z = mre*v_a*v_a*L2Ez_filt./n_0_dt;
 term7_filt_z = - term2_filt_z + term3_filt_z - term4_filt_z + term5_filt_z + term6_filt_z;
 %end
 
+
 %correction
 %--------------------------------------------------------------------------
 term5_dt_x = term5_dt_x + term6_dt_x;
@@ -1170,7 +1171,7 @@ My_colors = [ 204, 121, 167;
 lwm=2;
 
 
-% Plot for the magnitude instead of the x  component
+% Plot for the magnitude instead of the x  component 
 
 
 
@@ -1289,6 +1290,10 @@ legend( '$\overline{\mathbf{E}}$', '$-\overline{\mathbf{E}}_{MHD}$',...
 %     '$\Sigma \tau$',...
 %     'Interpreter','latex','NumColumns',2,'Location','southoutside')
 hold off
+
+
+
+
 
 
 stopp
