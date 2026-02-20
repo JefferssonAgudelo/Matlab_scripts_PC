@@ -1,6 +1,35 @@
 % This script is to plot tau and the model. This uses the already loaded
 % data.
 path_color = '/home/UNN/pfcy6/codes/processing_scripts/Matlab_Scripts_Laptop';
+
+curls = 1;
+if (curls == 1)
+    term1_dt = term1_dt_x;
+    term2_dt = term2_dt_x;
+    term3_dt = term3_dt_x;
+    term4_dt = term4_dt_x;
+    term5_dt = term5_dt_x;
+    term6_dt = term6_dt_x;
+
+    term1_filt = term1_filt_x;
+    term2_filt = term2_filt_x;
+    term3_filt = term3_filt_x;
+    term4_filt = term4_filt_x;
+    term5_filt = term5_filt_x;
+    term6_filt = term6_filt_x;    
+
+    tau_total = tau_total_x;
+    tau_nE_tau = tau_nE_tau_x;
+    tau_v_x_B_tau = tau_v_x_B_tau_x;
+    tau_J_x_B_tau = tau_J_x_B_tau_x;
+    tau_Div_tau1 = tau_Div_tau1_x;
+
+    % I don't know where is the file where I define this. but it has to do with
+    %  using K, H Omega vs not using them
+    %sum_tau_model1 = tau_M1_x;
+    %sum_tau_model2 = tau_M2_x;
+end
+
 %%%
 % This is to compute the voritcity
 %--------------------------------------------------------------------------
@@ -471,7 +500,7 @@ ax.YLabel.String = '$y/d_i$';
 %xlim([-15.2 15.2]);
 %ylim([-15.2 15.2]);
 pbaspect([1 1 1])
-title('$\Sigma \tau / max(\Sigma \tau) $','Interpreter','latex')
+title('$\Sigma \tau_{x} / \max(\Sigma \tau_{x}) $','Interpreter','latex')
 hold off
 
 
@@ -497,7 +526,8 @@ if (beta_i==0.25)
     %xlim([-15.2 15.2]);
     %ylim([-15.2 15.2]);
     pbaspect([1 1 1])
-    title('$\Sigma \tau \sim  a_{\beta}J + a_{\alpha}B + a_{\gamma}\Omega $','Interpreter','latex')
+    %title('$\Sigma \tau \sim  a_{\beta}J + a_{\alpha}B + a_{\gamma}\Omega $','Interpreter','latex')
+    title('$\Sigma \tau_{M1,x} / \max(\Sigma \tau_{M1,x}) $','Interpreter','latex')
     hold off
 
     ax1=subplot(1,3,3);
@@ -529,7 +559,7 @@ elseif(beta_i==1)
     %xlim([-15.2 15.2]);
     %ylim([-15.2 15.2]);
     pbaspect([1 1 1])
-    title('$\Sigma \tau \sim  a_{\beta}J + a_{\alpha}B + a_{\gamma}\Omega $','Interpreter','latex')
+    %title('$\Sigma \tau \sim  a_{\beta}J + a_{\alpha}B + a_{\gamma}\Omega $','Interpreter','latex')
     hold off
 
     ax1=subplot(1,3,3);
@@ -561,7 +591,7 @@ elseif(beta_i == 4)
     %xlim([-15.2 15.2]);
     %ylim([-15.2 15.2]);
     pbaspect([1 1 1])
-    title('$\Sigma \tau \sim  a_{\beta}J + a_{\alpha}B + a_{\gamma}\Omega $','Interpreter','latex')
+    %title('$\Sigma \tau \sim  a_{\beta}J + a_{\alpha}B + a_{\gamma}\Omega $','Interpreter','latex')
     hold off
 
     ax1=subplot(1,3,3);
@@ -588,7 +618,8 @@ title('$\beta_{i}=025$','Interpreter','latex')
 %xlim([-15.2 15.2]);
 %ylim([-15.2 15.2]);
 pbaspect([1 1 1])
-title('$\Sigma \tau \sim  a_{\beta}KJ + a_{\alpha}HB + a_{\gamma}W\Omega $','Interpreter','latex')
+%title('$\Sigma \tau \sim  a_{\beta}KJ + a_{\alpha}HB + a_{\gamma}W\Omega $','Interpreter','latex')
+title('$\Sigma \tau_{M2,x} / \max(\Sigma \tau_{M2,x}) $','Interpreter','latex')
 hold off
 
 
