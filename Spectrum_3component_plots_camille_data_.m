@@ -360,12 +360,13 @@ if(rho_terms == 0)
 
         % This is for the plot of the phase differences
     %----------------------------------------------------------------------
-    % [phase_diff_uxB,~] = Phase_difference(term2_filt_x,tau_v_x_B_tau_x,Lx,threshold);
+    %[phase_diff_uxB,~] = Phase_difference(term2_filt_x,tau_v_x_B_tau_x,Lx,threshold);
     % [phase_diff_JxB,~] = Phase_difference(term3_filt_x,tau_J_x_B_tau_x,Lx,threshold);
     % [phase_diff_div,~] = Phase_difference(term5_filt_x,tau_Div_tau1_x,Lx,threshold);
     % [phase_diff_sumtau,k_bins] = Phase_difference(term7_filt_x,sum_tau_x,Lx,threshold);
 
-    %for the three components
+    %for the three components doing the average of the phase angle
+    %{
     [phase_diff_uxB_x,~] = Phase_difference(term2_filt_x,tau_v_x_B_tau_x,Lx,threshold);
     [phase_diff_JxB_x,~] = Phase_difference(term3_filt_x,tau_J_x_B_tau_x,Lx,threshold);
     [phase_diff_div_x,~] = Phase_difference(term5_filt_x,tau_Div_tau1_x,Lx,threshold);
@@ -385,9 +386,26 @@ if(rho_terms == 0)
     phase_diff_JxB = sqrt(phase_diff_JxB_x.^2 + phase_diff_JxB_y.^2 + phase_diff_JxB_z.^2);
     phase_diff_div = sqrt(phase_diff_div_x.^2 + phase_diff_div_y.^2 + phase_diff_div_z.^2);
     phase_diff_sumtau = sqrt(phase_diff_sumtau_x.^2 + phase_diff_sumtau_y.^2 + phase_diff_sumtau_z.^2);
+    %}
+
+    % This is computing the phase angle of the dot product of between tau
+    % and the complex conjugate
+    %Phase_difference3D(uxB_x,uxB_y,uxB_z,tauuxB_x,tauuxB_y,tauuxB_z,Lx,threshold)    
 
 
-    f1005=figure(1005);
+    [phase_diff_uxB,~] = Phase_difference3D(term2_filt_x,term2_filt_y,term2_filt_z, ...
+        tau_v_x_B_tau_x,tau_v_x_B_tau_y,tau_v_x_B_tau_z,Lx,threshold);
+
+    [phase_diff_JxB,~] = Phase_difference3D(term3_filt_x,term3_filt_y,term3_filt_z, ...
+        tau_J_x_B_tau_x,tau_J_x_B_tau_y,tau_J_x_B_tau_z,Lx,threshold);
+
+    [phase_diff_div,~] = Phase_difference3D(term5_filt_x,term5_filt_y,term5_filt_z, ...
+        tau_Div_tau1_x,tau_Div_tau1_y,tau_Div_tau1_z,Lx,threshold); 
+
+    [phase_diff_sumtau,~] = Phase_difference3D(term7_filt_x,term7_filt_y,term7_filt_z, ...
+        sum_tau_x,sum_tau_y,sum_tau_z,Lx,threshold);     
+
+    f1006=figure(1006);
     set(gcf,'position',[x0,y0,1*xx1,yy1*1])
     subplot(2,1,1)
     dump = Ek_tau_v_x_B_tau./Ek_term2_filt;
@@ -1492,6 +1510,67 @@ end
 %uxB = AA; %term2_filt_x;
 %tauuxB = BB; %tau_v_x_B_tau_x;
 
+
+function [E_k,k_bins]=Phase_difference3D(uxB_x,uxB_y,uxB_z,tauuxB_x,tauuxB_y,tauuxB_z,Lx,threshold)
+% Detrend the variable
+Bx_dt_DT_x = uxB_x - mean(uxB_x,'all');
+Bx_dt_DT_y = uxB_y - mean(uxB_y,'all');
+Bx_dt_DT_z = uxB_z - mean(uxB_z,'all');
+
+Bx_dt_DT2_x = tauuxB_x - mean(tauuxB_x,'all');
+Bx_dt_DT2_y = tauuxB_y - mean(tauuxB_y,'all');
+Bx_dt_DT2_z = tauuxB_z - mean(tauuxB_z,'all');
+
+% Perform the FFT of the 3D field B
+F_B_x = fftn(Bx_dt_DT_x);
+F_B_y = fftn(Bx_dt_DT_y);
+F_B_z = fftn(Bx_dt_DT_z);
+
+F_B2_x = fftn(Bx_dt_DT2_x);
+F_B2_y = fftn(Bx_dt_DT2_y);
+F_B2_z = fftn(Bx_dt_DT2_z);
+
+fgcon = F_B_x.*conj(F_B2_x) + F_B_y.*conj(F_B2_y) + F_B_z.*conj(F_B2_z);
+
+%%% --- Phase differences in Fourier space ---
+phi1 = atan2(imag(fgcon), real(fgcon));
+phi1 = rad2deg(phi1);
+
+Ns=size(uxB_x);
+% Compute the wavenumbers
+kx = (2*pi/Lx) * [0:(Ns(1)/2-1) -Ns(1)/2:-1];
+ky = kx;
+kz = kx;
+[KX, KY, KZ] = meshgrid(kx, ky, kz);
+% Calculate the radial wavenumber k
+K = sqrt(KX.^2 + KY.^2 + KZ.^2);
+
+%% --- Omnidirectional averaging (simple linear mean of abs phase) ---
+%kx = fftshift(-N/2:N/2-1);
+%[KY,KX,KZ] = meshgrid(kx,kx,kx);
+kr = round(sqrt(KX.^2 + KY.^2 + KZ.^2));
+kmax = floor(Ns(1)/2)+1;
+spec_phi1 = zeros(kmax,1);
+
+% Define the bins for the radial wavenumber
+dk = 2 * pi / Lx; % Bin width in k-space
+k_max = threshold;%max(K(:)); % Maximum wavenumber
+k_bins = 0:dk:k_max; % Radial wavenumber bins
+% Initialize the omnidirectional spectrum
+
+for k = 1:kmax
+    mask = (kr == k);
+    if any(mask(:))
+        % use mean of absolute phase difference magnitude
+        spec_phi1(k) = mean(abs(phi1(mask)));
+    end
+end
+
+E_k = spec_phi1;
+
+end
+
+
 function [E_k,k_bins]=Phase_difference(uxB,tauuxB,Lx,threshold)
 % Detrend the variable
 Bx_dt_DT = uxB - mean(uxB,'all');
@@ -1501,12 +1580,14 @@ Bx_dt_DT2 = tauuxB - mean(tauuxB,'all');
 F_B = fftn(Bx_dt_DT);
 F_B2 = fftn(Bx_dt_DT2);
 fgcon = F_B.*conj(F_B2);
+phi1 = atan2(imag(fgcon), real(fgcon));
+phi1 = rad2deg(phi1);
 
 %%% --- Phase differences in Fourier space ---
-phi1 = angle(F_B2) - angle(F_B);
+%phi1 = angle(F_B2) - angle(F_B);
 % wrap to [-pi, pi]
-phi1 = atan2(sin(phi1), cos(phi1));
-phi1 = rad2deg(phi1);
+%phi1 = atan2(sin(phi1), cos(phi1));
+%phi1 = rad2deg(phi1);
 
 Ns=size(uxB);
 % Compute the wavenumbers
