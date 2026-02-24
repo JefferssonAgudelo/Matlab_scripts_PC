@@ -1,20 +1,39 @@
 %% FILE PATH
 %dir = input('Name of the directory? (Like ./low_amplitude/12 or ./large_amplitude/01): ', 's');
 
-dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
+%dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/02';
+
 %dir = '/JAAR-DATA/DATA_HVM/betai=4';
+dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
+%dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
+
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;
 outformat = 1;
-ns = 10;
-tt = 10;
-pressure_on = 1;
+
+ns = 5;
+tt = 5;
+beta_i = 0.25;
+Ti02Te0 =2.5;
+
+%ns = 6;
+%tt = 6;
+%beta_i = 1.0;
+%Ti02Te0 = 10.0;
+
+%ns = 10;
+%tt = 10;
+%beta_i = 4.0;
+%Ti02Te0 = 40.0;
+
+pressure_on = 0;
 l_wind = 8;
 rms_value = 1;
 absolute = 1;
-beta_i = 4.0;
-Ti02Te0 = 40.0;
+
+
+
 % How many to randomly sample
 AN = 256*256*32;
 filename_beta_comp = "beta4_scatter_KJHBWOgradndivPi_AN32.mat";
@@ -552,9 +571,9 @@ L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
 [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y); [~, Ez_dt_xx, ~] = gradient(Ez_dt_x); [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
 L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
 
-Ex_dt = Ex_dt - L2Ex_dt;
-Ey_dt = Ey_dt - L2Ey_dt;
-Ez_dt = Ez_dt - L2Ez_dt;
+%Ex_dt = Ex_dt - L2Ex_dt;
+%Ey_dt = Ey_dt - L2Ey_dt;
+%Ez_dt = Ez_dt - L2Ez_dt;
 %----------------------------------------------------------------------
 
 
