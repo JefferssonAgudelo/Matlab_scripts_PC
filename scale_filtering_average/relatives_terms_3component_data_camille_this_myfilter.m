@@ -1637,10 +1637,10 @@ hold off
 % contribute to the generation of magnetic field
 %--------------------------------------------------------------------------
 [phase_diff_B_curl_tau_nE,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
-    -curl_tau_nE_tau_x,-curl_tau_nE_tau_y,-curl_tau_nE_tau_z,Lx,threshold);
+    curl_tau_nE_tau_x,curl_tau_nE_tau_y,curl_tau_nE_tau_z,Lx,threshold);
 
 [phase_diff_B_curl_tau_v_x_B,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
-    -curl_tau_v_x_B_tau_x,-curl_tau_v_x_B_tau_y,-curl_tau_v_x_B_tau_z,Lx,threshold);
+    curl_tau_v_x_B_tau_x,curl_tau_v_x_B_tau_y,curl_tau_v_x_B_tau_z,Lx,threshold);
 
 [phase_diff_B_curl_tau_J_x_B,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
     -curl_tau_J_x_B_tau_x,-curl_tau_J_x_B_tau_y,-curl_tau_J_x_B_tau_z,Lx,threshold);
@@ -1666,7 +1666,7 @@ hold off
 [phase_diff_E_tau_Div,~] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
     tau_Div_tau1_x,tau_Div_tau1_y,tau_Div_tau1_z,Lx,threshold);
 
-[phase_diff_E_tau_total,k_bins] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
+[phase_diff_E_tau_total,k_bins] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
     tau_total_x,tau_total_y,tau_total_z,Lx,threshold);
 
 %--------------------------------------------------------------------------

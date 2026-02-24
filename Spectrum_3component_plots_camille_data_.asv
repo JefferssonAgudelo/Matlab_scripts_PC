@@ -103,32 +103,7 @@ if(rho_terms == 0)
 
     [Ek_sum_tau,k_bins]=Omni1DSpectra3c(sum_tau_x,sum_tau_y,sum_tau_z,Lx,threshold);
 
-    % sum_tau01_x = -term4_filt_x + term5_filt_x + 1.*term6_filt_x + sum_tau_x;
-    % sum_tau01_y = -term4_filt_y + term5_filt_y + 1.*term6_filt_y + sum_tau_y;
-    % sum_tau01_z = -term4_filt_z + term5_filt_z + 1.*term6_filt_z + sum_tau_z;
-    %
-    % sum_tau02_x = term3_filt_x + sum_tau01_x;
-    % sum_tau02_y = term3_filt_y + sum_tau01_y;
-    % sum_tau02_z = term3_filt_z + sum_tau01_z;
-    %
-    % [Ek_sum_tau01,~]=Omni1DSpectra3c(sum_tau01_x,sum_tau01_y,sum_tau01_z,Lx,threshold);
-    % [Ek_sum_tau02,~]=Omni1DSpectra3c(sum_tau02_x,sum_tau02_y,sum_tau02_z,Lx,threshold);
 
-    %
-    % [phase_diff_sum_tau_01,~] = Phase_difference(sum_tau01_x,sum_tau_x,Lx,threshold);
-    % [phase_diff_sum_tau_02,k_bins] = Phase_difference(sum_tau02_x,sum_tau_x,Lx,threshold);
-    %
-    % if (curls == 1)
-    % [Ek_sum_tau_M1, ~]=Omni1DSpectra(sum_tau_model1,x,threshold);
-    % [Ek_sum_tau_M2, ~]=Omni1DSpectra(sum_tau_model2,Lx,threshold);
-    %
-    % % These phase difference also need to be modified (this ony has x so far)
-    % [phase_diff_sum_tau_01_M2,~] = Phase_difference(sum_tau01_x, sum_tau_model2,Lx,threshold);
-    % [phase_diff_sum_tau_02_M1,~] = Phase_difference(sum_tau02_x, sum_tau_model1,Lx,threshold);
-    %
-    % [phase_diff_sum_tau_M1,~] = Phase_difference(sum_tau_model1,sum_tau,Lx,threshold);
-    % [phase_diff_sum_tau_M2,k_bins] = Phase_difference(sum_tau_model2,sum_tau,Lx,threshold);
-    % end
     %}
     %----------------------------------------------------------------------
 

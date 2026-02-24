@@ -2,7 +2,7 @@
 % data.
 path_color = '/home/UNN/pfcy6/codes/processing_scripts/Matlab_Scripts_Laptop';
 
-curls = 1;
+curls = 0;
 if (curls == 1)
     term1_dt = term1_dt_x;
     term2_dt = term2_dt_x;
@@ -120,15 +120,16 @@ sppp=1;
 
 
 % this is just for the x component
-tau00 = -tau_nE_tau - tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
-tau01 = -term4_filt + term5_filt + term6_filt + tau00;
-tau02 = term3_filt + tau01;
+%tau00 = -tau_nE_tau - tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1; % total tau
+%tau01 = -term4_filt + term5_filt + 0.*term6_filt + tau00; % tau HMHD
+%tau02 = term3_filt + tau01; % tau MHD
 
 
 % When using the three components to get the curl of tau
 %compute the components of the taus
-curls = 0;
+curls = 1;
 if(curls ==1)
+    if(beta_i==0.25)
     tau_M1_x = 0*Coeficcient_025(1,1) + Coeficcient_025(2,1)*Jx_filt + Coeficcient_025(3,1)*Bx_filt + Coeficcient_025(4,1)*vort_x_filt;
     tau_M1_y = 0*Coeficcient_025(1,2) + Coeficcient_025(2,2)*Jy_filt + Coeficcient_025(3,2)*By_filt + Coeficcient_025(4,2)*vort_y_filt;
     tau_M1_z = 0*Coeficcient_025(1,3) + Coeficcient_025(2,3)*Jz_filt + Coeficcient_025(3,3)*Bz_filt + Coeficcient_025(4,3)*vort_z_filt;
@@ -136,15 +137,62 @@ if(curls ==1)
     tau_M2_x = 0*Coeficcient_025(1,4) + Coeficcient_025(2,4)*K_filt_J_filt_x + Coeficcient_025(3,4)*H_filt_B_filt_x + Coeficcient_025(4,4)*W_filt_ome_filt_x;
     tau_M2_y = 0*Coeficcient_025(1,5) + Coeficcient_025(2,5)*K_filt_J_filt_y + Coeficcient_025(3,5)*H_filt_B_filt_y + Coeficcient_025(4,5)*W_filt_ome_filt_y;
     tau_M2_z = 0*Coeficcient_025(1,6) + Coeficcient_025(2,6)*K_filt_J_filt_z + Coeficcient_025(3,6)*H_filt_B_filt_z + Coeficcient_025(4,6)*W_filt_ome_filt_z;
+    elseif(beta_i==1)
+    tau_M1_x = 0*Coeficcient_1(1,1) + Coeficcient_1(2,1)*Jx_filt + Coeficcient_1(3,1)*Bx_filt + Coeficcient_1(4,1)*vort_x_filt;
+    tau_M1_y = 0*Coeficcient_1(1,2) + Coeficcient_1(2,2)*Jy_filt + Coeficcient_1(3,2)*By_filt + Coeficcient_1(4,2)*vort_y_filt;
+    tau_M1_z = 0*Coeficcient_1(1,3) + Coeficcient_1(2,3)*Jz_filt + Coeficcient_1(3,3)*Bz_filt + Coeficcient_1(4,3)*vort_z_filt;
 
-    tau01_x = -term4_filt_x + term5_filt_x + term6_filt_x + tau_total_x;
-    tau01_y = -term4_filt_y + term5_filt_y + term6_filt_y + tau_total_y;
-    tau01_z = -term4_filt_z + term5_filt_z + term6_filt_z + tau_total_z;
+    tau_M2_x = 0*Coeficcient_1(1,4) + Coeficcient_1(2,4)*K_filt_J_filt_x + Coeficcient_1(3,4)*H_filt_B_filt_x + Coeficcient_1(4,4)*W_filt_ome_filt_x;
+    tau_M2_y = 0*Coeficcient_1(1,5) + Coeficcient_1(2,5)*K_filt_J_filt_y + Coeficcient_1(3,5)*H_filt_B_filt_y + Coeficcient_1(4,5)*W_filt_ome_filt_y;
+    tau_M2_z = 0*Coeficcient_1(1,6) + Coeficcient_1(2,6)*K_filt_J_filt_z + Coeficcient_1(3,6)*H_filt_B_filt_z + Coeficcient_1(4,6)*W_filt_ome_filt_z;
+    elseif(beta_i==4)
+    tau_M1_x = 0*Coeficcient_4(1,1) + Coeficcient_4(2,1)*Jx_filt + Coeficcient_4(3,1)*Bx_filt + Coeficcient_4(4,1)*vort_x_filt;
+    tau_M1_y = 0*Coeficcient_4(1,2) + Coeficcient_4(2,2)*Jy_filt + Coeficcient_4(3,2)*By_filt + Coeficcient_4(4,2)*vort_y_filt;
+    tau_M1_z = 0*Coeficcient_4(1,3) + Coeficcient_4(2,3)*Jz_filt + Coeficcient_4(3,3)*Bz_filt + Coeficcient_4(4,3)*vort_z_filt;
 
-    tau02_x = term3_filt_x + tau01_x;
+    tau_M2_x = 0*Coeficcient_4(1,4) + Coeficcient_4(2,4)*K_filt_J_filt_x + Coeficcient_4(3,4)*H_filt_B_filt_x + Coeficcient_4(4,4)*W_filt_ome_filt_x;
+    tau_M2_y = 0*Coeficcient_4(1,5) + Coeficcient_4(2,5)*K_filt_J_filt_y + Coeficcient_4(3,5)*H_filt_B_filt_y + Coeficcient_4(4,5)*W_filt_ome_filt_y;
+    tau_M2_z = 0*Coeficcient_4(1,6) + Coeficcient_4(2,6)*K_filt_J_filt_z + Coeficcient_4(3,6)*H_filt_B_filt_z + Coeficcient_4(4,6)*W_filt_ome_filt_z;
+    end
+
+
+    % This is tau HMHD
+    tau01_x = -term4_filt_x + term5_filt_x + 0.*term6_filt_x + tau_total_x; 
+    tau01_y = -term4_filt_y + term5_filt_y + 0.*term6_filt_y + tau_total_y;
+    tau01_z = -term4_filt_z + term5_filt_z + 0.*term6_filt_z + tau_total_z;
+
+    % This is tau MHD
+    tau02_x = term3_filt_x + tau01_x; 
     tau02_y = term3_filt_y + tau01_y;
     tau02_z = term3_filt_z + tau01_z;
 
+  % this it to compute the phase difference 
+    [phase_diff_tau_total_tau_M1,~] = Phase_difference3D(tau_total_x,tau_total_y,tau_total_z, ...
+    tau_M1_x,tau_M1_y,tau_M1_z,Lx,threshold);
+
+    [phase_diff_tau_total_tau_M2,~] = Phase_difference3D(tau_total_x,tau_total_y,tau_total_z, ...
+    tau_M2_x,tau_M2_y,tau_M2_z,Lx,threshold);
+
+    [phase_diff_tau_total_tau_MHD,~] = Phase_difference3D(tau_total_x,tau_total_y,tau_total_z, ...
+    tau02_x,tau02_y,tau02_z,Lx,threshold);
+
+    [phase_diff_tau_total_tau_HMHD,~] = Phase_difference3D(tau_total_x,tau_total_y,tau_total_z, ...
+    tau01_x,tau01_y,tau01_z,Lx,threshold);    
+
+    [phase_diff_tau_MHD_tau_M1,~] = Phase_difference3D(tau02_x,tau02_y,tau02_z, ...
+    tau_M1_x,tau_M1_y,tau_M1_z,Lx,threshold);
+
+    [phase_diff_tau_HMHD_tau_M2,~] = Phase_difference3D(tau01_x,tau01_y,tau01_z, ...
+    tau_M2_x,tau_M2_y,tau_M2_z,Lx,threshold);
+
+    % this is for the spectrum
+    [Ek_sum_tauHMHD,~]=Omni1DSpectra3c(tau01_x,tau01_y,tau01_z,Lx,threshold);
+    [Ek_sum_tauMHD,~]=Omni1DSpectra3c(tau02_x,tau02_y,tau02_z,Lx,threshold);
+    [Ek_sum_tau_M1,~]=Omni1DSpectra3c(tau_M1_x,tau_M1_y,tau_M1_z,Lx,threshold);
+    [Ek_sum_tau_M2,~]=Omni1DSpectra3c(tau_M2_x,tau_M2_y,tau_M2_z,Lx,threshold);
+    [Ek_sum_tau,~]=Omni1DSpectra3c(tau_total_x,tau_total_y,tau_total_z,Lx,threshold);
+
+    
     % Compute gradients of the taus
     [tau_total_x_y, tau_total_x_x, tau_total_x_z] = gradient(tau_total_x);
     [tau_total_y_y, tau_total_y_x, tau_total_y_z] = gradient(tau_total_y);
@@ -165,7 +213,6 @@ if(curls ==1)
     [tau02_x_y, tau02_x_x, tau02_x_z] = gradient(tau02_x);
     [tau02_y_y, tau02_y_x, tau02_y_z] = gradient(tau02_y);
     [tau02_z_y, tau02_z_x, tau02_z_z] = gradient(tau02_z);
-
 
     %Compute the curls
     curl_tau_total_x = tau_total_z_y/(grad_fact.*resy) - tau_total_y_z/(grad_fact.*resz);
@@ -194,9 +241,240 @@ if(curls ==1)
     curl_tau01_mag = sqrt(curl_tau01_x.^2 + curl_tau01_y.^2 + curl_tau01_z.^2);
     curl_tau02_mag = sqrt(curl_tau02_x.^2 + curl_tau02_y.^2 + curl_tau02_z.^2);
 
+
+     % this it to compute the phase difference for the curl
+    [phase_diff_curl_tau_total_tau_M1,~] = Phase_difference3D(curl_tau_total_x,curl_tau_total_y,curl_tau_total_z, ...
+    curl_tau_M1_x,curl_tau_M1_y,curl_tau_M1_z,Lx,threshold);
+
+    [phase_diff_curl_tau_total_tau_M2,~] = Phase_difference3D(curl_tau_total_x,curl_tau_total_y,curl_tau_total_z, ...
+    curl_tau_M2_x,curl_tau_M2_y,curl_tau_M2_z,Lx,threshold);
+
+    [phase_diff_curl_tau_total_tau_MHD,~] = Phase_difference3D(curl_tau_total_x,curl_tau_total_y,curl_tau_total_z, ...
+    curl_tau02_x,curl_tau02_y,curl_tau02_z,Lx,threshold);
+
+    [phase_diff_curl_tau_total_tau_HMHD,~] = Phase_difference3D(curl_tau_total_x,curl_tau_total_y,curl_tau_total_z, ...
+    curl_tau01_x,curl_tau01_y,curl_tau01_z,Lx,threshold);    
+
+    [phase_diff_curl_tau_MHD_tau_M1,~] = Phase_difference3D(curl_tau02_x,curl_tau02_y,curl_tau02_z, ...
+    curl_tau_M1_x,curl_tau_M1_y,curl_tau_M1_z,Lx,threshold);
+
+    [phase_diff_curl_tau_HMHD_tau_M2,~] = Phase_difference3D(curl_tau01_x,curl_tau01_y,curl_tau01_z, ...
+    curl_tau_M2_x,curl_tau_M2_y,curl_tau_M2_z,Lx,threshold);
+
+     % this is for the spectrum
+    [Ek_curl_sum_tauHMHD,~]=Omni1DSpectra3c(curl_tau01_x,curl_tau01_y,curl_tau01_z,Lx,threshold);
+    [Ek_curl_sum_tauMHD,~]=Omni1DSpectra3c(curl_tau02_x,curl_tau02_y,curl_tau02_z,Lx,threshold);
+    [Ek_curl_sum_tau_M1,~]=Omni1DSpectra3c(curl_tau_M1_x,curl_tau_M1_y,curl_tau_M1_z,Lx,threshold);
+    [Ek_curl_sum_tau_M2,~]=Omni1DSpectra3c(curl_tau_M2_x,curl_tau_M2_y,curl_tau_M2_z,Lx,threshold);
+    [Ek_curl_sum_tau,~]=Omni1DSpectra3c(curl_tau_total_x,curl_tau_total_y,curl_tau_total_z,Lx,threshold);
+
+
+
+    sp = 0; % This is for E
+    maxx = 1; % To decide whether divide for maximum or not
+    fs=25;
+     x0=45;y0=54;xx1=900;yy1=500;
+   
+    f10041=figure(10041);
+     set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    subplot(2,1,1)
+    %hold on
+    dump = (Ek_sum_tau./max(Ek_sum_tau)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
+    hold on
+    dump = (Ek_sum_tau_M1./max(Ek_sum_tau_M1)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    dump = (Ek_sum_tau_M2./max(Ek_sum_tau_M2)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+    dump = (Ek_sum_tauMHD./max(Ek_sum_tauMHD)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = (Ek_sum_tauHMHD./max(Ek_sum_tauHMHD)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(4,:),LineWidth=2)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P^{1D}/max$';
+    ax.XTick = [10^0, 10^1];
+    %ax.YTick = [10^-10, 10^-5, 10^0];
+    xline(10,'--')
+    xline(1,'--')
+    %yline(1,'--')
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    %ax.YTick = [10^-4, 10^1];
+    ylim([10^(-5),5*10^(0)])
+
+    legend('$\Sigma\tau$',...
+        '$\Sigma\tau_{M1}$',...
+        '$\Sigma\tau_{M2}$',...
+        '$\Sigma \tau_{MHD}$',...
+        '$\Sigma \tau_{Hall}$',...
+        'Interpreter','latex','NumColumns',5,'Location','southeastoutside')
+    hold off
+
+    subplot(2,1,2)
+    dump = phase_diff_tau_total_tau_M1;
+    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    hold on
+    dump = phase_diff_tau_total_tau_M2;
+    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+    dump = phase_diff_tau_total_tau_MHD;
+    semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = phase_diff_tau_total_tau_HMHD;
+    semilogx(k_bins,dump,'-.',color=My_colors(4,:),LineWidth=2)
+
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$\Delta \phi^{\circ} (\Sigma \tau, \Sigma \tau_{j})$';
+    ax.XTick = [10^0, 10^1];
+    ax.YTick = [0, 90, 180];
+    %ax.YTick = [10^-10, 10^-5, 10^0];
+    xline(10,'--')
+    xline(1,'--')
+    %yline(1,'--')
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    %legend( '$\Sigma \tau_{M1},\Sigma \tau$', ...
+    %    '$\Sigma \tau_{M2},\Sigma \tau$',...
+    %    '$\Sigma \tau_{MHD},\Sigma \tau$',...
+    %    '$\Sigma \tau_{Hall},\Sigma \tau$',...
+    %    'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    %title('$\beta_{i}=4$', 'Interpreter','latex')
+    hold off
+
+  f10042=figure(10042);
+     set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    subplot(2,1,1)
+    %hold on
+    dump = (Ek_curl_sum_tau./max(Ek_curl_sum_tau)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
+    hold on
+    dump = (Ek_curl_sum_tau_M1./max(Ek_curl_sum_tau_M1)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    dump = (Ek_curl_sum_tau_M2./max(Ek_curl_sum_tau_M2)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+    dump = (Ek_curl_sum_tauMHD./max(Ek_curl_sum_tauMHD)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = (Ek_curl_sum_tauHMHD./max(Ek_curl_sum_tauHMHD)^maxx);
+    loglog(k_bins,dump,'-.',color=My_colors(4,:),LineWidth=2)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    %ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P^{1D}/max$';
+    ax.XTick = [];
+    %ax.YTick = [10^-10, 10^-5, 10^0];
+    xline(10,'--')
+    xline(1,'--')
+    %yline(1,'--')
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    %ax.YTick = [10^-4, 10^1];
+    ylim([10^(-5),5*10^(0)])
+
+    legend('$\nabla \times \Sigma\tau$',...
+        '$\nabla \times\Sigma\tau_{M1}$',...
+        '$\nabla \times\Sigma\tau_{M2}$',...
+        '$\nabla \times\Sigma \tau_{MHD}$',...
+        '$\nabla \times\Sigma \tau_{Hall}$',...
+        'Interpreter','latex','NumColumns',5,'Location','southeastoutside')
+    hold off
+
+    subplot(2,1,2)
+    dump = phase_diff_curl_tau_total_tau_M1;
+    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+    hold on
+    dump = phase_diff_curl_tau_total_tau_M2;
+    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+    dump = phase_diff_curl_tau_total_tau_MHD;
+    semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+    dump = phase_diff_curl_tau_total_tau_HMHD;
+    semilogx(k_bins,dump,'-.',color=My_colors(4,:),LineWidth=2)
+
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$\Delta \phi^{\circ} (\nabla \times \tau, \nabla \times \tau_{j})$';
+    ax.XTick = [10^0, 10^1];
+    ax.YTick = [0, 90, 180];
+    %ax.YTick = [10^-10, 10^-5, 10^0];
+    xline(10,'--')
+    xline(1,'--')
+    %yline(1,'--')
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xlim([min(k_bins),20])
+    ylim([0,110])
+%    legend( '$\nabla \times\Sigma \tau_{M1},\Sigma \tau$', ...
+%        '$\nabla \times\Sigma \tau_{M2},\Sigma \tau$',...
+%        '$\nabla \times\Sigma \tau_{MHD},\Sigma \tau$',...
+%        '$\Sigma \tau_{Hall},\Sigma \tau$',...
+%        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    %title('$\beta_{i}=4$', 'Interpreter','latex')
+    hold off
+
+
+
+    f123 =figure(123);
+     set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    dump = phase_diff_tau_HMHD_tau_M2;
+    semilogx(k_bins,dump,'-.',color=My_colors(4,:),LineWidth=1.5)
+    hold on
+    dump = phase_diff_tau_MHD_tau_M1;
+    semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=1.5)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$\Delta \phi^{\circ}$';
+    ax.XTick = [10^0, 10^1];
+    ax.YTick = [0, 90, 180];
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    ylim([0,110])
+    xlim([min(k_bins),20])
+    legend( '$\Sigma \tau_{Hall},\Sigma \tau_{M2}$',...
+        '$\Sigma \tau_{MHD},\Sigma \tau_{M1}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    %title('$\beta_{i}=4$', 'Interpreter','latex')
+    hold off
+
+
+  
+
+    f1230 =figure(1230);
+     set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    dump = phase_diff_curl_tau_HMHD_tau_M2;
+    semilogx(k_bins,dump,'-.',color=My_colors(4,:),LineWidth=1.5)
+    hold on
+    dump = phase_diff_curl_tau_MHD_tau_M1;
+    semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=1.5)
+    set(gca,'FontSize',fs)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$\Delta \phi^{\circ}$';
+    ax.XTick = [10^0, 10^1];
+    ax.YTick = [0, 90, 180];
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    ylim([0,110])
+    xlim([min(k_bins),20])
+    legend( '$\nabla \times\Sigma \tau_{Hall},\Sigma \tau_{M2}$',...
+        '$\nabla \times\Sigma \tau_{MHD},\Sigma \tau_{M1}$',...
+        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+    %title('$\beta_{i}=4$', 'Interpreter','latex')
+    hold off
+
+
+    stopp
+
+    % these plots here is just to see how the curl of the models look in
+    % the real space
     cd(path_color)
 
-    fs=15; x0=45;y0=54;xx1=1400;yy1=500;
+    x0=45;y0=54;xx1=900;yy1=500;
     i=50;j=50;
     i=50;j=50;
 
@@ -477,10 +755,10 @@ title('$Ex$','Interpreter','latex')
 hold off
 %}
 
-f122=figure(122);
+f1222=figure(1222);
 set(gcf,'position',[x0,y0,1.0*xx1,1.0*yy1])
 ax1=subplot(1,3,1);
-dum = tau00;
+dum = tau00_x;
 sum_tau_0 = dum;
 dump = squeeze(dum(:,:,i));
 hc=pcolor(xl,yl,dump/max(max(max(abs(dump)))));
@@ -707,6 +985,116 @@ hold off
 
 
 %cd('~/Downloads')
+function [E_k,k_bins]=Phase_difference3D(uxB_x,uxB_y,uxB_z,tauuxB_x,tauuxB_y,tauuxB_z,Lx,threshold)
+% Detrend the variable
+Bx_dt_DT_x = uxB_x - mean(uxB_x,'all');
+Bx_dt_DT_y = uxB_y - mean(uxB_y,'all');
+Bx_dt_DT_z = uxB_z - mean(uxB_z,'all');
+
+Bx_dt_DT2_x = tauuxB_x - mean(tauuxB_x,'all');
+Bx_dt_DT2_y = tauuxB_y - mean(tauuxB_y,'all');
+Bx_dt_DT2_z = tauuxB_z - mean(tauuxB_z,'all');
+
+% Perform the FFT of the 3D field B
+F_B_x = fftn(Bx_dt_DT_x);
+F_B_y = fftn(Bx_dt_DT_y);
+F_B_z = fftn(Bx_dt_DT_z);
+
+F_B2_x = fftn(Bx_dt_DT2_x);
+F_B2_y = fftn(Bx_dt_DT2_y);
+F_B2_z = fftn(Bx_dt_DT2_z);
+
+fgcon = F_B_x.*conj(F_B2_x) + F_B_y.*conj(F_B2_y) + F_B_z.*conj(F_B2_z);
+
+%%% --- Phase differences in Fourier space ---
+phi1 = atan2(imag(fgcon), real(fgcon));
+phi1 = rad2deg(phi1);
+
+Ns=size(uxB_x);
+% Compute the wavenumbers
+kx = (2*pi/Lx) * [0:(Ns(1)/2-1) -Ns(1)/2:-1];
+ky = kx;
+kz = kx;
+[KX, KY, KZ] = meshgrid(kx, ky, kz);
+% Calculate the radial wavenumber k
+K = sqrt(KX.^2 + KY.^2 + KZ.^2);
+
+%% --- Omnidirectional averaging (simple linear mean of abs phase) ---
+%kx = fftshift(-N/2:N/2-1);
+%[KY,KX,KZ] = meshgrid(kx,kx,kx);
+kr = round(sqrt(KX.^2 + KY.^2 + KZ.^2));
+kmax = floor(Ns(1)/2)+1;
+spec_phi1 = zeros(kmax,1);
+
+% Define the bins for the radial wavenumber
+dk = 2 * pi / Lx; % Bin width in k-space
+k_max = threshold;%max(K(:)); % Maximum wavenumber
+k_bins = 0:dk:k_max; % Radial wavenumber bins
+% Initialize the omnidirectional spectrum
+
+for k = 1:kmax
+    mask = (kr == k);
+    if any(mask(:))
+        % use mean of absolute phase difference magnitude
+        spec_phi1(k) = mean(abs(phi1(mask)));
+    end
+end
+
+E_k = spec_phi1;
+
+end
+
+function [E_k,k_bins]=Omni1DSpectra3c(Bx_dt,By_dt,Bz_dt,Lx,threshold)
+% Detrend the variable
+Bx_dt_DT = Bx_dt - mean(Bx_dt,'all');
+By_dt_DT = By_dt - mean(By_dt,'all');
+Bz_dt_DT = Bz_dt - mean(Bz_dt,'all');
+
+% Perform the FFT of the 3D field B
+F_Bx = fftn(Bx_dt_DT);
+F_By = fftn(By_dt_DT);
+F_Bz = fftn(Bz_dt_DT);
+
+Ns=size(Bx_dt);
+% Compute the wavenumbers
+kx = (2*pi/Lx) * [0:(Ns(1)/2-1) -Ns(1)/2:-1];
+ky = kx;
+kz = kx;
+[KX, KY, KZ] = meshgrid(kx, ky, kz);
+% Calculate the radial wavenumber k
+K = sqrt(KX.^2 + KY.^2 + KZ.^2);
+% Calculate the energy spectrum
+energy = (abs(F_Bx).^2 + abs(F_By).^2 + abs(F_Bz).^2) / (prod(Ns)^2);
+% Define the bins for the radial wavenumber
+dk = 2 * pi / Lx; % Bin width in k-space
+k_max = threshold;%max(K(:)); % Maximum wavenumber
+k_bins = 0:dk:k_max; % Radial wavenumber bins
+% Initialize the omnidirectional spectrum
+E_k = zeros(size(k_bins));
+% Bin the energy into the radial wavenumber bins
+for i = 1:length(k_bins)-1
+    k_min = k_bins(i);
+    k_max = k_bins(i+1);
+    % Find the indices of the Fourier modes that fall within the current bin
+    indices = (K >= k_min) & (K < k_max);
+    % Sum the energy of these modes
+    E_k(i) = sum(energy(indices));
+end
+
+% Normalize the spectrum by the bin width
+E_k = E_k / dk;
+
+% % Plot the omnidirectional spectrum
+% figure;
+% loglog(k_bins(1:end-1), E_k(1:end-1), 'LineWidth', 1.5);
+% title('1D Omnidirectional Spectrum');
+% xlabel('k');
+% ylabel('E(k)');
+end
+
+%--------------------------------------------------------------------------
+%uxB = AA; %term2_filt_x;
+%tauuxB = BB; %tau_v_x_B_tau_x;
 
 
 %----------------------------------------------------------------------
