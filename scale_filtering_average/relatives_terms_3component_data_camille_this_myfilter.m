@@ -22,7 +22,7 @@ beta_i = 0.25; Ti02Te0 = 2.5;
 %beta_i = 4; Ti02Te0 = 40;
 
 pressure_on = 0; % This is ion pressure correction (dosen't actually add mutch)
-l_wind = 4;
+l_wind = 8;
 rms_value = 1;
 absolute = 1;
 
@@ -330,7 +330,7 @@ if(pressure_on == 1)
                 fprintf('%f\n', time(end));
 
                 TOTAL_SIZE = nx * ny * nz;
-		SHAPE = [nx, ny, nz];
+        		SHAPE = [nx, ny, nz];
 
                 fseek(fid, 8, 'cof');
 
@@ -593,26 +593,26 @@ if(pressure_on == 1)
 
     %----------------------------------------------------------------------
     %if (component == 1)
-        Div_Pi_dt_x = Pij_ixx_dt_x/(grad_fact.*resx) + Pij_ixy_dt_y/(grad_fact.*resy) + Pij_ixz_dt_z/(grad_fact.*resz);
+    Div_Pi_dt_x = Pij_ixx_dt_x/(grad_fact.*resx) + Pij_ixy_dt_y/(grad_fact.*resy) + Pij_ixz_dt_z/(grad_fact.*resz);
     %elseif (component == 2)
-        Div_Pi_dt_y = Pij_ixy_dt_x/(grad_fact.*resx) + Pij_iyy_dt_y/(grad_fact.*resy) + Pij_iyz_dt_z/(grad_fact.*resz);
+    Div_Pi_dt_y = Pij_ixy_dt_x/(grad_fact.*resx) + Pij_iyy_dt_y/(grad_fact.*resy) + Pij_iyz_dt_z/(grad_fact.*resz);
     %elseif (component == 3)
-        Div_Pi_dt_z = Pij_ixz_dt_x/(grad_fact.*resx) + Pij_iyz_dt_y/(grad_fact.*resy) + Pij_izz_dt_z/(grad_fact.*resz);
+    Div_Pi_dt_z = Pij_ixz_dt_x/(grad_fact.*resx) + Pij_iyz_dt_y/(grad_fact.*resy) + Pij_izz_dt_z/(grad_fact.*resz);
     %end
-    	clearvars Pij_ixx_dt_* Pij_ixy_dt_* Pij_ixz_dt_* ...
-        Pij_iyy_dt_* Pij_iyz_dt_* Pij_izz_dt_* 
-        %----------------------------------------------------------------------
+    clearvars Pij_ixx_dt_* Pij_ixy_dt_* Pij_ixz_dt_* ...
+        Pij_iyy_dt_* Pij_iyz_dt_* Pij_izz_dt_*
+    %----------------------------------------------------------------------
 
-	% This is the correction of the div Pe
-	%----------------------------------------------------------------------
-	%if (component == 1)
-        Div_Pe_dt_x = (mre/me)*Div_Pe_dt_x - (mre/mi)*Div_Pi_dt_x ;
-	%    elseif (component == 2)
-        Div_Pe_dt_y = (mre/me)*Div_Pe_dt_y - (mre/mi)*Div_Pi_dt_y ;
-	%    elseif (component == 3)
-        Div_Pe_dt_z = (mre/me)*Div_Pe_dt_z - (mre/mi)*Div_Pi_dt_z ;
-%end
-%----------------------------------------------------------------------
+    % This is the correction of the div Pe
+    %----------------------------------------------------------------------
+    %if (component == 1)
+    Div_Pe_dt_x = (mre/me)*Div_Pe_dt_x - (mre/mi)*Div_Pi_dt_x ;
+    %    elseif (component == 2)
+    Div_Pe_dt_y = (mre/me)*Div_Pe_dt_y - (mre/mi)*Div_Pi_dt_y ;
+    %    elseif (component == 3)
+    Div_Pe_dt_z = (mre/me)*Div_Pe_dt_z - (mre/mi)*Div_Pi_dt_z ;
+    %end
+    %----------------------------------------------------------------------
 end
 
 %----------------------------------------------------------------------
@@ -719,7 +719,7 @@ ky = 2 * pi * [0:ny/2 -ny/2+1:-1] / Lz; % Wavenumbers in y
 kz = 2 * pi * [0:nz/2 -nz/2+1:-1] / Lz; % Wavenumbers in z
 [Kz, Kx, Ky] = meshgrid(kz, kx ,ky); % Note the order here Kz goes first
 
-Dx = l_wind*Lx/nx; 
+Dx = l_wind*Lx/nx;
 
 % These four lines are the filtering
 %----------------------------------------------------------------------
@@ -759,32 +759,32 @@ end
 %L2Ez_dt = 4*del2(Ez_dt)/(grad_fact.*resx)^2;
 
 %if (component == 1)
-    [Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
-    [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y);
-    [~, Ex_dt_xx, ~] = gradient(Ex_dt_x);
-    [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
-    L2Ex_dt = (me^0)*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
-    %----------------------------------------------------------------------
-    L2Ex_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ex_dt);
-    %----------------------------------------------------------------------
+[Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
+[Ex_dt_yy, ~, ~] = gradient(Ex_dt_y);
+[~, Ex_dt_xx, ~] = gradient(Ex_dt_x);
+[~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
+L2Ex_dt = (me^0)*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+%----------------------------------------------------------------------
+L2Ex_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ex_dt);
+%----------------------------------------------------------------------
 %elseif (component == 2)
-    [Ey_dt_y, Ey_dt_x, Ey_dt_z] = gradient(Ey_dt);
-    [Ey_dt_yy, ~, ~] = gradient(Ey_dt_y);
-    [~, Ey_dt_xx, ~] = gradient(Ey_dt_x);
-    [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
-    L2Ey_dt = (me^0)*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
-    %----------------------------------------------------------------------
-    L2Ey_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ey_dt);
-    %----------------------------------------------------------------------
+[Ey_dt_y, Ey_dt_x, Ey_dt_z] = gradient(Ey_dt);
+[Ey_dt_yy, ~, ~] = gradient(Ey_dt_y);
+[~, Ey_dt_xx, ~] = gradient(Ey_dt_x);
+[~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
+L2Ey_dt = (me^0)*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
+%----------------------------------------------------------------------
+L2Ey_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ey_dt);
+%----------------------------------------------------------------------
 %elseif (component == 3)
-    [Ez_dt_y, Ez_dt_x, Ez_dt_z] = gradient(Ez_dt);
-    [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y);
-    [~, Ez_dt_xx, ~] = gradient(Ez_dt_x);
-    [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
-    L2Ez_dt = (me^0)*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
-    %----------------------------------------------------------------------
-    L2Ez_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ez_dt);
-    %----------------------------------------------------------------------
+[Ez_dt_y, Ez_dt_x, Ez_dt_z] = gradient(Ez_dt);
+[Ez_dt_yy, ~, ~] = gradient(Ez_dt_y);
+[~, Ez_dt_xx, ~] = gradient(Ez_dt_x);
+[~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
+L2Ez_dt = (me^0)*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
+%----------------------------------------------------------------------
+L2Ez_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ez_dt);
+%----------------------------------------------------------------------
 %end
 
 
@@ -858,27 +858,27 @@ if(pressure_on == 1)
 
     %----------------------------------------------------------------------
     %if (component == 1)
-        Div_Pi_filt_x = Pij_ixx_filt_x/(grad_fact.*resx) + Pij_ixy_filt_y/(grad_fact.*resy) + Pij_ixz_filt_z/(grad_fact.*resz);
+    Div_Pi_filt_x = Pij_ixx_filt_x/(grad_fact.*resx) + Pij_ixy_filt_y/(grad_fact.*resy) + Pij_ixz_filt_z/(grad_fact.*resz);
     %elseif (component == 2)
-        Div_Pi_filt_y = Pij_ixy_filt_x/(grad_fact.*resx) + Pij_iyy_filt_y/(grad_fact.*resy) + Pij_iyz_filt_z/(grad_fact.*resz);
+    Div_Pi_filt_y = Pij_ixy_filt_x/(grad_fact.*resx) + Pij_iyy_filt_y/(grad_fact.*resy) + Pij_iyz_filt_z/(grad_fact.*resz);
     %elseif (component == 3)
-        Div_Pi_filt_z = Pij_ixz_filt_x/(grad_fact.*resx) + Pij_iyz_filt_y/(grad_fact.*resy) + Pij_izz_filt_z/(grad_fact.*resz);
+    Div_Pi_filt_z = Pij_ixz_filt_x/(grad_fact.*resx) + Pij_iyz_filt_y/(grad_fact.*resy) + Pij_izz_filt_z/(grad_fact.*resz);
     %end
-    	clearvars Pij_ixx_filt_* Pij_ixy_filt_* Pij_ixz_filt_* ... 
+    clearvars Pij_ixx_filt_* Pij_ixy_filt_* Pij_ixz_filt_* ...
         Pij_iyy_filt_* Pij_iyz_filt_* Pij_izz_filt_*
-        %----------------------------------------------------------------------
+    %----------------------------------------------------------------------
 
-%----------------------------------------------------------------------
-% This is the correction of the div Pe
-%----------------------------------------------------------------------
-%if (component == 1)
-        Div_Pe_filt_x = (mre/me)*Div_Pe_filt_x - (mre/mi)*Div_Pi_filt_x ;
-%    elseif (component == 2)
-        Div_Pe_filt_y = (mre/me)*Div_Pe_filt_y - (mre/mi)*Div_Pi_filt_y ;
-%    elseif (component == 3)
-        Div_Pe_filt_z = (mre/me)*Div_Pe_filt_z - (mre/mi)*Div_Pi_filt_z ;
-%end
-%----------------------------------------------------------------------
+    %----------------------------------------------------------------------
+    % This is the correction of the div Pe
+    %----------------------------------------------------------------------
+    %if (component == 1)
+    Div_Pe_filt_x = (mre/me)*Div_Pe_filt_x - (mre/mi)*Div_Pi_filt_x ;
+    %    elseif (component == 2)
+    Div_Pe_filt_y = (mre/me)*Div_Pe_filt_y - (mre/mi)*Div_Pi_filt_y ;
+    %    elseif (component == 3)
+    Div_Pe_filt_z = (mre/me)*Div_Pe_filt_z - (mre/mi)*Div_Pi_filt_z ;
+    %end
+    %----------------------------------------------------------------------
 
 end
 
@@ -1142,12 +1142,12 @@ term5_filt_x = term5_filt_x + term6_filt_x;
 term5_filt_y = term5_filt_y + term6_filt_y;
 term5_filt_z = term5_filt_z + term6_filt_z;
 
-term6_dt_x = term7_dt_x; 
-term6_dt_y = term7_dt_y; 
+term6_dt_x = term7_dt_x;
+term6_dt_y = term7_dt_y;
 term6_dt_z = term7_dt_z;
 
-term6_filt_x = term7_filt_x; 
-term6_filt_y = term7_filt_y; 
+term6_filt_x = term7_filt_x;
+term6_filt_y = term7_filt_y;
 term6_filt_z = term7_filt_z;
 %--------------------------------------------------------------------------
 
@@ -1158,7 +1158,11 @@ tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 %--------------------------------------------------------------------------
 
 
+% Thos part here is to make the plot for the contributions. This has the
+% correct labels and colours
 %--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+%{
 My_colors = [ 204, 121, 167; 
 0, 114, 178; 
 128, 128, 128
@@ -1175,7 +1179,7 @@ lwm=2;
 
 
 
-fs=15; x0=45;y0=54;xx1=1400;yy1=500;
+fs=25; x0=45;y0=54;xx1=1400;yy1=500;
 i = 50;
 j = 50;
 %this is for the x-component
@@ -1290,13 +1294,10 @@ legend( '$\overline{\mathbf{E}}$', '$-\overline{\mathbf{E}}_{MHD}$',...
 %     '$\Sigma \tau$',...
 %     'Interpreter','latex','NumColumns',2,'Location','southoutside')
 hold off
+%}
+%--------------------------------------------------------------------------
 
-
-
-
-
-
-stopp
+%stopp
 
 % lets Compute the Curl
 %--------------------------------------------------------------------------
@@ -1342,6 +1343,7 @@ curl_tau_total_tau_z = -curl_tau_nE_tau_z - curl_tau_v_x_B_tau_z + curl_tau_J_x_
 % Making a histogram to see how the curls contribute
 %--------------------------------------------------------------------------
 B_filt_mag = sqrt(Bx_filt.^2 + By_filt.^2 + Bz_filt.^2);
+
 curl_tau_nE_tau_mag = sqrt(curl_tau_nE_tau_x.^2 + curl_tau_nE_tau_y.^2 + curl_tau_nE_tau_z.^2);
 curl_tau_v_x_B_tau_mag = sqrt(curl_tau_v_x_B_tau_x.^2 + curl_tau_v_x_B_tau_y.^2 + curl_tau_v_x_B_tau_z.^2);
 curl_tau_J_x_B_tau_mag = sqrt(curl_tau_J_x_B_tau_x.^2 + curl_tau_J_x_B_tau_y.^2 + curl_tau_J_x_B_tau_z.^2);
@@ -1366,13 +1368,9 @@ B_filt_dot_curl_tau_total = -(Bx_filt.*curl_tau_total_tau_x + By_filt.*curl_tau_
 
 
 acos_B_filt_dot_curl_tau_nE = acosd(B_filt_dot_curl_tau_nE);
-
 acos_B_filt_dot_curl_tau_v_x_B = acosd(B_filt_dot_curl_tau_v_x_B);
-
 acos_B_filt_dot_curl_tau_J_x_B = acosd(B_filt_dot_curl_tau_J_x_B);
-
 acos_B_filt_dot_curl_tau_Div = acosd(B_filt_dot_curl_tau_Div);
-
 acos_B_filt_dot_curl_tau_total = acosd(B_filt_dot_curl_tau_total);
 %--------------------------------------------------------------------------
 
@@ -1398,7 +1396,7 @@ acosedges2=acosedges(1:end-1);
 [N_acos_tau_total,acosedges] = histcounts(acos_B_filt_dot_curl_tau_total,acosedges);
 
 
- My_colors = [ 204, 121, 167;
+My_colors = [ 204, 121, 167;
     0, 114, 178;
     128, 128, 128
     213, 94, 0;
@@ -1408,46 +1406,46 @@ acosedges2=acosedges(1:end-1);
     0, 158, 115;
     ]/256;
 
- fs=18;
- f666=figure(666);
- plot(edges2,N_tau_nE/sum(N_tau_nE),color=My_colors(1,:),LineWidth=1.5) %plot(edges(2:100),Nc,'r')
- hold on
- plot(edges2,N_tau_v_x_B/sum(N_tau_v_x_B),color=My_colors(2,:),LineWidth=1.5)
- plot(edges2,N_tau_J_x_B/sum(N_tau_J_x_B),color=My_colors(3,:),LineWidth=1.5)
- plot(edges2,N_tau_Div/sum(N_tau_Div),color=My_colors(5,:),LineWidth=1.5)
- plot(edges2,N_tau_total/sum(N_tau_total),color=My_colors(6,:),LineWidth=1.5)
- xline(0,'--k')
- ylim([0, 0.06])
- ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; 
- xlabel('$\cos(\theta_{-\overline{B} \cdot \nabla \times \tau_{j}})$','Interpreter','latex','FontSize',20)
- ylabel('Normalised Counts','Interpreter','latex','FontSize',fs)
- title('$\beta_{i} = 0.25$','Interpreter','latex','FontSize',fs)
- legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$',...
-     '$\tau_{\nabla \cdot (u_{i}J + Ju_{i} - JJ/ne)}$', '$\Sigma\tau$','Interpreter','latex','FontSize',20)
- hold off
+fs=25;
+f666=figure(666);
+plot(edges2,N_tau_nE/sum(N_tau_nE),color=My_colors(1,:),LineWidth=1.5) %plot(edges(2:100),Nc,'r')
+hold on
+plot(edges2,N_tau_v_x_B/sum(N_tau_v_x_B),color=My_colors(2,:),LineWidth=1.5)
+plot(edges2,N_tau_J_x_B/sum(N_tau_J_x_B),color=My_colors(3,:),LineWidth=1.5)
+plot(edges2,N_tau_Div/sum(N_tau_Div),color=My_colors(5,:),LineWidth=1.5)
+plot(edges2,N_tau_total/sum(N_tau_total),color=My_colors(6,:),LineWidth=1.5)
+xline(0,'--k')
+ylim([0, 0.06])
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+xlabel('$\cos(\theta_{-\overline{B} \cdot \nabla \times \tau_{j}})$','Interpreter','latex','FontSize',20)
+ylabel('Normalised Counts','Interpreter','latex','FontSize',fs)
+title('$\beta_{i} = 0.25$','Interpreter','latex','FontSize',fs)
+legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$',...
+    '$\tau_{Ine}$', '$\Sigma\tau$','Interpreter','latex','FontSize',20)
+hold off
 
- f557=figure(557);
- plot(acosedges2,N_acos_tau_nE/sum(N_acos_tau_nE),color=My_colors(1,:),LineWidth=1.5) %plot(edges(2:100),Nc,'r')
- hold on
- plot(acosedges2,N_acos_tau_v_x_B/sum(N_acos_tau_v_x_B),color=My_colors(2,:),LineWidth=1.5)
- plot(acosedges2,N_acos_tau_J_x_B/sum(N_acos_tau_J_x_B),color=My_colors(3,:),LineWidth=1.5)
- plot(acosedges2,N_acos_tau_Div/sum(N_acos_tau_Div),color=My_colors(5,:),LineWidth=1.5)
- plot(acosedges2,N_acos_tau_total/sum(N_acos_tau_total),color=My_colors(6,:),LineWidth=1.5)
- xline(0,'--k')
- ylim([0, 0.03])
- ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; 
- xlabel('$\theta^{\circ}_{-\overline{B} \cdot \nabla \times \tau_{j}}$','Interpreter','latex','FontSize',20)
- ylabel('Normalised Counts','Interpreter','latex','FontSize',fs)
- title('$\beta_{i} = 4$','Interpreter','latex','FontSize',fs)
- legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$',...
-     '$\tau_{\nabla \cdot (u_{i}J + Ju_{i} - JJ/ne)}$', '$\Sigma\tau$','Interpreter','latex','FontSize',20)
- hold off
+f557=figure(557);
+plot(acosedges2,N_acos_tau_nE/sum(N_acos_tau_nE),color=My_colors(1,:),LineWidth=1.5) %plot(edges(2:100),Nc,'r')
+hold on
+plot(acosedges2,N_acos_tau_v_x_B/sum(N_acos_tau_v_x_B),color=My_colors(2,:),LineWidth=1.5)
+plot(acosedges2,N_acos_tau_J_x_B/sum(N_acos_tau_J_x_B),color=My_colors(3,:),LineWidth=1.5)
+plot(acosedges2,N_acos_tau_Div/sum(N_acos_tau_Div),color=My_colors(5,:),LineWidth=1.5)
+plot(acosedges2,N_acos_tau_total/sum(N_acos_tau_total),color=My_colors(6,:),LineWidth=1.5)
+xline(0,'--k')
+ylim([0, 0.03])
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+xlabel('$\theta^{\circ}_{-\overline{B} \cdot \nabla \times \tau_{j}}$','Interpreter','latex','FontSize',20)
+ylabel('Normalised Counts','Interpreter','latex','FontSize',fs)
+title('$\beta_{i} = 0.25$','Interpreter','latex','FontSize',fs)
+legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$',...
+    '$\tau_{Ine}$', '$\Sigma\tau$','Interpreter','latex','FontSize',20)
+hold off
 
- %stoppp
+%stoppp
 
- %Do an analysis by quartiles
+%Do an analysis by quartiles
 Q1_nE = sum(N_tau_nE(1,1:25))/(256*256*256);
 Q2_nE = sum(N_tau_nE(1,26:50))/(256*256*256);
 Q3_nE = sum(N_tau_nE(1,51:75))/(256*256*256);
@@ -1489,6 +1487,10 @@ TT = [Q1_nE, Q2_nE, Q3_nE, Q4_nE;...
 %--------------------------------------------------------------------------
 % what is left is to compute the phases?
 threshold =pi/resx;
+
+% This is the phasedifferences of the components
+%--------------------------------------------------------------------------
+%{
 [phase_diff_B_curl_tau_nE_x,~] = Phase_difference(Bx_filt,-curl_tau_nE_tau_x,Lx,threshold);
 [phase_diff_B_curl_tau_nE_y,~] = Phase_difference(By_filt,-curl_tau_nE_tau_y,Lx,threshold);
 [phase_diff_B_curl_tau_nE_z,~] = Phase_difference(Bz_filt,-curl_tau_nE_tau_z,Lx,threshold);
@@ -1510,125 +1512,235 @@ threshold =pi/resx;
 [phase_diff_B_curl_tau_total_z,k_bins] = Phase_difference(Bz_filt,curl_tau_total_tau_z,Lx,threshold);
 
 %[phase_diff_sum_tau_M2,k_bins] = Phase_difference(sum_tau_model2,sum_tau,Lx,threshold);
+%}
 
-
-% Make the phase difference plot now
-
-    f122 =figure(122);
-    %-------------------------
-    subplot(1,5,1)
-    dump = phase_diff_B_curl_tau_nE_x;
-    semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
-    hold on
-    dump = phase_diff_B_curl_tau_nE_y;
-    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
-    dump = phase_diff_B_curl_tau_nE_z;
-    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
-    set(gca,'FontSize',fs)
-    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.XLabel.String = '$kd_i$';
-       ax.YLabel.String = '$\Delta \phi^{\circ}$';
-    ax.XTick = [10^0, 10^1];
-    ax.YTick = [70, 90, 110];
-        xline(10.64,'--k',LineWidth=1.5)
-    ylim([70,110])
-    xlim([0.3,threshold/2])
-    title('$\tau_{nE}$', 'Interpreter','latex')
-    hold off
-    %-------------------------
-        %-------------------------
-    subplot(1,5,2)
-    dump = phase_diff_B_curl_tau_v_x_B_x;
-    semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
-    hold on
-    dump = phase_diff_B_curl_tau_v_x_B_y;
-    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
-    dump = phase_diff_B_curl_tau_v_x_B_z;
-    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
-    set(gca,'FontSize',fs)
-    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.XLabel.String = '$kd_i$';
-    ax.XTick = [10^0, 10^1];
-    ax.YTick = [70, 90, 110];
-        xline(10.64,'--k',LineWidth=1.5)
-    ylim([70,110])
-    xlim([0.3,threshold/2])
-    title('$\tau_{nu_{i} \times B}$', 'Interpreter','latex')
-    hold off
-    %-------------------------
-        %-------------------------
-    subplot(1,5,3)
-    dump = phase_diff_B_curl_tau_J_x_B_x;
-    semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
-    hold on
-    dump = phase_diff_B_curl_tau_J_x_B_y;
-    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
-    dump = phase_diff_B_curl_tau_J_x_B_z;
-    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
-    set(gca,'FontSize',fs)
-    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.XLabel.String = '$kd_i$';
-    ax.XTick = [10^0, 10^1];
-    ax.YTick = [70, 90, 110];
-        xline(10.64,'--k',LineWidth=1.5)
-    ylim([70,110])
-    xlim([0.3,threshold/2])
-    title('$\tau_{J \times B}$', 'Interpreter','latex')
-    hold off
-    %-------------------------
-        %-------------------------
-    subplot(1,5,4)
-    dump = phase_diff_B_curl_tau_Div_x;
-    semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
-    hold on
-    dump = phase_diff_B_curl_tau_Div_y;
-    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
-    dump = phase_diff_B_curl_tau_Div_z;
-    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
-    set(gca,'FontSize',fs)
-    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.XLabel.String = '$kd_i$';
-    ax.XTick = [10^0, 10^1];
-    ax.YTick = [70, 90, 110];
-        xline(10.64,'--k',LineWidth=1.5)
-    ylim([70,110])
-    xlim([0.3,threshold/2])
-    title('$\tau_{\nabla \cdot (u_{i}J + Ju_{i} -JJ/ne)}$', 'Interpreter','latex')
-    hold off
-    %-------------------------
-        %-------------------------
-    subplot(1,5,5)
-    dump = phase_diff_B_curl_tau_total_x;
-    semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
-    hold on
-    dump = phase_diff_B_curl_tau_total_y;
-    semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
-    dump = phase_diff_B_curl_tau_total_z;
-    semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
-    set(gca,'FontSize',fs)
-    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.XLabel.String = '$kd_i$';
-    ax.XTick = [10^0, 10^1];
-    ax.YTick = [70, 90, 110];
-    xline(10.64,'--k',LineWidth=1.5)
+%{
+f122 =figure(122);
+%-------------------------
+subplot(1,5,1)
+dump = phase_diff_B_curl_tau_nE_x;
+semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
+hold on
+dump = phase_diff_B_curl_tau_nE_y;
+semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+dump = phase_diff_B_curl_tau_nE_z;
+semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$kd_i$';
+ax.YLabel.String = '$\Delta \phi^{\circ}$';
+ax.XTick = [10^0, 10^1];
+ax.YTick = [70, 90, 110];
+xline(10.64,'--k',LineWidth=1.5)
+ylim([70,110])
+xlim([0.3,threshold/2])
+title('$\tau_{nE}$', 'Interpreter','latex')
+hold off
+%-------------------------
+%-------------------------
+subplot(1,5,2)
+dump = phase_diff_B_curl_tau_v_x_B_x;
+semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
+hold on
+dump = phase_diff_B_curl_tau_v_x_B_y;
+semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+dump = phase_diff_B_curl_tau_v_x_B_z;
+semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$kd_i$';
+ax.XTick = [10^0, 10^1];
+ax.YTick = [70, 90, 110];
+xline(10.64,'--k',LineWidth=1.5)
+ylim([70,110])
+xlim([0.3,threshold/2])
+title('$\tau_{nu_{i} \times B}$', 'Interpreter','latex')
+hold off
+%-------------------------
+%-------------------------
+subplot(1,5,3)
+dump = phase_diff_B_curl_tau_J_x_B_x;
+semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
+hold on
+dump = phase_diff_B_curl_tau_J_x_B_y;
+semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+dump = phase_diff_B_curl_tau_J_x_B_z;
+semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$kd_i$';
+ax.XTick = [10^0, 10^1];
+ax.YTick = [70, 90, 110];
+xline(10.64,'--k',LineWidth=1.5)
+ylim([70,110])
+xlim([0.3,threshold/2])
+title('$\tau_{J \times B}$', 'Interpreter','latex')
+hold off
+%-------------------------
+%-------------------------
+subplot(1,5,4)
+dump = phase_diff_B_curl_tau_Div_x;
+semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
+hold on
+dump = phase_diff_B_curl_tau_Div_y;
+semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+dump = phase_diff_B_curl_tau_Div_z;
+semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$kd_i$';
+ax.XTick = [10^0, 10^1];
+ax.YTick = [70, 90, 110];
+xline(10.64,'--k',LineWidth=1.5)
+ylim([70,110])
+xlim([0.3,threshold/2])
+title('$\tau_{\nabla \cdot (u_{i}J + Ju_{i} -JJ/ne)}$', 'Interpreter','latex')
+hold off
+%-------------------------
+%-------------------------
+subplot(1,5,5)
+dump = phase_diff_B_curl_tau_total_x;
+semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
+hold on
+dump = phase_diff_B_curl_tau_total_y;
+semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+dump = phase_diff_B_curl_tau_total_z;
+semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$kd_i$';
+ax.XTick = [10^0, 10^1];
+ax.YTick = [70, 90, 110];
+xline(10.64,'--k',LineWidth=1.5)
 %    xline(5.34,'--k',LineWidth=1)
-    ylim([70,110])
-    xlim([0.3,threshold/2])
-    legend('$(Bx, -\nabla \times \tau_{x})$', ...
-        '$(By, -\nabla \times \tau_{y})$',...
-        '$(Bz, -\nabla \times \tau_{z})$',...
-        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
-    title('$\Sigma \tau$', 'Interpreter','latex')
-    hold off
-    %-------------------------
+ylim([70,110])
+xlim([0.3,threshold/2])
+legend('$(Bx, -\nabla \times \tau_{x})$', ...
+    '$(By, -\nabla \times \tau_{y})$',...
+    '$(Bz, -\nabla \times \tau_{z})$',...
+    'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+title('$\Sigma \tau$', 'Interpreter','latex')
+hold off
+%}
+%-------------------------
+%--------------------------------------------------------------------------
+
+% This is the pahse difference of the vectors
+%--------------------------------------------------------------------------
+
+% Tis is the phase difference with the curl to see how the anomalous terms
+% contribute to the generation of magnetic field
+%--------------------------------------------------------------------------
+[phase_diff_B_curl_tau_nE,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
+    -curl_tau_nE_tau_x,-curl_tau_nE_tau_y,-curl_tau_nE_tau_z,Lx,threshold);
+
+[phase_diff_B_curl_tau_v_x_B,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
+    -curl_tau_v_x_B_tau_x,-curl_tau_v_x_B_tau_y,-curl_tau_v_x_B_tau_z,Lx,threshold);
+
+[phase_diff_B_curl_tau_J_x_B,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
+    -curl_tau_J_x_B_tau_x,-curl_tau_J_x_B_tau_y,-curl_tau_J_x_B_tau_z,Lx,threshold);
+
+[phase_diff_B_curl_tau_Div,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
+    -curl_tau_Div_tau_x,-curl_tau_Div_tau_y,-curl_tau_Div_tau_z,Lx,threshold);
+
+[phase_diff_B_curl_tau_total,k_bins] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
+    -curl_tau_total_tau_x,-curl_tau_total_tau_y,-curl_tau_total_tau_z,Lx,threshold);
+%--------------------------------------------------------------------------
+
+% this is directly between tau and the resolved electric field 
+%--------------------------------------------------------------------------
+[phase_diff_E_tau_nE,~] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
+    -tau_nE_tau_x,-tau_nE_tau_y,-tau_nE_tau_z,Lx,threshold);
+
+[phase_diff_E_tau_v_x_B,~] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
+    -tau_v_x_B_tau_x,-tau_v_x_B_tau_y,-tau_v_x_B_tau_z,Lx,threshold);
+
+[phase_diff_E_tau_J_x_B,~] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
+    tau_J_x_B_tau_x,tau_J_x_B_tau_y,tau_J_x_B_tau_z,Lx,threshold);
+
+[phase_diff_E_tau_Div,~] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
+    tau_Div_tau1_x,tau_Div_tau1_y,tau_Div_tau1_z,Lx,threshold);
+
+[phase_diff_E_tau_total,k_bins] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
+    tau_total_x,tau_total_y,tau_total_z,Lx,threshold);
 
 %--------------------------------------------------------------------------
-%stoopp
+% Make the phase difference plot now
+
+fs=25; 
+%x0=45;y0=54;xx1=1400;yy1=500;
+x0=45;y0=54;xx1=900;yy1=500;
+f122 =figure(122);
+set(gcf,'position',[x0,y0,xx1,yy1])
+%-------------------------
+subplot(2,1,1)
+dump = phase_diff_E_tau_nE;
+semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
+hold on
+dump = phase_diff_E_tau_v_x_B;
+semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+dump = phase_diff_E_tau_J_x_B;
+semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+dump = phase_diff_E_tau_Div;
+semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+dump = phase_diff_E_tau_total;
+semilogx(k_bins,dump,'-.',color=My_colors(6,:),LineWidth=2)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$kd_i$';
+ax.YLabel.String = '$\Delta \phi^{\circ} (\mathbf{E},\tau)$';
+ax.XTick = [10^0, 10^1];
+ax.YTick = [70, 90, 110];
+xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+ylim([70,110])
+xlim([0.3,threshold/2])
+%title('$\tau_{nE}$', 'Interpreter','latex')
+legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$','$ \tau_{Ine}$','$ \Sigma \tau$', ...
+    'Interpreter','latex','NumColumns',5,'Location','southoutside')
+hold off
+%-------------------------
+
+%-------------------------
+subplot(2,1,2)
+dump = phase_diff_B_curl_tau_nE;
+semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
+hold on
+dump = phase_diff_B_curl_tau_v_x_B;
+semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
+dump = phase_diff_B_curl_tau_J_x_B;
+semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
+dump = phase_diff_B_curl_tau_Div;
+semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
+dump = phase_diff_B_curl_tau_total;
+semilogx(k_bins,dump,'-.',color=My_colors(6,:),LineWidth=2)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$kd_i$';
+ax.YLabel.String = '$\Delta \phi^{\circ} (\mathbf{B},-\nabla \times \tau)$';
+ax.XTick = [10^0, 10^1];
+ax.YTick = [70, 90, 110];
+xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+ylim([70,110])
+xlim([0.3,threshold/2])
+%title('$\tau_{nE}$', 'Interpreter','latex')
+legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$','$ \tau_{Ine}$','$ \Sigma \tau$', ...
+    'Interpreter','latex','NumColumns',5,'Location','southoutside')
+hold off
+%-------------------------
+
+
+
+
+
+%--------------------------------------------------------------------------
+stoopp
 %--------------------------------------------------------------------------
 
 % Now this is to compute the total amplitude
@@ -1826,10 +1938,10 @@ ES = SGS_tau_Div_mean2vxB_mean(1,in);
 FS = SGS_tau_total_mean2vxB_mean(1,in);
 
 T = table([AA;AS],[BB;BS],[CC;CS],[DD;0],[EE;ES],[FF;FS],...
-    'VariableNames',{'E','vxB','JxB','divP','divvJ','RHS'},'RowName',{'Resolved','Unresolved'}); 
+    'VariableNames',{'E','vxB','JxB','divP','divvJ','RHS'},'RowName',{'Resolved','Unresolved'});
 
 
-disp(T) 
+disp(T)
 
 
 
@@ -1848,6 +1960,12 @@ disp(T)
 
 
 time_in = 1;
+
+%comment%{
+
+%comment
+%}
+
 
 %{
 
@@ -2039,6 +2157,66 @@ end
 % Defining the functions to use in this script
 %----------------------------------------------------------------------
 
+function [E_k,k_bins]=Phase_difference3D(uxB_x,uxB_y,uxB_z,tauuxB_x,tauuxB_y,tauuxB_z,Lx,threshold)
+% Detrend the variable
+Bx_dt_DT_x = uxB_x - mean(uxB_x,'all');
+Bx_dt_DT_y = uxB_y - mean(uxB_y,'all');
+Bx_dt_DT_z = uxB_z - mean(uxB_z,'all');
+
+Bx_dt_DT2_x = tauuxB_x - mean(tauuxB_x,'all');
+Bx_dt_DT2_y = tauuxB_y - mean(tauuxB_y,'all');
+Bx_dt_DT2_z = tauuxB_z - mean(tauuxB_z,'all');
+
+% Perform the FFT of the 3D field B
+F_B_x = fftn(Bx_dt_DT_x);
+F_B_y = fftn(Bx_dt_DT_y);
+F_B_z = fftn(Bx_dt_DT_z);
+
+F_B2_x = fftn(Bx_dt_DT2_x);
+F_B2_y = fftn(Bx_dt_DT2_y);
+F_B2_z = fftn(Bx_dt_DT2_z);
+
+fgcon = F_B_x.*conj(F_B2_x) + F_B_y.*conj(F_B2_y) + F_B_z.*conj(F_B2_z);
+
+%%% --- Phase differences in Fourier space ---
+phi1 = atan2(imag(fgcon), real(fgcon));
+phi1 = rad2deg(phi1);
+
+Ns=size(uxB_x);
+% Compute the wavenumbers
+kx = (2*pi/Lx) * [0:(Ns(1)/2-1) -Ns(1)/2:-1];
+ky = kx;
+kz = kx;
+[KX, KY, KZ] = meshgrid(kx, ky, kz);
+% Calculate the radial wavenumber k
+K = sqrt(KX.^2 + KY.^2 + KZ.^2);
+
+%% --- Omnidirectional averaging (simple linear mean of abs phase) ---
+%kx = fftshift(-N/2:N/2-1);
+%[KY,KX,KZ] = meshgrid(kx,kx,kx);
+kr = round(sqrt(KX.^2 + KY.^2 + KZ.^2));
+kmax = floor(Ns(1)/2)+1;
+spec_phi1 = zeros(kmax,1);
+
+% Define the bins for the radial wavenumber
+dk = 2 * pi / Lx; % Bin width in k-space
+k_max = threshold;%max(K(:)); % Maximum wavenumber
+k_bins = 0:dk:k_max; % Radial wavenumber bins
+% Initialize the omnidirectional spectrum
+
+for k = 1:kmax
+    mask = (kr == k);
+    if any(mask(:))
+        % use mean of absolute phase difference magnitude
+        spec_phi1(k) = mean(abs(phi1(mask)));
+    end
+end
+
+E_k = spec_phi1;
+
+end
+
+
 function [E_k,k_bins]=Phase_difference(uxB,tauuxB,Lx,threshold)
 % Detrend the variable
 Bx_dt_DT = uxB - mean(uxB,'all');
@@ -2124,7 +2302,7 @@ end
 
 
 %----------------------------------------------------------------------
-function[Jx_filt] = Gauss_filter_3D_xyz(Dx,Kx,Ky,Kz,Jx_dt) 
+function[Jx_filt] = Gauss_filter_3D_xyz(Dx,Kx,Ky,Kz,Jx_dt)
 % Apply a low-pass Gaussian filter to remove high frequencies
 sigma = Dx; % Adjust as needed for filtering strength
 filter = exp(-(Kx.^2 + Ky.^2 + Kz.^2) * 0.5 * sigma^2);

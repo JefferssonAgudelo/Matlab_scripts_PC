@@ -21,7 +21,8 @@ My_colors = [ 204, 121, 167;
 %--------------------------------------------------------------------------
 lwm=2;
 i=50; j=50;
-fs=18; x0=45;y0=54;xx1=900;yy1=500;
+fs=25; 
+x0=45;y0=54;xx1=900;yy1=500;
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -60,7 +61,7 @@ end
 if(rho_terms == 0)
     %--------------------------------------------------------------------------
 
-    fs=20;
+    %fs=20;
     threshold =pi/resx; %
 
 
@@ -131,7 +132,7 @@ if(rho_terms == 0)
     %}
     %----------------------------------------------------------------------
 
-    fs=30;
+    %fs=30;
     sp = 0; % This is for E
     f10013=figure(10013);
     set(gcf,'position',[x0,y0,2*xx1,yy1*2])
@@ -164,10 +165,10 @@ if(rho_terms == 0)
     ylim([10^(-7),10^(0)])
     xlim([min(k_bins),threshold])
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D$';
+    ax.YLabel.String = '$P^{1D}$';
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
     set(gca,'FontSize',fs)
@@ -195,10 +196,10 @@ if(rho_terms == 0)
     ylim([10^(-7),10^(0)])
     xlim([min(k_bins),threshold])
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D$';
+    ax.YLabel.String = '$P^{1D}$';
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     xlim([min(k_bins),threshold])
     ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
@@ -251,12 +252,12 @@ if(rho_terms == 0)
     ylim([10^(-7),10^(0)])
     xlim([min(k_bins),10])
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D$';
+    ax.YLabel.String = '$P^{1D}$';
     ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     set(gca,'FontSize',fs)
     legend( '$\overline{\mathbf{E}}$', ...
         '$\overline{\mathbf{E}}_{MHD}$',...
@@ -284,7 +285,7 @@ if(rho_terms == 0)
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     %ax.YTick = [10^5, 10^10];
-    %ax.YLabel.String = '$k^{5/3} P1D_{x}$';
+    %ax.YLabel.String = '$k^{5/3} P^{1D}_{x}$';
     %ax.XTick = [10^0, 10^1];
 
     %ylim([-0.6,0.3])
@@ -298,12 +299,12 @@ if(rho_terms == 0)
     ylim([10^(-11),10^(-3)])
     xlim([min(k_bins),10])
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D$';
+    ax.YLabel.String = '$P^{1D}$';
     ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     legend( '${\tau}_{nE}$', ...
         '$\tau_{nu \times B}$', ...
         '$\tau_{J \times B}$',...
@@ -318,7 +319,7 @@ if(rho_terms == 0)
     % Lets make also plots for the ratios julia style fo
 
     %--------------------------------------------------------------------------
-    fs=20;
+    %fs=20;
     sp = 0; % This is for E
     f10014=figure(10014);
     set(gcf,'position',[x0,y0,1*xx1,yy1*1])
@@ -334,10 +335,10 @@ if(rho_terms == 0)
     %ylim([10^(-7),10^(0)])
     xlim([min(k_bins),threshold])
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$Ratio \ P1D$';
+    ax.YLabel.String = '$Ratio \ P^{1D}$';
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     xlim([min(k_bins),threshold])
     %ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
@@ -390,9 +391,11 @@ if(rho_terms == 0)
 
     % This is computing the phase angle of the dot product of between tau
     % and the complex conjugate
-    %Phase_difference3D(uxB_x,uxB_y,uxB_z,tauuxB_x,tauuxB_y,tauuxB_z,Lx,threshold)    
+    %Phase_difference3D(uxB_x,uxB_y,uxB_z,tauuxB_x,tauuxB_y,tauuxB_z,Lx,threshold)   
+    %----------------------------------------------------------------------    
 
-
+    % This is for the phase difference of the vectors
+    %----------------------------------------------------------------------    
     [phase_diff_uxB,~] = Phase_difference3D(term2_filt_x,term2_filt_y,term2_filt_z, ...
         tau_v_x_B_tau_x,tau_v_x_B_tau_y,tau_v_x_B_tau_z,Lx,threshold);
 
@@ -404,8 +407,9 @@ if(rho_terms == 0)
 
     [phase_diff_sumtau,~] = Phase_difference3D(term7_filt_x,term7_filt_y,term7_filt_z, ...
         sum_tau_x,sum_tau_y,sum_tau_z,Lx,threshold);     
+    %----------------------------------------------------------------------
 
-    f1006=figure(1006);
+    f1005=figure(1005);
     set(gcf,'position',[x0,y0,1*xx1,yy1*1])
     subplot(2,1,1)
     dump = Ek_tau_v_x_B_tau./Ek_term2_filt;
@@ -420,24 +424,25 @@ if(rho_terms == 0)
     set(gca,'FontSize',fs)
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-    ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$Ratio \ P1D$';
+    %ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$Ratio \ P^{1D}$';
     %xlim([10^(0),1.1*10^(1)])
     %xlim([min(sqrt(beta_i)*k_bins),threshold])
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
+    yline(1,'--')
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
-    ax.XTick = [10^0, 10^1];
-    ax.YTick = [10^-1, 10^2];
-    ylim([10^(-5),1*10^(3)])
+    ax.XTick = [];
+    ax.YTick = [10^-4, 10^1];
+    ylim([10^(-5),1*10^(2)])
     %ylim([-0.6,0.3])
     legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
         '$\tau_{J \times B} / \overline{\mathbf{E}}_{Hall}$',...
         '$\tau_{Ine} / \overline{\mathbf{E}}_{Ine}$',...
         '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
-        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
-    title('$\Delta_{l} = 0.28 d_{i}$','Interpreter','latex')
+        'Interpreter','latex','NumColumns',4,'Location','southeastoutside')
+    title('$\Delta_{l} = 0.59 d_{i}$','Interpreter','latex')
     hold off
 
     subplot(2,1,2)
@@ -461,13 +466,13 @@ if(rho_terms == 0)
     xlim([0.3,threshold])
     ax.XTick = [10^0, 10^1];
     ax.YTick = [0, 90, 180];
-    yline(135,'--')
+    %yline(135,'--')
     yline(90,'--')
-    ylim([0,180])
+    ylim([0,100])
 
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     %ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
@@ -477,7 +482,7 @@ if(rho_terms == 0)
         '$\tau_{J \times B} / \overline{\mathbf{E}}_{Hall}$',...
         '$\tau_{Ine} / \overline{\mathbf{E}}_{Ine}$',...
         '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
-        'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
+        'Interpreter','latex','NumColumns',4,'Location','southeastoutside')
     %title('$\Delta_{l} = 0.59 d_{i}$','Interpreter','latex')
     hold off
 
@@ -509,7 +514,7 @@ if(rho_terms == 0)
     ylim([0,180])
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     ax.XTick = [10^0, 10^1];
     legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
@@ -542,7 +547,7 @@ if(rho_terms == 0)
     ylim([0,180])
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     ax.XTick = [10^0, 10^1];
     legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
@@ -574,7 +579,7 @@ if(rho_terms == 0)
     ylim([0,180])
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     ax.XTick = [10^0, 10^1];
     legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
@@ -606,7 +611,7 @@ if(rho_terms == 0)
     ylim([0,180])
     xline(10,'--')
     xline(1,'--')
-    xline(2*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     ax.XTick = [10^0, 10^1];
     legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
@@ -659,7 +664,7 @@ stopp
     % ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     % ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     % ax.XLabel.String = '$kd_i$';
-    % ax.YLabel.String = '$P1D_{x}/max$';
+    % ax.YLabel.String = '$P^{1D}_{x}/max$';
     % ax.XTick = [10^0, 10^1];
     % ax.YTick = [10^-10, 10^-5, 10^0];
     % ylim([10^(-12),5*10^(0)])
@@ -733,7 +738,7 @@ stopp
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D_{x}/max$';
+    ax.YLabel.String = '$P^{1D}_{x}/max$';
     ax.XTick = [10^0, 10^1];
     ax.YTick = [10^-10, 10^-5, 10^0];
     ylim([10^(-12),5*10^(0)])
@@ -793,7 +798,7 @@ stopp
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D_{x}/max$';
+    ax.YLabel.String = '$P^{1D}_{x}/max$';
     ax.XTick = [10^0, 10^1];
     ax.YTick = [10^-10, 10^-5, 10^0];
     ylim([10^(-12),5*10^(0)])
@@ -858,7 +863,7 @@ stopp
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D_{x}/P1D_{x,max}$';
+    ax.YLabel.String = '$P^{1D}_{x}/P^{1D}_{x,max}$';
     xlim([min(k_bins),threshold])
     %ylim([10^(-12),5*10^(0)])
     ax.YTick = [10^-7, 10^0];
@@ -892,7 +897,7 @@ stopp
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D_{x}/max$';
+    ax.YLabel.String = '$P^{1D}_{x}/max$';
     ax.XTick = [10^0, 10^1];
     ax.YTick = [10^-10, 10^-5, 10^0];
     ylim([10^(-12),5*10^(0)])
@@ -990,8 +995,8 @@ stopp
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     %ax.XLabel.String = '$kd_i$';
-    %ax.YLabel.String = '$k^{5/3} P1D_{x}$';
-    ax.YLabel.String = '$P1D_{x}$';
+    %ax.YLabel.String = '$k^{5/3} P^{1D}_{x}$';
+    ax.YLabel.String = '$P^{1D}_{x}$';
 
     %ylim([10^(-),10^(8)])
     yline(1*10^9,'--')
@@ -1049,8 +1054,8 @@ stopp
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     %ax.XLabel.String = '$kd_i$';
-    %ax.YLabel.String = '$k^{5/3} P1D_{x}$';
-    ax.YLabel.String = '$P1D_{x}$';
+    %ax.YLabel.String = '$k^{5/3} P^{1D}_{x}$';
+    ax.YLabel.String = '$P^{1D}_{x}$';
     xlim([min(k_bins),threshold])
     ylim([10^(2),10^(14)])
     %ax.YTick = [10^5, 10^10];
@@ -1086,9 +1091,9 @@ stopp
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$P1D_{x}$';
+    ax.YLabel.String = '$P^{1D}_{x}$';
     ax.YTick = [10^5, 10^10];
-    %ax.YLabel.String = '$k^{5/3} P1D_{x}$';
+    %ax.YLabel.String = '$k^{5/3} P^{1D}_{x}$';
     %xlim([10^(0),1.1*10^(1)])
     xlim([min(k_bins),threshold])
     %ylim([10^(-5),10^(8)])
@@ -1107,7 +1112,7 @@ stopp
 else
 
 
-    fs=20;
+    %fs=20;
     threshold = sqrt(beta_i)*pi/resx; % This is including the beta for rho
 
     [Ek_term1_dt,~]=Omni1DSpectra(term1_dt,Lx,threshold);
@@ -1156,7 +1161,7 @@ else
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.XLabel.String = '$k\rho_i$';
-    ax.YLabel.String = '$k^{5/3} P1D_{x}$';
+    ax.YLabel.String = '$k^{5/3} P^{1D}_{x}$';
 
     %xlim([min(sqrt(beta_i)*k_bins),threshold])
     %ylim([10^(2),10^(14)])
@@ -1195,7 +1200,7 @@ else
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.XLabel.String = '$k\rho_i$';
-    ax.YLabel.String = '$k^{5/3} P1D_{x}$';
+    ax.YLabel.String = '$k^{5/3} P^{1D}_{x}$';
     %xlim([10^(0),1.1*10^(1)])
     %xlim([min(sqrt(beta_i)*k_bins),threshold])
     %ylim([10^(0),10^(14)])
@@ -1230,7 +1235,7 @@ else
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.XLabel.String = '$k\rho_i$';
-    ax.YLabel.String = '$k^{5/3} P1D_{x}$';
+    ax.YLabel.String = '$k^{5/3} P^{1D}_{x}$';
     %xlim([10^(0),1.1*10^(1)])
     %xlim([min(sqrt(beta_i)*k_bins),threshold])
     %ylim([10^(0),10^(14)])
@@ -1304,7 +1309,7 @@ set(gca,'FontSize',fs)
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
 ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$k\rho_i$';
-%ax.YLabel.String = '$Ratio \ P1D_{x}$';
+%ax.YLabel.String = '$Ratio \ P^{1D}_{x}$';
 %xlim([10^(0),1.1*10^(1)])
 %xlim([min(sqrt(beta_i)*k_bins),threshold])
 %ylim([10^(0),10^(14)])
@@ -1343,7 +1348,7 @@ set(gca,'FontSize',fs)
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
 ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$kd_i$';
-%ax.YLabel.String = '$Ratio \ P1D_{x}$';
+%ax.YLabel.String = '$Ratio \ P^{1D}_{x}$';
 %xlim([10^(0),1.1*10^(1)])
 %xlim([min(sqrt(beta_i)*k_bins),threshold])
 ylim([10^(-5),10^(15)])
