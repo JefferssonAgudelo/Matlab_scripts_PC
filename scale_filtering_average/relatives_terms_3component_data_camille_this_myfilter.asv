@@ -1299,8 +1299,10 @@ hold off
 
 %stopp
 
-% lets Compute the Curl
+% lets Compute the Curl %<----------------- to compute the curl and make
+% the plots
 %--------------------------------------------------------------------------
+%{
 [tau_nE_tau_x_y, tau_nE_tau_x_x, tau_nE_tau_x_z] = gradient(tau_nE_tau_x);
 [tau_nE_tau_y_y, tau_nE_tau_y_x, tau_nE_tau_y_z] = gradient(tau_nE_tau_y);
 [tau_nE_tau_z_y, tau_nE_tau_z_x, tau_nE_tau_z_z] = gradient(tau_nE_tau_z);
@@ -1406,7 +1408,7 @@ My_colors = [ 204, 121, 167;
     0, 158, 115;
     ]/256;
 
-fs=18;
+fs=25;
 f666=figure(666);
 plot(edges2,N_tau_nE/sum(N_tau_nE),color=My_colors(1,:),LineWidth=1.5) %plot(edges(2:100),Nc,'r')
 hold on
@@ -1440,7 +1442,7 @@ xlabel('$\theta^{\circ}_{-\overline{B} \cdot \nabla \times \tau_{j}}$','Interpre
 ylabel('Normalised Counts','Interpreter','latex','FontSize',fs)
 title('$\beta_{i} = 0.25$','Interpreter','latex','FontSize',fs)
 legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$',...
-    '$\tau_{Ine)}$', '$\Sigma\tau$','Interpreter','latex','FontSize',20)
+    '$\tau_{Ine}$', '$\Sigma\tau$','Interpreter','latex','FontSize',20)
 hold off
 
 %stoppp
@@ -1476,9 +1478,10 @@ TT = [Q1_nE, Q2_nE, Q3_nE, Q4_nE;...
     Q1_J_x_B, Q2_J_x_B, Q3_J_x_B, Q4_J_x_B;...
     Q1_Div, Q2_Div, Q3_Div, Q4_Div;...
     Q1_total, Q2_total, Q3_total, Q4_total]
+%}
 %--------------------------------------------------------------------------
 
-
+%threshold =pi/resx;
 
 % It is still important to look at the phase.
 % maybe repeat the same with the model taus?
@@ -1486,7 +1489,7 @@ TT = [Q1_nE, Q2_nE, Q3_nE, Q4_nE;...
 
 %--------------------------------------------------------------------------
 % what is left is to compute the phases?
-threshold =pi/resx;
+
 
 % This is the phasedifferences of the components
 %--------------------------------------------------------------------------
@@ -1636,56 +1639,62 @@ hold off
 % Tis is the phase difference with the curl to see how the anomalous terms
 % contribute to the generation of magnetic field
 %--------------------------------------------------------------------------
-[phase_diff_B_curl_tau_nE,~] = Phase_difference3D(Bx_filt,Bx_filt,Bx_filt, ...
-    -curl_tau_nE_tau_x,-curl_tau_nE_tau_y,-curl_tau_nE_tau_z,Lx,threshold);
+%{ 
+%<---- this is where the latest phase analysis is 25/03/2026
 
-[phase_diff_B_curl_tau_v_x_B,~] = Phase_difference3D(Bx_filt,Bx_filt,Bx_filt, ...
-    -curl_tau_v_x_B_tau_x,-curl_tau_v_x_B_tau_y,-curl_tau_v_x_B_tau_z,Lx,threshold);
+[phase_diff_B_curl_tau_nE,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
+    curl_tau_nE_tau_x,curl_tau_nE_tau_y,curl_tau_nE_tau_z,Lx,threshold);
 
-[phase_diff_B_curl_tau_J_x_B,~] = Phase_difference3D(Bx_filt,Bx_filt,Bx_filt, ...
+[phase_diff_B_curl_tau_v_x_B,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
+    curl_tau_v_x_B_tau_x,curl_tau_v_x_B_tau_y,curl_tau_v_x_B_tau_z,Lx,threshold);
+
+[phase_diff_B_curl_tau_J_x_B,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
     -curl_tau_J_x_B_tau_x,-curl_tau_J_x_B_tau_y,-curl_tau_J_x_B_tau_z,Lx,threshold);
 
-[phase_diff_B_curl_tau_Div,~] = Phase_difference3D(Bx_filt,Bx_filt,Bx_filt, ...
+[phase_diff_B_curl_tau_Div,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
     -curl_tau_Div_tau_x,-curl_tau_Div_tau_y,-curl_tau_Div_tau_z,Lx,threshold);
 
-[phase_diff_B_curl_tau_total,k_bins] = Phase_difference3D(Bx_filt,Bx_filt,Bx_filt, ...
+[phase_diff_B_curl_tau_total,k_bins] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
     -curl_tau_total_tau_x,-curl_tau_total_tau_y,-curl_tau_total_tau_z,Lx,threshold);
 %--------------------------------------------------------------------------
 
 % this is directly between tau and the resolved electric field 
 %--------------------------------------------------------------------------
-[phase_diff_E_tau_nE,~] = Phase_difference3D(Ex_filt,Ex_filt,Ex_filt, ...
+[phase_diff_E_tau_nE,~] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
     -tau_nE_tau_x,-tau_nE_tau_y,-tau_nE_tau_z,Lx,threshold);
 
-[phase_diff_E_tau_v_x_B,~] = Phase_difference3D(Ex_filt,Ex_filt,Ex_filt, ...
+[phase_diff_E_tau_v_x_B,~] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
     -tau_v_x_B_tau_x,-tau_v_x_B_tau_y,-tau_v_x_B_tau_z,Lx,threshold);
 
-[phase_diff_E_tau_J_x_B,~] = Phase_difference3D(Ex_filt,Ex_filt,Ex_filt, ...
+[phase_diff_E_tau_J_x_B,~] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
     tau_J_x_B_tau_x,tau_J_x_B_tau_y,tau_J_x_B_tau_z,Lx,threshold);
 
-[phase_diff_E_tau_Div,~] = Phase_difference3D(Ex_filt,Ex_filt,Ex_filt, ...
+[phase_diff_E_tau_Div,~] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
     tau_Div_tau1_x,tau_Div_tau1_y,tau_Div_tau1_z,Lx,threshold);
 
-[phase_diff_E_tau_total,k_bins] = Phase_difference3D(Bx_filt,Bx_filt,Bx_filt, ...
-    tau_total_tau_x,-curl_tau_total_tau_y,-curl_tau_total_tau_z,Lx,threshold);
+[phase_diff_E_tau_total,k_bins] = Phase_difference3D(Ex_filt,Ey_filt,Ez_filt, ...
+    tau_total_x,tau_total_y,tau_total_z,Lx,threshold);
 
 %--------------------------------------------------------------------------
 % Make the phase difference plot now
 
-
+fs=25; 
+%x0=45;y0=54;xx1=1400;yy1=500;
+x0=45;y0=54;xx1=900;yy1=500;
 f122 =figure(122);
+set(gcf,'position',[x0,y0,xx1,yy1])
 %-------------------------
 subplot(2,1,1)
-dump = phase_diff_B_curl_tau_nE;
+dump = phase_diff_E_tau_nE;
 semilogx(k_bins,dump,'-.',color=My_colors(1,:),LineWidth=2)
 hold on
-dump = phase_diff_B_curl_tau_v_x_B;
+dump = phase_diff_E_tau_v_x_B;
 semilogx(k_bins,dump,'-.',color=My_colors(2,:),LineWidth=2)
-dump = phase_diff_B_curl_tau_J_x_B;
+dump = phase_diff_E_tau_J_x_B;
 semilogx(k_bins,dump,'-.',color=My_colors(3,:),LineWidth=2)
-dump = phase_diff_B_curl_tau_Div;
+dump = phase_diff_E_tau_Div;
 semilogx(k_bins,dump,'-.',color=My_colors(5,:),LineWidth=2)
-dump = phase_diff_B_curl_tau_total;
+dump = phase_diff_E_tau_total;
 semilogx(k_bins,dump,'-.',color=My_colors(6,:),LineWidth=2)
 set(gca,'FontSize',fs)
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
@@ -1697,7 +1706,7 @@ ax.YTick = [70, 90, 110];
 xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
 ylim([70,110])
 xlim([0.3,threshold/2])
-title('$\tau_{nE}$', 'Interpreter','latex')
+%title('$\tau_{nE}$', 'Interpreter','latex')
 legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$','$ \tau_{Ine}$','$ \Sigma \tau$', ...
     'Interpreter','latex','NumColumns',5,'Location','southoutside')
 hold off
@@ -1726,10 +1735,11 @@ ax.YTick = [70, 90, 110];
 xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
 ylim([70,110])
 xlim([0.3,threshold/2])
-title('$\tau_{nE}$', 'Interpreter','latex')
+%title('$\tau_{nE}$', 'Interpreter','latex')
 legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$','$ \tau_{Ine}$','$ \Sigma \tau$', ...
     'Interpreter','latex','NumColumns',5,'Location','southoutside')
 hold off
+%}
 %-------------------------
 
 
@@ -1859,7 +1869,8 @@ elseif rms_value == 1
 
         SGS_tau_nE_mean = sqrt(mean(abs(tau_nE_tau),'all'));
         SGS_tau_vxB_mean = sqrt(mean(abs(tau_v_x_B_tau),'all'));
-        SGS_tau_JxB_mean = sqrt(mean(abs(tau_J_x_B_tau),'all'));
+        SGS_tau_JxB_mean = sqrt(mean(abs(tau ...
+            _J_x_B_tau),'all'));
         SGS_tau_Div_mean = sqrt(mean(abs(tau_Div_tau1),'all'));
         SGS_tau_total_mean = sqrt(mean(abs(tau_total),'all'));
 
@@ -1909,6 +1920,9 @@ elseif rms_value == 1
         %-----------------------------------------------------------------------
 
     end
+J_mean_mag(1,in) = mean(sqrt(Jx_dt.^2 + Jy_dt.^2 + Jz_dt.^2),'all');
+J_max_mag(1,in) = max( max( max( sqrt(Jx_dt.^2 + Jy_dt.^2 + Jz_dt.^2))));
+J_rms(1,in) = sqrt(mean((Jx_dt.^2 + Jy_dt.^2 + Jz_dt.^2),'all'));
 
 end
 
@@ -1934,8 +1948,12 @@ CS = SGS_tau_JxB_mean2vxB_mean(1,in);
 ES = SGS_tau_Div_mean2vxB_mean(1,in);
 FS = SGS_tau_total_mean2vxB_mean(1,in);
 
-T = table([AA;AS],[BB;BS],[CC;CS],[DD;0],[EE;ES],[FF;FS],...
-    'VariableNames',{'E','vxB','JxB','divP','divvJ','RHS'},'RowName',{'Resolved','Unresolved'});
+JJ_mag = J_mean_mag(1,in);
+JJ_max = J_max_mag(1,in);
+JJ_rms = J_rms(1,in);
+
+T = table([AA;AS],[BB;BS],[CC;CS],[DD;0],[EE;ES],[FF;FS],[JJ_rms;JJ_max],...
+    'VariableNames',{'E','vxB','JxB','divP','divvJ','RHS','J_rms_mag_max'},'RowName',{'Resolved','Unresolved'});
 
 
 disp(T)

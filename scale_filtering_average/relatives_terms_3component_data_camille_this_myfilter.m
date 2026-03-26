@@ -1299,8 +1299,10 @@ hold off
 
 %stopp
 
-% lets Compute the Curl
+% lets Compute the Curl %<----------------- to compute the curl and make
+% the plots
 %--------------------------------------------------------------------------
+%{
 [tau_nE_tau_x_y, tau_nE_tau_x_x, tau_nE_tau_x_z] = gradient(tau_nE_tau_x);
 [tau_nE_tau_y_y, tau_nE_tau_y_x, tau_nE_tau_y_z] = gradient(tau_nE_tau_y);
 [tau_nE_tau_z_y, tau_nE_tau_z_x, tau_nE_tau_z_z] = gradient(tau_nE_tau_z);
@@ -1476,9 +1478,10 @@ TT = [Q1_nE, Q2_nE, Q3_nE, Q4_nE;...
     Q1_J_x_B, Q2_J_x_B, Q3_J_x_B, Q4_J_x_B;...
     Q1_Div, Q2_Div, Q3_Div, Q4_Div;...
     Q1_total, Q2_total, Q3_total, Q4_total]
+%}
 %--------------------------------------------------------------------------
 
-
+%threshold =pi/resx;
 
 % It is still important to look at the phase.
 % maybe repeat the same with the model taus?
@@ -1486,7 +1489,7 @@ TT = [Q1_nE, Q2_nE, Q3_nE, Q4_nE;...
 
 %--------------------------------------------------------------------------
 % what is left is to compute the phases?
-threshold =pi/resx;
+
 
 % This is the phasedifferences of the components
 %--------------------------------------------------------------------------
@@ -1636,6 +1639,9 @@ hold off
 % Tis is the phase difference with the curl to see how the anomalous terms
 % contribute to the generation of magnetic field
 %--------------------------------------------------------------------------
+%{ 
+%<---- this is where the latest phase analysis is 25/03/2026
+
 [phase_diff_B_curl_tau_nE,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
     curl_tau_nE_tau_x,curl_tau_nE_tau_y,curl_tau_nE_tau_z,Lx,threshold);
 
@@ -1733,6 +1739,7 @@ xlim([0.3,threshold/2])
 legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$','$ \tau_{Ine}$','$ \Sigma \tau$', ...
     'Interpreter','latex','NumColumns',5,'Location','southoutside')
 hold off
+%}
 %-------------------------
 
 
@@ -1740,12 +1747,13 @@ hold off
 
 
 %--------------------------------------------------------------------------
-stoopp
+%stoopp
 %--------------------------------------------------------------------------
 
 % Now this is to compute the total amplitude
 
 in = 1;
+%in=1;
 if rms_value==0
 
     % This is average of th absolute value <sqrt(Ex^2 + Ey^2 + Ez^2)>;
@@ -1850,7 +1858,7 @@ elseif rms_value == 1
     % This analysis should be done with the three components not just one
 
     % The idea of this is to compute relative importance with absolute values
-    in=1;
+    
     if absolute==1
         %-----------------------------------------------------------------------
         MHD_E_mean = sqrt(mean(abs(term1_filt),'all'));
@@ -1912,6 +1920,9 @@ elseif rms_value == 1
         %-----------------------------------------------------------------------
 
     end
+J_mean_mag(1,in) = mean(sqrt(Jx_dt.^2 + Jy_dt.^2 + Jz_dt.^2),'all');
+J_max_mag(1,in) = max( max( max( sqrt(Jx_dt.^2 + Jy_dt.^2 + Jz_dt.^2))));
+J_rms(1,in) = sqrt(mean((Jx_dt.^2 + Jy_dt.^2 + Jz_dt.^2),'all'));
 
 end
 
@@ -1937,8 +1948,12 @@ CS = SGS_tau_JxB_mean2vxB_mean(1,in);
 ES = SGS_tau_Div_mean2vxB_mean(1,in);
 FS = SGS_tau_total_mean2vxB_mean(1,in);
 
-T = table([AA;AS],[BB;BS],[CC;CS],[DD;0],[EE;ES],[FF;FS],...
-    'VariableNames',{'E','vxB','JxB','divP','divvJ','RHS'},'RowName',{'Resolved','Unresolved'});
+JJ_mag = J_mean_mag(1,in);
+JJ_max = J_max_mag(1,in);
+JJ_rms = J_rms(1,in);
+
+T = table([AA;AS],[BB;BS],[CC;CS],[DD;0],[EE;ES],[FF;FS],[JJ_rms;JJ_max],...
+    'VariableNames',{'E','vxB','JxB','divP','divvJ','RHS','J_rms_mag_max'},'RowName',{'Resolved','Unresolved'});
 
 
 disp(T)

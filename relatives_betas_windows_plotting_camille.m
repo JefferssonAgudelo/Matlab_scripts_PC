@@ -1,5 +1,23 @@
 % This script is to make and save the plots for the 3 components relatives
-% terms 
+% terms
+
+My_colors = [ 204, 121, 167;
+    0, 114, 178;
+    128, 128, 128
+    213, 94, 0;
+    230, 159, 0;
+    0, 0, 0;
+    86, 180, 233;
+    0, 158, 115;
+    ]/256;
+
+%--------------------------------------------------------------------------
+lwm=2;
+i=50; j=50;
+fs=25;
+x0=45;y0=54;xx1=900;yy1=500;
+%--------------------------------------------------------------------------
+
 
 
 time_in = 1;
@@ -40,7 +58,7 @@ legendsgsmhd_2 = {'$<\overline{E}>/<\overline{u} \times \overline{B}>$',...
 %time_in = linspace(1,21,Nf);
 fs=18;
 
-fs=16; x0=45;y0=54;xx1=1000;yy1=800;
+fs=25; x0=45;y0=54;xx1=400;yy1=800;
 
 legendsgsmhd_3 = {'$<\overline{E}>/<\overline{u} \times \overline{B}>$',...
     '$<\Sigma \tau>/<\overline{u} \times \overline{B}>$'...,
@@ -74,23 +92,23 @@ SGS_tau_total_mean2vxB_mean = [0, 0.0089922, 0.0094701, 0.012059, 0.015468, 0.01
 f30 = figure(30);
 set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(3,1,1)
-semilogy(time_in,MHD_E2vxB_mean,'-or',LineWidth=2)
+plot(time_in,MHD_E2vxB_mean,color=My_colors(1,:),LineWidth=2)
 hold on
-semilogy(time_in,MHD_vxB2vxB_mean,'-ob',LineWidth=2)
-semilogy(time_in,MHD_JxB2vxB_mean,'-og',LineWidth=2)
-semilogy(time_in,MHD_divP2vxB_mean,'-om',LineWidth=2)
-semilogy(time_in,MHD_divvJall2vxB_mean,'-oc',LineWidth=2)
-semilogy(time_in,MHD_RHS2vxB_mean,'-ok',LineWidth=2)
-semilogy(time_in,SGS_tau_nE_mean2vxB_mean,'-+r',LineWidth=2)
-semilogy(time_in,SGS_tau_vxB_mean2vxB_mean,'-+b',LineWidth=2)
-semilogy(time_in,SGS_tau_JxB_mean2vxB_mean,'-+g',LineWidth=2)
-semilogy(time_in,SGS_tau_Div_mean2vxB_mean,'-+c',LineWidth=2)
-semilogy(time_in,SGS_tau_total_mean2vxB_mean,'-*k',LineWidth=2)
-legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+plot(time_in,MHD_vxB2vxB_mean,'-',color=My_colors(2,:),LineWidth=2)
+plot(time_in,MHD_JxB2vxB_mean,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean,'-',color=My_colors(5,:),LineWidth=2)
+plot(time_in,MHD_RHS2vxB_mean,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
 ylabel('$\beta_{i} = 0.25$','FontSize',fs,Interpreter='latex')
-xlim([1,14])
-ylim([10^(-4),10]) 
+xlim([2,14])
+%ylim([10^(-4),10])
 hold off
 
 
@@ -113,22 +131,22 @@ SGS_tau_total_mean2vxB_mean = [0.0066523, 0.009139, 0.012896, 0.01798, 0.028677,
 %--------------------------------------------------------------------------
 
 subplot(3,1,2)
-semilogy(time_in,MHD_E2vxB_mean,'or',LineWidth=2)
+plot(time_in,MHD_E2vxB_mean,color=My_colors(1,:),LineWidth=2)
 hold on
-semilogy(time_in,MHD_vxB2vxB_mean,'-ob',LineWidth=2)
-semilogy(time_in,MHD_JxB2vxB_mean,'-og',LineWidth=2)
-semilogy(time_in,MHD_divP2vxB_mean,'-om',LineWidth=2)
-semilogy(time_in,MHD_divvJall2vxB_mean,'-oc',LineWidth=2)
-semilogy(time_in,MHD_RHS2vxB_mean,'-ok',LineWidth=2)
-semilogy(time_in,SGS_tau_nE_mean2vxB_mean,'-+r',LineWidth=2)
-semilogy(time_in,SGS_tau_vxB_mean2vxB_mean,'-+b',LineWidth=2)
-semilogy(time_in,SGS_tau_JxB_mean2vxB_mean,'-+g',LineWidth=2)
-semilogy(time_in,SGS_tau_Div_mean2vxB_mean,'-+c',LineWidth=2)
-semilogy(time_in,SGS_tau_total_mean2vxB_mean,'-*k',LineWidth=2)
-legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+plot(time_in,MHD_vxB2vxB_mean,'-',color=My_colors(2,:),LineWidth=2)
+plot(time_in,MHD_JxB2vxB_mean,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean,'-',color=My_colors(5,:),LineWidth=2)
+plot(time_in,MHD_RHS2vxB_mean,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
-xlim([1,14])
-ylim([10^(-4),10]) 
+xlim([2,14])
+%ylim([10^(-4),10])
 ylabel('$\beta_{i} = 1.0$','FontSize',fs,Interpreter='latex')
 hold off
 
@@ -151,23 +169,23 @@ SGS_tau_total_mean2vxB_mean = [0, 0.0067834, 0.01381, 0.028018, 0.045573, 0.0634
 %--------------------------------------------------------------------------
 
 subplot(3,1,3)
-semilogy(time_in,MHD_E2vxB_mean,'-or',LineWidth=2)
+plot(time_in,MHD_E2vxB_mean,color=My_colors(1,:),LineWidth=2)
 hold on
-semilogy(time_in,MHD_vxB2vxB_mean,'-ob',LineWidth=2)
-semilogy(time_in,MHD_JxB2vxB_mean,'-og',LineWidth=2)
-semilogy(time_in,MHD_divP2vxB_mean,'-om',LineWidth=2)
-semilogy(time_in,MHD_divvJall2vxB_mean,'-oc',LineWidth=2)
-semilogy(time_in,MHD_RHS2vxB_mean,'-ok',LineWidth=2)
-semilogy(time_in,SGS_tau_nE_mean2vxB_mean,'-+r',LineWidth=2)
-semilogy(time_in,SGS_tau_vxB_mean2vxB_mean,'-+b',LineWidth=2)
-semilogy(time_in,SGS_tau_JxB_mean2vxB_mean,'-+g',LineWidth=2)
-semilogy(time_in,SGS_tau_Div_mean2vxB_mean,'-+c',LineWidth=2)
-semilogy(time_in,SGS_tau_total_mean2vxB_mean,'-*k',LineWidth=2)
+plot(time_in,MHD_vxB2vxB_mean,'-',color=My_colors(2,:),LineWidth=2)
+plot(time_in,MHD_JxB2vxB_mean,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean,'-',color=My_colors(5,:),LineWidth=2)
+plot(time_in,MHD_RHS2vxB_mean,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean,'--',color=My_colors(6,:),LineWidth=2)
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
-xlim([1,14])
-ylim([10^(-4),10]) 
+xlim([2,14])
+%ylim([10^(-4),10])
 ylabel('$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex')
-legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
 hold off
 %saveas(f30,strcat(num2str(i),'relatives_terms_time_rms_log_025-1-4.png'));
 
@@ -248,27 +266,27 @@ SGS_tau_Div_mean2vxB_mean = [0.0025591, 0.002149, 0.0016694, 0.0014443, 0.001382
 SGS_tau_total_mean2vxB_mean = [0.023894, 0.040672, 0.062588, 0.080781, 0.08967, 0.098434];
 %--------------------------------------------------------------------------
 
-
+fs=25; x0=45;y0=54;xx1=400;yy1=800;
 f31 = figure(31);
 set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(3,1,1)
-semilogy(time_in,MHD_E2vxB_mean,'-or',LineWidth=2)
+plot(time_in,MHD_E2vxB_mean,color=My_colors(1,:),LineWidth=2)
 hold on
-semilogy(time_in,MHD_vxB2vxB_mean,'-ob',LineWidth=2)
-semilogy(time_in,MHD_JxB2vxB_mean,'-og',LineWidth=2)
-semilogy(time_in,MHD_divP2vxB_mean,'-om',LineWidth=2)
-semilogy(time_in,MHD_divvJall2vxB_mean,'-oc',LineWidth=2)
-semilogy(time_in,MHD_RHS2vxB_mean,'-ok',LineWidth=2)
-semilogy(time_in,SGS_tau_nE_mean2vxB_mean,'-+r',LineWidth=2)
-semilogy(time_in,SGS_tau_vxB_mean2vxB_mean,'-+b',LineWidth=2)
-semilogy(time_in,SGS_tau_JxB_mean2vxB_mean,'-+g',LineWidth=2)
-semilogy(time_in,SGS_tau_Div_mean2vxB_mean,'-+c',LineWidth=2)
-semilogy(time_in,SGS_tau_total_mean2vxB_mean,'-*k',LineWidth=2)
-legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
-xlabel('$sw/d_{i}$','FontSize',fs,Interpreter='latex')
+plot(time_in,MHD_vxB2vxB_mean,'-',color=My_colors(2,:),LineWidth=2)
+plot(time_in,MHD_JxB2vxB_mean,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean,'-',color=My_colors(5,:),LineWidth=2)
+plot(time_in,MHD_RHS2vxB_mean,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$\Delta_{l}/d_{i}$','FontSize',fs,Interpreter='latex')
+xlim([0.15,1.3])
 ylabel('$\beta_{i} = 0.25$','FontSize',fs,Interpreter='latex')
-xlim([0,1.3])
-ylim([10^(-4),10]) 
+%ylim([10^(-4),10])
 hold off
 
 % rms =1, abs 0 for beta 1
@@ -287,24 +305,23 @@ SGS_tau_Div_mean2vxB_mean = [0.0077462, 0.0048001, 0.0027097, 0.0021135, 0.00196
 SGS_tau_total_mean2vxB_mean = [0.042465, 0.057146, 0.075854, 0.092613, 0.10078, 0.10876];
 %--------------------------------------------------------------------------
 
-subplot(3,1,2) 
-semilogy(time_in,MHD_E2vxB_mean,'or',LineWidth=2) 
-hold on 
-semilogy(time_in,MHD_vxB2vxB_mean,'-ob',LineWidth=2) 
-semilogy(time_in,MHD_JxB2vxB_mean,'-og',LineWidth=2) 
-semilogy(time_in,MHD_divP2vxB_mean,'-om',LineWidth=2) 
-semilogy(time_in,MHD_divvJall2vxB_mean,'-oc',LineWidth=2) 
-semilogy(time_in,MHD_RHS2vxB_mean,'-ok',LineWidth=2) 
-semilogy(time_in,SGS_tau_nE_mean2vxB_mean,'-+r',LineWidth=2) 
-semilogy(time_in,SGS_tau_vxB_mean2vxB_mean,'-+b',LineWidth=2) 
-semilogy(time_in,SGS_tau_JxB_mean2vxB_mean,'-+g',LineWidth=2) 
-semilogy(time_in,SGS_tau_Div_mean2vxB_mean,'-+c',LineWidth=2) 
-semilogy(time_in,SGS_tau_total_mean2vxB_mean,'-*k',LineWidth=2) 
-legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside') 
-xlabel('$sw/d_{i}$','FontSize',fs,Interpreter='latex') 
-xlim([0,1.3])
-ylim([10^(-4),10]) 
-ylabel('$\beta_{i} = 1.0$','FontSize',fs,Interpreter='latex') 
+subplot(3,1,2)
+plot(time_in,MHD_E2vxB_mean,color=My_colors(1,:),LineWidth=2)
+hold on
+plot(time_in,MHD_vxB2vxB_mean,'-',color=My_colors(2,:),LineWidth=2)
+plot(time_in,MHD_JxB2vxB_mean,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean,'-',color=My_colors(5,:),LineWidth=2)
+plot(time_in,MHD_RHS2vxB_mean,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$\Delta_{l}/d_{i}$','FontSize',fs,Interpreter='latex')
+xlim([0.15,1.3])
+ylabel('$\beta_{i} = 1.0$','FontSize',fs,Interpreter='latex')
 hold off
 
 
@@ -325,27 +342,27 @@ SGS_tau_total_mean2vxB_mean = [0.10084, 0.13775, 0.17527, 0.20046, 0.20906, 0.21
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
-subplot(3,1,3) 
-semilogy(time_in,MHD_E2vxB_mean,'-or',LineWidth=2) 
-hold on 
-semilogy(time_in,MHD_vxB2vxB_mean,'-ob',LineWidth=2) 
-semilogy(time_in,MHD_JxB2vxB_mean,'-og',LineWidth=2) 
-semilogy(time_in,MHD_divP2vxB_mean,'-om',LineWidth=2) 
-semilogy(time_in,MHD_divvJall2vxB_mean,'-oc',LineWidth=2) 
-semilogy(time_in,MHD_RHS2vxB_mean,'-ok',LineWidth=2) 
-semilogy(time_in,SGS_tau_nE_mean2vxB_mean,'-+r',LineWidth=2) 
-semilogy(time_in,SGS_tau_vxB_mean2vxB_mean,'-+b',LineWidth=2) 
-semilogy(time_in,SGS_tau_JxB_mean2vxB_mean,'-+g',LineWidth=2) 
-semilogy(time_in,SGS_tau_Div_mean2vxB_mean,'-+c',LineWidth=2) 
-semilogy(time_in,SGS_tau_total_mean2vxB_mean,'-*k',LineWidth=2) 
-xlabel('$sw/d_{i}$','FontSize',fs,Interpreter='latex') 
-xlim([0,1.3])
-ylim([10^(-4),10]) 
-ylabel('$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex') 
-legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside') 
-hold off 
+subplot(3,1,3)
+plot(time_in,MHD_E2vxB_mean,color=My_colors(1,:),LineWidth=2)
+hold on
+plot(time_in,MHD_vxB2vxB_mean,'-',color=My_colors(2,:),LineWidth=2)
+plot(time_in,MHD_JxB2vxB_mean,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean,'-',color=My_colors(5,:),LineWidth=2)
+plot(time_in,MHD_RHS2vxB_mean,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$\Delta_{l}/d_{i}$','FontSize',fs,Interpreter='latex')
+xlim([0.15,1.3])
+ylabel('$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex')
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+hold off
 %--------------------------------------------------------------------------
-%saveas(f31,strcat(num2str(i),'relatives_terms_windows_rms_log_025-1-4.png')); 
+%saveas(f31,strcat(num2str(i),'relatives_terms_windows_rms_log_025-1-4.png'));
 %--------------------------------------------------------------------------
 
 
@@ -370,15 +387,15 @@ sum_sgs4 = [0.10084, 0.13775, 0.17527, 0.20046, 0.20906, 0.21547];
 rela_sum2E4 = sum_sgs4./E_betas4;
 
 f42=figure(42);
-semilogy(time_in,rela_sum2E025,'-or',LineWidth=2) 
-hold on 
-semilogy(time_in,rela_sum2E1,'-ob',LineWidth=2) 
-semilogy(time_in,rela_sum2E4,'-ok',LineWidth=2) 
-xlabel('$sw/d_{i}$','FontSize',fs,Interpreter='latex') 
-ylabel('$<\Sigma \tau>/<\overline{E}>$','FontSize',fs,Interpreter='latex') 
+semilogy(time_in,rela_sum2E025,'-or',LineWidth=2)
+hold on
+semilogy(time_in,rela_sum2E1,'-ob',LineWidth=2)
+semilogy(time_in,rela_sum2E4,'-ok',LineWidth=2)
+xlabel('$sw/d_{i}$','FontSize',fs,Interpreter='latex')
+ylabel('$<\Sigma \tau>/<\overline{E}>$','FontSize',fs,Interpreter='latex')
 xlim([0,1.3])
-%ylim([10^(-3),10]) 
-legend('$\beta_{i} = 0.25$','$\beta_{i} = 1.0$','$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex') 
+%ylim([10^(-3),10])
+legend('$\beta_{i} = 0.25$','$\beta_{i} = 1.0$','$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex')
 hold off
 
 
@@ -414,34 +431,34 @@ yfit4_1_3 = 0.53 + (1.23)*yy1;
 
 
 f43=figure(43);
-plot(xxx,yfit025_1_2,'-r',LineWidth=1) 
-hold on 
-plot(xxx,yfit1_1_2,'-b',LineWidth=1) 
-plot(xxx,yfit4_1_2,'-k',LineWidth=1) 
-plot(delta,REvxB_betas025,'-or',LineWidth=2) 
-plot(delta,REvxB_betas1,'-ob',LineWidth=2) 
-plot(delta,REvxB_betas4,'-ok',LineWidth=2) 
-xlabel('$sw/d_{i}$','FontSize',fs,Interpreter='latex') 
-ylabel('$<\Sigma \tau>/<\overline{E}>$','FontSize',fs,Interpreter='latex') 
+plot(xxx,yfit025_1_2,'-r',LineWidth=1)
+hold on
+plot(xxx,yfit1_1_2,'-b',LineWidth=1)
+plot(xxx,yfit4_1_2,'-k',LineWidth=1)
+plot(delta,REvxB_betas025,'-or',LineWidth=2)
+plot(delta,REvxB_betas1,'-ob',LineWidth=2)
+plot(delta,REvxB_betas4,'-ok',LineWidth=2)
+xlabel('$sw/d_{i}$','FontSize',fs,Interpreter='latex')
+ylabel('$<\Sigma \tau>/<\overline{E}>$','FontSize',fs,Interpreter='latex')
 xlim([0,1.3])
-%ylim([10^(-3),10]) 
-%legend('$\beta_{i} = 0.25$','$\beta_{i} = 1.0$','$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex') 
+%ylim([10^(-3),10])
+%legend('$\beta_{i} = 0.25$','$\beta_{i} = 1.0$','$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex')
 hold off
 
 
 f44=figure(44);
-plot(xxx,yfit025_1_3,'-r',LineWidth=1) 
-hold on 
-plot(xxx,yfit1_1_3,'-b',LineWidth=1) 
-plot(xxx,yfit4_1_3,'-k',LineWidth=1) 
-plot(delta,REvxB_betas025,'-or',LineWidth=2) 
-plot(delta,REvxB_betas1,'-ob',LineWidth=2) 
-plot(delta,REvxB_betas4,'-ok',LineWidth=2) 
-xlabel('$sw/d_{i}$','FontSize',fs,Interpreter='latex') 
-ylabel('$<\Sigma \tau>/<\overline{E}>$','FontSize',fs,Interpreter='latex') 
+plot(xxx,yfit025_1_3,'-r',LineWidth=1)
+hold on
+plot(xxx,yfit1_1_3,'-b',LineWidth=1)
+plot(xxx,yfit4_1_3,'-k',LineWidth=1)
+plot(delta,REvxB_betas025,'-or',LineWidth=2)
+plot(delta,REvxB_betas1,'-ob',LineWidth=2)
+plot(delta,REvxB_betas4,'-ok',LineWidth=2)
+xlabel('$sw/d_{i}$','FontSize',fs,Interpreter='latex')
+ylabel('$<\Sigma \tau>/<\overline{E}>$','FontSize',fs,Interpreter='latex')
 xlim([0,1.3])
-%ylim([10^(-3),10]) 
-%legend('$\beta_{i} = 0.25$','$\beta_{i} = 1.0$','$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex') 
+%ylim([10^(-3),10])
+%legend('$\beta_{i} = 0.25$','$\beta_{i} = 1.0$','$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex')
 hold off
 
 
@@ -462,4 +479,381 @@ hold off
 
 
 %0.1472  0.2944    0.5888    0.8832    1.0304    1.1776%
- 
+
+
+J_rms_025 = [0, 0.32271, 0.32811, 0.35512, 0.35157, 0.35344, 0.36334, 0.37796, 0.37165]; %8 12.799080
+J_max_025 = [0, 2.7353, 2.7502, 1.8615, 2.1041, 2.205, 2.2005, 3.7129, 2.4182]; %
+
+J_rms_1 = [0.2855, 0.28159, 0.2916, 0.29668, 0.31995, 0.32834, 0.34506, 0.34822, 0.35618, 0.35568, 0.35572, 0.35457]; %9 11.250000
+J_max_1 = [1.7173, 1.5899, 1.6218, 1.9479, 2.1329, 1.6462, 1.97, 2.0812, 3.4352, 1.6442, 1.6542, 1.6088];
+
+J_rms_4 = [0, 0.30911, 0.28306, 0.29361, 0.31926, 0.34008, 0.36031, 0.37881, 0.39471, 0.40664];%10
+J_max_4 = [0, 1.18, 1.186, 1.6334, 1.9605, 2.1025, 1.9692, 1.9356, 2.0524, 2.2658];
+
+
+f212 = figure(212);
+subplot(2,1,1)
+plot(J_rms_025,color=My_colors(1,:),LineWidth=2)
+hold on
+plot(J_rms_1,'-',color=My_colors(2,:),LineWidth=2)
+plot(J_rms_4,'-',color=My_colors(3,:),LineWidth=2)
+legend('025','1','4')
+title('J RMS')
+hold off
+subplot(2,1,2)
+plot(J_max_025,color=My_colors(1,:),LineWidth=2)
+hold on
+plot(J_max_1,'-',color=My_colors(2,:),LineWidth=2)
+plot(J_max_4,'-',color=My_colors(3,:),LineWidth=2)
+legend('025','1','4')
+title('J max')
+hold off
+% This part is updating the values, no electric or pressure correction,
+% window 8 and including the current
+
+% This is for the window 2 only
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+% rms =1, abs 0 for beta 0.25
+%--------------------------------------------------------------------------
+time_in = [0, 2, 4, 6, 7.6, 9.2, 10.8, 12.4, 14];
+
+MHD_E2vxB_mean = [0, 0.39886, 0.34555, 0.32764, 0.30472, 0.2808, 0.27349, 0.26528, 0.26646];
+MHD_vxB2vxB_mean = [0,0.31248,0.26136,0.24997,0.22544,0.20918,0.20464,0.19411,0.20699];
+MHD_JxB2vxB_mean = [0,0.16485, 0.18462, 0.19722, 0.17468, 0.16376, 0.14937, 0.15018, 0.13141];
+MHD_divP2vxB_mean = [0, 0.013367, 0.01311, 0.009453, 0.010835, 0.010802, 0.009731, 0.009483, 0.009616];
+MHD_divvJall2vxB_mean = [0, 0.003928, 0.004646, 0.00438, 0.004101, 0.004025, 0.003617, 0.003584, 0.003509];
+MHD_RHS2vxB_mean = [0, 0.39777, 0.34262, 0.32756, 0.30497, 0.28007, 0.27308, 0.26505, 0.26556];
+
+SGS_tau_nE_mean2vxB_mean = [0, 0.024631, 0.020667, 0.014129, 0.016694, 0.01436, 0.012082, 0.012693, 0.010977];
+SGS_tau_vxB_mean2vxB_mean = [0, 0.025161, 0.020233, 0.015831, 0.016466, 0.014626, 0.01231, 0.011765, 0.01062];
+SGS_tau_JxB_mean2vxB_mean = [0, 0.011338, 0.010957, 0.012804, 0.011839, 0.011755, 0.01164, 0.011008, 0.009096];
+SGS_tau_Div_mean2vxB_mean = [0, 0.000291, 0.000282, 0.000334, 0.000324, 0.000348, 0.000308, 0.000311, 0.000304];
+SGS_tau_total_mean2vxB_mean = [0, 0.021964, 0.018361, 0.019245, 0.017658, 0.016461, 0.016464, 0.015487, 0.01339];
+%--------------------------------------------------------------------------
+
+noma_array = MHD_E2vxB_mean;
+
+fs=25; x0=45;y0=54;xx1=400;yy1=800;
+f21 = figure(21);
+set(gcf,'position',[x0,y0,xx1,yy1])
+subplot(3,1,1)
+%plot(time_in,MHD_E2vxB_mean./noma_array,color=My_colors(1,:),LineWidth=2)
+plot(time_in,MHD_vxB2vxB_mean./noma_array,'-',color=My_colors(2,:),LineWidth=2)
+hold on
+plot(time_in,MHD_JxB2vxB_mean./noma_array,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean./noma_array,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean./noma_array,'-',color=My_colors(5,:),LineWidth=2)
+%plot(time_in,MHD_RHS2vxB_mean./noma_array,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean./noma_array,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
+ylabel('$\beta_{i} = 0.25$','FontSize',fs,Interpreter='latex')
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+xlim([2,14])
+ylim([0,1.2])
+xline(12.799080,'--')
+hold off
+
+
+% rms =1, abs 0 for beta 1
+%--------------------------------------------------------------------------
+time_in = [1.25, 2.5, 3.75, 5, 6.25, 7.5, 8.75, 10, 11.25, 12, 12.79, 13.56];
+
+MHD_E2vxB_mean = [0.33446, 0.26223, 0.24713, 0.20631, 0.17554, 0.17684, 0.16539, 0.16244, 0.14544, 0.13818, 0.1329, 0.13164 ];
+MHD_vxB2vxB_mean = [0.25968, 0.18934, 0.1709, 0.15018, 0.11583, 0.13012, 0.11925, 0.1253, 0.11148, 0.10218, 0.09451, 0.093304];
+MHD_JxB2vxB_mean = [0.13693, 0.15386, 0.14917, 0.11713, 0.11321, 0.099208, 0.10486, 0.081247, 0.081062, 0.084468, 0.08682, 0.08654 ];
+MHD_divP2vxB_mean = [0.009455, 0.007294, 0.005075, 0.00538, 0.004947, 0.004729, 0.004161, 0.004518, 0.004206, 0.003995, 0.003799, 0.003651];
+MHD_divvJall2vxB_mean = [0.003219, 0.00293, 0.002835, 0.002478, 0.002341, 0.002264, 0.002315, 0.002305, 0.002153, 0.00213, 0.002178, 0.002196];
+MHD_RHS2vxB_mean = [0.3345, 0.26208, 0.24747, 0.20678, 0.17564, 0.17713, 0.16546, 0.16241, 0.14558, 0.13832, 0.1329, 0.13145];
+
+SGS_tau_nE_mean2vxB_mean = [0.012367, 0.007346, 0.004852, 0.004505, 0.003585, 0.003496, 0.002993, 0.003308, 0.002495, 0.002418, 0.002545, 0.002517];
+SGS_tau_vxB_mean2vxB_mean = [0.011867, 0.006906, 0.005537, 0.004725, 0.003326, 0.003164, 0.002738, 0.002623, 0.002333, 0.002252, 0.002184, 0.002151];
+SGS_tau_JxB_mean2vxB_mean = [0.009616, 0.00831, 0.008961, 0.008671, 0.008745, 0.007735, 0.006988, 0.006178, 0.006097, 0.006134, 0.006064, 0.005945];
+SGS_tau_Div_mean2vxB_mean = [0.000177, 0.000159, 0.000161, 0.000171, 0.000183, 0.000188, 0.000209, 0.00022, 0.000215, 0.000212, 0.000213, 0.000213];
+SGS_tau_total_mean2vxB_mean = [0.016358, 0.011651, 0.011605, 0.010349, 0.010112, 0.009038, 0.008281, 0.007358, 0.006919, 0.006938, 0.006961, 0.006953];
+%--------------------------------------------------------------------------
+
+noma_array = MHD_E2vxB_mean;
+subplot(3,1,2)
+%plot(time_in,MHD_E2vxB_mean./noma_array,color=My_colors(1,:),LineWidth=2)
+%hold on
+plot(time_in,MHD_vxB2vxB_mean./noma_array,'-',color=My_colors(2,:),LineWidth=2)
+hold on
+plot(time_in,MHD_JxB2vxB_mean./noma_array,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean./noma_array,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean./noma_array,'-',color=My_colors(5,:),LineWidth=2)
+%plot(time_in,MHD_RHS2vxB_mean./noma_array,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean./noma_array,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
+xlim([2,14])
+ylim([0,1.2])
+%ylim([10^(-4),10])
+ylabel('$\beta_{i} = 1.0$','FontSize',fs,Interpreter='latex')
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+xline(11.250000,'--')
+hold off
+
+% rms =1, abs 0 for beta 4
+%--------------------------------------------------------------------------
+time_in = [0.0, 1.6, 3.2, 4.8, 6.4, 8.0, 9.2, 10.4, 11.6, 12.8];
+
+MHD_E2vxB_mean = [0, 0.27317, 0.18097, 0.16381, 0.14251, 0.11509, 0.12575, 0.12596, 0.11498, 0.10854];
+MHD_vxB2vxB_mean = [0, 0.19174, 0.11496, 0.081104, 0.0672, 0.059946, 0.052949, 0.050729, 0.04943, 0.054086];
+MHD_JxB2vxB_mean = [0, 0.18865, 0.1518, 0.13781, 0.13507, 0.11638, 0.1159, 0.11244, 0.10525, 0.10332];
+MHD_divP2vxB_mean = [0, 0.004313, 0.003337, 0.002774, 0.002248, 0.002403, 0.002134, 0.00205, 0.002158, 0.002079];
+MHD_divvJall2vxB_mean = [0, 0.002744, 0.002275, 0.002239, 0.002279, 0.002211, 0.002319, 0.002387, 0.002467, 0.002556];
+MHD_RHS2vxB_mean = [0, 0.27487, 0.18197, 0.16448, 0.14286, 0.11559, 0.12595, 0.12599, 0.11508, 0.1088];
+
+SGS_tau_nE_mean2vxB_mean = [0, 0.004282, 0.002627, 0.001988, 0.001509, 0.00142, 0.001391, 0.00139, 0.001553, 0.001493];
+SGS_tau_vxB_mean2vxB_mean = [0, 0.007112, 0.003308, 0.002184, 0.001983, 0.00165, 0.001435, 0.001396, 0.001271, 0.001284];
+SGS_tau_JxB_mean2vxB_mean = [0, 0.011574, 0.009533, 0.009626, 0.010101, 0.009736, 0.00969, 0.009527, 0.009163, 0.00861];
+SGS_tau_Div_mean2vxB_mean = [0, 0.00013, 0.000124, 0.000143, 0.000168, 0.0002, 0.00023, 0.000256, 0.000279, 0.000309];
+SGS_tau_total_mean2vxB_mean = [0, 0.015344, 0.011266, 0.010674, 0.010744, 0.010168, 0.010171, 0.010075, 0.009839, 0.00926];
+%--------------------------------------------------------------------------
+noma_array = MHD_E2vxB_mean;
+
+subplot(3,1,3)
+%plot(time_in,MHD_E2vxB_mean./noma_array,color=My_colors(1,:),LineWidth=2)
+%hold on
+plot(time_in,MHD_vxB2vxB_mean./noma_array,'-',color=My_colors(2,:),LineWidth=2)
+hold on
+plot(time_in,MHD_JxB2vxB_mean./noma_array,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean./noma_array,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean./noma_array,'-',color=My_colors(5,:),LineWidth=2)
+%plot(time_in,MHD_RHS2vxB_mean./noma_array,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean./noma_array,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
+xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
+xlim([2,14])
+ylim([0,1.2])
+%ylim([10^(-4),10])
+ylabel('$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex')
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+xline(12.800000,'--')
+hold off
+%saveas(f30,strcat(num2str(i),'relatives_terms_time_rms_log_025-1-4.png'));
+
+
+
+resx = 0.0736;
+
+% This is changing the window size for each beta
+%--------------------------------------------------------------------------
+time_in = [2*sqrt(12)*resx, 4*sqrt(12)*resx, 8*sqrt(12)*resx, 12*sqrt(12)*resx, 16*sqrt(12)*resx]; % <--- this has to be in terms of the other window
+%--------------------------------------------------------------------------
+
+% rms =1, abs 0 for beta 0.25
+%--------------------------------------------------------------------------
+MHD_E2vxB_mean = [0.18262, 0.1634, 0.13818, 0.11821, 0.10019];
+MHD_vxB2vxB_mean = [0.11517, 0.11202, 0.10218 , 0.090279, 0.078273 ];
+MHD_JxB2vxB_mean = [0.15066, 0.11498 ,0.084468, 0.067415, 0.054213 ];
+MHD_divP2vxB_mean = [0.0088609 ,0.0064151, 0.0039948, 0.0029003, 0.0022427 ];
+MHD_divvJall2vxB_mean = [0.025127 , 0.0078433, 0.0021301, 0.001019, 0.00063848  ];
+MHD_RHS2vxB_mean = [0.18142, 0.16298, 0.13832, 0.11851, 0.10045  ];
+
+SGS_tau_nE_mean2vxB_mean = [0.001406, 0.0019554, 0.0024181, 0.0027184, 0.002871  ];
+SGS_tau_vxB_mean2vxB_mean = [0.00033854, 0.00095389, 0.0022521, 0.0032609, 0.0038674  ];
+SGS_tau_JxB_mean2vxB_mean = [0.0037772, 0.0052135, 0.0061338, 0.0060597,0.0055432  ];
+SGS_tau_Div_mean2vxB_mean = [0.0007615, 0.0004374, 0.00021234,  0.00013728, 9.9212e-05 ];
+SGS_tau_total_mean2vxB_mean = [0.004616, 0.0059606, 0.0069381, 0.0071977, 0.0070333 ];
+%--------------------------------------------------------------------------
+
+noma_array = MHD_E2vxB_mean;
+fs=25; x0=45;y0=54;xx1=400;yy1=800;
+f321 = figure(321);
+set(gcf,'position',[x0,y0,xx1,yy1])
+subplot(3,1,1)
+%plot(time_in,MHD_E2vxB_mean./noma_array,color=My_colors(1,:),LineWidth=2)
+%hold on
+plot(time_in,MHD_vxB2vxB_mean./noma_array,'-',color=My_colors(2,:),LineWidth=2)
+hold on
+plot(time_in,MHD_JxB2vxB_mean./noma_array,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean./noma_array,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean./noma_array,'-',color=My_colors(5,:),LineWidth=2)
+%plot(time_in,MHD_RHS2vxB_mean./noma_array,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean./noma_array,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$\Delta_{c}/d_{i}$','FontSize',fs,Interpreter='latex')
+xlim([0.5,4])
+ylim([0,1.2])
+ylabel('$\beta_{i} = 0.25$','FontSize',fs,Interpreter='latex')
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+%ylim([10^(-4),10])
+hold off
+
+% rms =1, abs 0 for beta 1
+%--------------------------------------------------------------------------
+MHD_E2vxB_mean = [0.18886, 0.17037, 0.14544, 0.12499, 0.10628 ];
+MHD_vxB2vxB_mean = [0.12461, 0.12149, 0.11148, 0.098961, 0.086025];
+MHD_JxB2vxB_mean = [ 0.14805, 0.11217, 0.081062, 0.063855, 0.050969 ];
+MHD_divP2vxB_mean = [0.0089529, 0.0065718, 0.0042063, 0.0031171, 0.002434];
+MHD_divvJall2vxB_mean = [0.024944, 0.0078239, 0.0021529, 0.0010611, 0.00067247];
+MHD_RHS2vxB_mean = [0.1877, 0.16997, 0.14558, 0.12532, 0.10666];
+
+SGS_tau_nE_mean2vxB_mean = [0.001414, 0.0019754, 0.0024949, 0.0028826, 0.0031012  ];
+SGS_tau_vxB_mean2vxB_mean = [0.00035096, 0.00098654, 0.0023328, 0.003356, 0.0039465];
+SGS_tau_JxB_mean2vxB_mean = [0.0038678, 0.0053104, 0.0060972, 0.0059165, 0.0053482 ];
+SGS_tau_Div_mean2vxB_mean = [0.00078366 ,0.00044887, 0.00021523, 0.00013789, 9.9662e-05 ];
+SGS_tau_total_mean2vxB_mean = [0.004717, 0.006087, 0.0069191, 0.0070692,0.0068572];
+%--------------------------------------------------------------------------
+
+noma_array = MHD_E2vxB_mean;
+subplot(3,1,2)
+%plot(time_in,MHD_E2vxB_mean./noma_array,color=My_colors(1,:),LineWidth=2)
+%hold on
+plot(time_in,MHD_vxB2vxB_mean./noma_array,'-',color=My_colors(2,:),LineWidth=2)
+hold on
+plot(time_in,MHD_JxB2vxB_mean./noma_array,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean./noma_array,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean./noma_array,'-',color=My_colors(5,:),LineWidth=2)
+%plot(time_in,MHD_RHS2vxB_mean./noma_array,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean./noma_array,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$\Delta_{c}/d_{i}$','FontSize',fs,Interpreter='latex')
+xlim([0.5,4])
+ylim([0,1.2])
+ylabel('$\beta_{i} = 1.0$','FontSize',fs,Interpreter='latex')
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+hold off
+
+% rms =1, abs 0 for beta 4
+%--------------------------------------------------------------------------
+MHD_E2vxB_mean = [0.17886, 0.14652, 0.10854, 0.085508, 0.068648];
+MHD_vxB2vxB_mean = [0.06056, 0.059045, 0.054086, 0.047743, 0.041079 ];
+MHD_JxB2vxB_mean = [0.19244, 0.14659, 0.10332, 0.079412, 0.062623];
+MHD_divP2vxB_mean = [0.0039153, 0.0030643, 0.0020789, 0.0015336, 0.0011732];
+MHD_divvJall2vxB_mean = [0.031497, 0.010232, 0.0025561, 0.001089, 0.00060246];
+MHD_RHS2vxB_mean = [0.1769, 0.14595,  0.1088, 0.085868, 0.069041];
+
+SGS_tau_nE_mean2vxB_mean = [0.00082658, 0.0012178, 0.0014927, 0.001561, 0.0015052 ];
+SGS_tau_vxB_mean2vxB_mean = [0.00017862, 0.00051817, 0.0012838, 0.0019084, 0.0023062];
+SGS_tau_JxB_mean2vxB_mean = [0.0054167, 0.0073691, 0.0086097, 0.0083511, 0.0073452 ];
+SGS_tau_Div_mean2vxB_mean = [0.0010449, 0.00062147, 0.00030931, 0.00019355, 0.00013332 ];
+SGS_tau_total_mean2vxB_mean = [0.0060754, 0.0079661, 0.0092597, 0.0091634, 0.0082449];
+%--------------------------------------------------------------------------
+
+noma_array = MHD_E2vxB_mean;
+%--------------------------------------------------------------------------
+subplot(3,1,3)
+%plot(time_in,MHD_E2vxB_mean./noma_array,color=My_colors(1,:),LineWidth=2)
+%hold on
+plot(time_in,MHD_vxB2vxB_mean./noma_array,'-',color=My_colors(2,:),LineWidth=2)
+hold on
+plot(time_in,MHD_JxB2vxB_mean./noma_array,'-',color=My_colors(3,:),LineWidth=2)
+plot(time_in,MHD_divP2vxB_mean./noma_array,'-',color=My_colors(4,:),LineWidth=2)
+plot(time_in,MHD_divvJall2vxB_mean./noma_array,'-',color=My_colors(5,:),LineWidth=2)
+%plot(time_in,MHD_RHS2vxB_mean./noma_array,'-',color=My_colors(6,:),LineWidth=2)
+plot(time_in,10*SGS_tau_nE_mean2vxB_mean./noma_array,'--',color=My_colors(1,:),LineWidth=2)
+plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)',LineWidth=2)
+plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
+plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
+plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+xlabel('$\Delta_{c}/d_{i}$','FontSize',fs,Interpreter='latex')
+xlim([0.5,4])
+ylim([0,1.2])
+ylabel('$\beta_{i} = 4.0$','FontSize',fs,Interpreter='latex')
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+%legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+hold off
+
+
+
+
+
+
+resx = 0.0736;
+
+% This is changing the window size for each beta
+%--------------------------------------------------------------------------
+time_in = [2*sqrt(12)*resx, 4*sqrt(12)*resx, 8*sqrt(12)*resx, 12*sqrt(12)*resx, 16*sqrt(12)*resx]; % <--- this has to be in terms of the other window
+%--------------------------------------------------------------------------
+
+% rms =1, abs 0 for beta 0.25
+%--------------------------------------------------------------------------
+MHD_E2vxB_mean_beta025 = [0.18262, 0.1634, 0.13818, 0.11821, 0.10019];
+MHD_vxB2vxB_mean_beta025 = [0.11517, 0.11202, 0.10218 , 0.090279, 0.078273 ];
+SGS_tau_total_mean2vxB_mean_beta025 = [0.004616, 0.0059606, 0.0069381, 0.0071977, 0.0070333 ];
+% rms =1, abs 0 for beta 1
+%--------------------------------------------------------------------------
+MHD_E2vxB_mean_beta1 = [0.18886, 0.17037, 0.14544, 0.12499, 0.10628 ];
+MHD_vxB2vxB_mean_beta1 = [0.12461, 0.12149, 0.11148, 0.098961, 0.086025];
+SGS_tau_total_mean2vxB_mean_beta1 = [0.004717, 0.006087, 0.0069191, 0.0070692,0.0068572];
+%--------------------------------------------------------------------------
+% rms =1, abs 0 for beta 4
+%--------------------------------------------------------------------------
+MHD_E2vxB_mean_beta4 = [0.17886, 0.14652, 0.10854, 0.085508, 0.068648];
+MHD_vxB2vxB_mean_beta4 = [0.06056, 0.059045, 0.054086, 0.047743, 0.041079 ];
+SGS_tau_total_mean2vxB_mean_beta4 = [0.0060754, 0.0079661, 0.0092597, 0.0091634, 0.0082449];
+%--------------------------------------------------------------------------
+
+fs=25; x0=45;y0=54;xx1=400;yy1=800*2/3;
+f322 = figure(322);
+set(gcf,'position',[x0,y0,xx1,yy1])
+subplot(2,1,1)
+%--------------------------------------------------------------------------
+noma_array = MHD_vxB2vxB_mean_beta025;
+plot(time_in,MHD_E2vxB_mean_beta025./noma_array,'r',LineWidth=2)
+hold on
+noma_array = MHD_vxB2vxB_mean_beta1;
+plot(time_in,MHD_E2vxB_mean_beta1./noma_array,'b',LineWidth=2)
+noma_array = MHD_vxB2vxB_mean_beta4;
+plot(time_in,MHD_E2vxB_mean_beta4./noma_array,'k',LineWidth=2)
+%--------------------------------------------------------------------------
+xlabel('$\Delta_{c}/d_{i}$','FontSize',fs,Interpreter='latex')
+xlim([0.5,4])
+%ylim([0,1.2])
+title('$\langle \overline{\mathbf{E}} \rangle_{rms}/\langle \overline{\mathbf{E}}_{MHD} \rangle_{rms} $','FontSize',fs,Interpreter='latex')
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+legend('$\beta_{i} = 0.25$','$\beta_{i} = 1$','$\beta_{i} = 4$','FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+%ylim([10^(-4),10])
+hold off
+
+subplot(2,1,2)
+%--------------------------------------------------------------------------
+noma_array = MHD_E2vxB_mean_beta025;
+plot(time_in,SGS_tau_total_mean2vxB_mean_beta025./noma_array,'r',LineWidth=2)
+hold on
+noma_array = MHD_E2vxB_mean_beta1;
+plot(time_in,SGS_tau_total_mean2vxB_mean_beta1./noma_array,'b',LineWidth=2)
+noma_array = MHD_E2vxB_mean_beta4;
+plot(time_in,SGS_tau_total_mean2vxB_mean_beta4./noma_array,'k',LineWidth=2)
+%--------------------------------------------------------------------------
+xlabel('$\Delta_{c}/d_{i}$','FontSize',fs,Interpreter='latex')
+xlim([0.5,4])
+%ylim([0,1.2])
+title('$\langle \Sigma \tau \rangle_{rms}/\langle \overline{\mathbf{E}} \rangle_{rms} $','FontSize',fs,Interpreter='latex')
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs;
+%legend('$\beta_{i} = 0.25$','$\beta_{i} = 1$','$\beta_{i} = 4$','FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+%ylim([10^(-4),10])
+hold off

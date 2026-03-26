@@ -28,7 +28,7 @@ Ti02Te0 =2.5;
 %Ti02Te0 = 40.0;
 
 pressure_on = 0;
-l_wind = 8;
+l_wind = 4;
 rms_value = 1;
 absolute = 1;
 
@@ -36,7 +36,7 @@ absolute = 1;
 
 % How many to randomly sample
 AN = 256*256*32;
-filename_beta_comp = "beta4_scatter_KJHBWOgradndivPi_AN32.mat";
+filename_beta_comp = "beta025_scatter_KJHBWOgradndivPi_AN32.mat";
 
 f_path = [dir, '/'];
 fprintf('FILE PATH = %s\n', f_path);
@@ -571,6 +571,8 @@ L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
 [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y); [~, Ez_dt_xx, ~] = gradient(Ez_dt_x); [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
 L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
 
+%Correction (electron inertia) (I should not substract this )
+%----------------------------------------------------------------------
 %Ex_dt = Ex_dt - L2Ex_dt;
 %Ey_dt = Ey_dt - L2Ey_dt;
 %Ez_dt = Ez_dt - L2Ez_dt;
