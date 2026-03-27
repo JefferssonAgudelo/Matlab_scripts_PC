@@ -185,6 +185,7 @@ fs=25; x0=45;y0=54;xx1=900;yy1=500;
 
 
 
+     fs=25;
 
     f3=figure(3)
     subplot(1,3,1)
@@ -193,7 +194,7 @@ fs=25; x0=45;y0=54;xx1=900;yy1=500;
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     xline(3,'--k',LineWidth=1.2)
     ax.XLabel.String = '$k\rho_i$';
-    ax.YLabel.String = '$k^{5/3} P1D_{x}$';
+    ax.YLabel.String = '$P^{1D}$';
     title('$\Sigma \tau_{x} / \max(\Sigma \tau_{x})$','Interpreter','latex',FontSize=fs)
     subplot(1,3,2)
     loglog(x,y,'-.',color=My_colors(1,:),LineWidth=1.5)

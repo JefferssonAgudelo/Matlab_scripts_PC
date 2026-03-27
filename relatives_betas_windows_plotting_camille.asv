@@ -492,6 +492,7 @@ J_max_4 = [0, 1.18, 1.186, 1.6334, 1.9605, 2.1025, 1.9692, 1.9356, 2.0524, 2.265
 
 
 f212 = figure(212);
+%set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(2,1,1)
 plot(J_rms_025,color=My_colors(1,:),LineWidth=2)
 hold on
@@ -499,6 +500,7 @@ plot(J_rms_1,'-',color=My_colors(2,:),LineWidth=2)
 plot(J_rms_4,'-',color=My_colors(3,:),LineWidth=2)
 legend('025','1','4')
 title('J RMS')
+xlim([2,14])
 hold off
 subplot(2,1,2)
 plot(J_max_025,color=My_colors(1,:),LineWidth=2)
@@ -506,6 +508,7 @@ hold on
 plot(J_max_1,'-',color=My_colors(2,:),LineWidth=2)
 plot(J_max_4,'-',color=My_colors(3,:),LineWidth=2)
 legend('025','1','4')
+xlim([2,14])
 title('J max')
 hold off
 % This part is updating the values, no electric or pressure correction,
@@ -536,7 +539,7 @@ noma_array = MHD_E2vxB_mean;
 
 fs=25; x0=45;y0=54;xx1=400;yy1=800;
 f21 = figure(21);
-set(gcf,'position',[x0,y0,xx1,yy1])
+%set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(3,1,1)
 %plot(time_in,MHD_E2vxB_mean./noma_array,color=My_colors(1,:),LineWidth=2)
 plot(time_in,MHD_vxB2vxB_mean./noma_array,'-',color=My_colors(2,:),LineWidth=2)
@@ -550,6 +553,7 @@ plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)'
 plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
 plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
 plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
+plot(time_in,J_rms_025./max(J_rms_025),'-r',LineWidth=2)
 %legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
 ylabel('$\beta_{i} = 0.25$','FontSize',fs,Interpreter='latex')
@@ -815,7 +819,7 @@ MHD_vxB2vxB_mean_beta4 = [0.06056, 0.059045, 0.054086, 0.047743, 0.041079 ];
 SGS_tau_total_mean2vxB_mean_beta4 = [0.0060754, 0.0079661, 0.0092597, 0.0091634, 0.0082449];
 %--------------------------------------------------------------------------
 
-fs=25; x0=45;y0=54;xx1=400;yy1=800;
+fs=25; x0=45;y0=54;xx1=400;yy1=800*2/3;
 f322 = figure(322);
 set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(2,1,1)
@@ -831,7 +835,7 @@ plot(time_in,MHD_E2vxB_mean_beta4./noma_array,'k',LineWidth=2)
 xlabel('$\Delta_{c}/d_{i}$','FontSize',fs,Interpreter='latex')
 xlim([0.5,4])
 %ylim([0,1.2])
-ylabel('$\langle \overline{\mathbf{E}} \rangle_{rms}/\langle \overline{\mathbf{E}}_{MHD} \rangle_{rms} $','FontSize',fs,Interpreter='latex')
+title('$\langle \overline{\mathbf{E}} \rangle_{rms}/\langle \overline{\mathbf{E}}_{MHD} \rangle_{rms} $','FontSize',fs,Interpreter='latex')
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
 ax.FontSize=fs;
 legend('$\beta_{i} = 0.25$','$\beta_{i} = 1$','$\beta_{i} = 4$','FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
@@ -840,20 +844,20 @@ hold off
 
 subplot(2,1,2)
 %--------------------------------------------------------------------------
-noma_array = MHD_vxB2vxB_mean_beta025;
-plot(time_in,MHD_E2vxB_mean_beta025./noma_array,'r',LineWidth=2)
+noma_array = MHD_E2vxB_mean_beta025;
+plot(time_in,SGS_tau_total_mean2vxB_mean_beta025./noma_array,'r',LineWidth=2)
 hold on
-noma_array = MHD_vxB2vxB_mean_beta1;
-plot(time_in,MHD_E2vxB_mean_beta1./noma_array,'b',LineWidth=2)
-noma_array = MHD_vxB2vxB_mean_beta4;
-plot(time_in,MHD_E2vxB_mean_beta4./noma_array,'k',LineWidth=2)
+noma_array = MHD_E2vxB_mean_beta1;
+plot(time_in,SGS_tau_total_mean2vxB_mean_beta1./noma_array,'b',LineWidth=2)
+noma_array = MHD_E2vxB_mean_beta4;
+plot(time_in,SGS_tau_total_mean2vxB_mean_beta4./noma_array,'k',LineWidth=2)
 %--------------------------------------------------------------------------
 xlabel('$\Delta_{c}/d_{i}$','FontSize',fs,Interpreter='latex')
 xlim([0.5,4])
 %ylim([0,1.2])
-ylabel('$\langle \overline{\mathbf{E}} \rangle_{rms}/\langle \overline{\mathbf{E}}_{MHD} \rangle_{rms} $','FontSize',fs,Interpreter='latex')
+title('$\langle \Sigma \tau \rangle_{rms}/\langle \overline{\mathbf{E}} \rangle_{rms} $','FontSize',fs,Interpreter='latex')
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
 ax.FontSize=fs;
-legend('$\beta_{i} = 0.25$','$\beta_{i} = 1$','$\beta_{i} = 4$','FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+%legend('$\beta_{i} = 0.25$','$\beta_{i} = 1$','$\beta_{i} = 4$','FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
 %ylim([10^(-4),10])
 hold off

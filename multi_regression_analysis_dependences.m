@@ -1,5 +1,5 @@
 
-cd('~/Downloads/New_images_may')
+cd('/JAAR-DATA/DATA_HVM/betai=4')
 %load("beta025_scatter_KJHBWO_time4.mat")
 %load("beta1_scatter_KJHBWO_time6.mat")
 %load("beta4_scatter_KJHBWO.mat")
@@ -15,13 +15,21 @@ cd('~/Downloads/New_images_may')
 
 %load("beta025_scatter_KJHBWOgradndivPi_time4_AN32.mat")
 %load("beta1_scatter_KJHBWOgradndivPi_time6_AN32.mat")
-load("beta4_scatter_KJHBWOgradndivPi_AN32.mat")
+%load("beta4_scatter_KJHBWOgradndivPi_AN32.mat")
 
 %load("beta1_scatter_KJHBWOgradndivPi_time6_AN2.mat")
 %load("beta1_scatter_KJHBWOgradndivPi_time6_AN4.mat")
 %load("beta1_scatter_KJHBWOgradndivPi_time6_AN8.mat")
 %load("beta1_scatter_KJHBWOgradndivPi_time6_AN16.mat")
 
+%  '/JAAR-DATA/DATA_HVM/betai=4'
+load("beta025_scatter_KJHBWOgradndivPi_time4_AN32_028.mat")
+%load("beta1_scatter_KJHBWOgradndivPi_time6_AN32.mat")
+%load("beta4_scatter_KJHBWOgradndivPi_AN32.mat")
+
+
+% This is the part tha I will use to make the analysis fitting to total
+% tau, tau MHD, tau hall
 
 Yx = var_tau_total_x';
 Yy = var_tau_total_y';

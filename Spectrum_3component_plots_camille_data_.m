@@ -400,13 +400,14 @@ if(rho_terms == 0)
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     %ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$Ratio \ P^{1D}$';
+    %ax.YLabel.String = '$P^{1D}_{\tau_{\nu}}/P^{1D}_{\overline{\mathbf{E}}_{\nu})}$';
+    title('$P^{1D}_{\tau_{\nu}}/P^{1D}_{\overline{\mathbf{E}}_{\nu}}$','Interpreter','latex',FontSize=fs);    
     %xlim([10^(0),1.1*10^(1)])
     %xlim([min(sqrt(beta_i)*k_bins),threshold])
     xline(10,'--')
     xline(1,'--')
     yline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     ax.XTick = [];
     ax.YTick = [10^-4, 10^1];
@@ -417,7 +418,7 @@ if(rho_terms == 0)
         '$\tau_{Ine} / \overline{\mathbf{E}}_{Ine}$',...
         '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
         'Interpreter','latex','NumColumns',4,'Location','southeastoutside')
-    title('$\Delta_{l} = 0.59 d_{i}$','Interpreter','latex')
+    %title('$\Delta_{c} = 0.96 d_{i}$','Interpreter','latex')
     hold off
 
     subplot(2,1,2)
@@ -434,7 +435,8 @@ if(rho_terms == 0)
     ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
     ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
     ax.XLabel.String = '$kd_i$';
-    ax.YLabel.String = '$\Delta \phi^{\circ}$';
+    %ax.YLabel.String = '$\Delta \phi^{\circ}$';
+    title('$\Delta \phi^{\circ} (\tau_{\nu},\overline{\mathbf{E}}_{\nu})$','Interpreter','latex',FontSize=fs);
     %xlim([10^(0),1.1*10^(1)])
     %xlim([min(sqrt(beta_i)*k_bins),threshold])
     %ylim([10^(0),10^(14)])
@@ -443,11 +445,11 @@ if(rho_terms == 0)
     ax.YTick = [0, 90, 180];
     %yline(135,'--')
     yline(90,'--')
-    ylim([0,100])
+    ylim([30,110])
 
     xline(10,'--')
     xline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     %ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];

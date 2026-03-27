@@ -22,7 +22,7 @@ beta_i = 0.25; Ti02Te0 = 2.5;
 %beta_i = 4; Ti02Te0 = 40;
 
 pressure_on = 0; % This is ion pressure correction (dosen't actually add mutch)
-l_wind = 8;
+l_wind = 4;
 rms_value = 1;
 absolute = 1;
 
@@ -1162,7 +1162,7 @@ tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 % correct labels and colours
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
-%{
+%
 My_colors = [ 204, 121, 167; 
 0, 114, 178; 
 128, 128, 128
@@ -1302,7 +1302,7 @@ hold off
 % lets Compute the Curl %<----------------- to compute the curl and make
 % the plots
 %--------------------------------------------------------------------------
-%{
+%
 [tau_nE_tau_x_y, tau_nE_tau_x_x, tau_nE_tau_x_z] = gradient(tau_nE_tau_x);
 [tau_nE_tau_y_y, tau_nE_tau_y_x, tau_nE_tau_y_z] = gradient(tau_nE_tau_y);
 [tau_nE_tau_z_y, tau_nE_tau_z_x, tau_nE_tau_z_z] = gradient(tau_nE_tau_z);
@@ -1481,7 +1481,7 @@ TT = [Q1_nE, Q2_nE, Q3_nE, Q4_nE;...
 %}
 %--------------------------------------------------------------------------
 
-%threshold =pi/resx;
+threshold =pi/resx;
 
 % It is still important to look at the phase.
 % maybe repeat the same with the model taus?
@@ -1493,7 +1493,7 @@ TT = [Q1_nE, Q2_nE, Q3_nE, Q4_nE;...
 
 % This is the phasedifferences of the components
 %--------------------------------------------------------------------------
-%{
+%
 [phase_diff_B_curl_tau_nE_x,~] = Phase_difference(Bx_filt,-curl_tau_nE_tau_x,Lx,threshold);
 [phase_diff_B_curl_tau_nE_y,~] = Phase_difference(By_filt,-curl_tau_nE_tau_y,Lx,threshold);
 [phase_diff_B_curl_tau_nE_z,~] = Phase_difference(Bz_filt,-curl_tau_nE_tau_z,Lx,threshold);
@@ -1639,7 +1639,7 @@ hold off
 % Tis is the phase difference with the curl to see how the anomalous terms
 % contribute to the generation of magnetic field
 %--------------------------------------------------------------------------
-%{ 
+% 
 %<---- this is where the latest phase analysis is 25/03/2026
 
 [phase_diff_B_curl_tau_nE,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
@@ -1700,14 +1700,20 @@ set(gca,'FontSize',fs)
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
 ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$kd_i$';
-ax.YLabel.String = '$\Delta \phi^{\circ} (\mathbf{E},\tau)$';
+%ax.YLabel.String = '$\Delta \phi^{\circ} (\mathbf{E},\tau)$';
+title('$\Delta \phi^{\circ} (\overline{\mathbf{E}},\tau_{\nu})$','Interpreter','latex',FontSize=fs);
 ax.XTick = [10^0, 10^1];
 ax.YTick = [70, 90, 110];
-xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
-ylim([70,110])
+xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
+
+    yline(90,'--')
+    ylim([70,110])
+
+    xline(10,'--')
+    xline(1,'--')
 xlim([0.3,threshold/2])
 %title('$\tau_{nE}$', 'Interpreter','latex')
-legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$','$ \tau_{Ine}$','$ \Sigma \tau$', ...
+legend('$-\tau_{nE}$','-$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$','$ \tau_{Ine}$','$ \Sigma \tau$', ...
     'Interpreter','latex','NumColumns',5,'Location','southoutside')
 hold off
 %-------------------------
@@ -1729,14 +1735,19 @@ set(gca,'FontSize',fs)
 ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
 ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$kd_i$';
-ax.YLabel.String = '$\Delta \phi^{\circ} (\mathbf{B},-\nabla \times \tau)$';
+%ax.YLabel.String = '$\Delta \phi^{\circ} (\mathbf{B},-\nabla \times \tau)$';
+title('$\Delta \phi^{\circ} (\overline{\mathbf{B}},-\nabla \times \tau_{\nu})$','Interpreter','latex',FontSize=fs);
 ax.XTick = [10^0, 10^1];
 ax.YTick = [70, 90, 110];
-xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
-ylim([70,110])
+xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
+    yline(90,'--')
+    ylim([70,110])
+
+    xline(10,'--')
+    xline(1,'--')
 xlim([0.3,threshold/2])
 %title('$\tau_{nE}$', 'Interpreter','latex')
-legend('$\tau_{nE}$','$\tau_{nu_{i} \times B}$','$\tau_{J \times B}$','$ \tau_{Ine}$','$ \Sigma \tau$', ...
+legend('$-\tau_{nE}$','$-\tau_{nu_{i} \times B}$','$\tau_{J \times B}$','$ \tau_{Ine}$','$ \Sigma \tau$', ...
     'Interpreter','latex','NumColumns',5,'Location','southoutside')
 hold off
 %}
@@ -1746,8 +1757,9 @@ hold off
 
 
 
+
 %--------------------------------------------------------------------------
-%stoopp
+stoopp
 %--------------------------------------------------------------------------
 
 % Now this is to compute the total amplitude
@@ -2266,7 +2278,7 @@ spec_phi1 = zeros(kmax,1);
 
 % Define the bins for the radial wavenumber
 dk = 2 * pi / Lx; % Bin width in k-space
-k_max = threshold;%max(K(:)); % Maximum wavenumber
+k_max = threshold; %max(K(:)); % Maximum wavenumber
 k_bins = 0:dk:k_max; % Radial wavenumber bins
 % Initialize the omnidirectional spectrum
 

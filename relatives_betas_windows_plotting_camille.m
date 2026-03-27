@@ -492,6 +492,7 @@ J_max_4 = [0, 1.18, 1.186, 1.6334, 1.9605, 2.1025, 1.9692, 1.9356, 2.0524, 2.265
 
 
 f212 = figure(212);
+%set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(2,1,1)
 plot(J_rms_025,color=My_colors(1,:),LineWidth=2)
 hold on
@@ -499,6 +500,7 @@ plot(J_rms_1,'-',color=My_colors(2,:),LineWidth=2)
 plot(J_rms_4,'-',color=My_colors(3,:),LineWidth=2)
 legend('025','1','4')
 title('J RMS')
+xlim([2,14])
 hold off
 subplot(2,1,2)
 plot(J_max_025,color=My_colors(1,:),LineWidth=2)
@@ -506,6 +508,7 @@ hold on
 plot(J_max_1,'-',color=My_colors(2,:),LineWidth=2)
 plot(J_max_4,'-',color=My_colors(3,:),LineWidth=2)
 legend('025','1','4')
+xlim([2,14])
 title('J max')
 hold off
 % This part is updating the values, no electric or pressure correction,
@@ -550,6 +553,7 @@ plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)'
 plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
 plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
 plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
+plot(time_in,J_rms_025./max(J_rms_025),'-r',LineWidth=2)
 %legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
 ylabel('$\beta_{i} = 0.25$','FontSize',fs,Interpreter='latex')
@@ -595,6 +599,7 @@ plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),
 plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
 plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
 %legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+plot(time_in,J_rms_1./max(J_rms_1),'-r',LineWidth=2)
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
 xlim([2,14])
 ylim([0,1.2])
@@ -638,6 +643,7 @@ plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)'
 plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
 plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
 plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
+plot(time_in,J_rms_4./max(J_rms_4),'-r',LineWidth=2)
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
 xlim([2,14])
 ylim([0,1.2])

@@ -3,29 +3,29 @@
 
 %dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/02';
 
-%dir = '/JAAR-DATA/DATA_HVM/betai=4';
-dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
+dir = '/JAAR-DATA/DATA_HVM/betai=4';
+%dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
 %dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
 
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;
-outformat = 1;
+outformat = 0;
 
-ns = 5;
-tt = 5;
-beta_i = 0.25;
-Ti02Te0 =2.5;
+%ns = 5;
+%tt = 4;
+%beta_i = 0.25;
+%Ti02Te0 =2.5;
 
 %ns = 6;
-%tt = 6;
+%tt = 3;
 %beta_i = 1.0;
 %Ti02Te0 = 10.0;
 
-%ns = 10;
-%tt = 10;
-%beta_i = 4.0;
-%Ti02Te0 = 40.0;
+ns = 10;
+tt = 10;
+beta_i = 4.0;
+Ti02Te0 = 40.0;
 
 pressure_on = 0;
 l_wind = 4;
@@ -36,7 +36,7 @@ absolute = 1;
 
 % How many to randomly sample
 AN = 256*256*32;
-filename_beta_comp = "beta025_scatter_KJHBWOgradndivPi_AN32.mat";
+filename_beta_comp = "beta4_scatter_KJHBWOgradndivPe_AN32_028.mat";
 
 f_path = [dir, '/'];
 fprintf('FILE PATH = %s\n', f_path);
@@ -619,11 +619,11 @@ end
 % This is the correction of the div Pe
 %----------------------------------------------------------------------
 %if (component == 1)
-        Div_Pe_dt_x = (mre/me)*Div_Pe_dt_x - (mre/mi)*Div_Pi_dt_x ;
+        %Div_Pe_dt_x = (mre/me)*Div_Pe_dt_x - (mre/mi)*Div_Pi_dt_x ;
 %    elseif (component == 2)
-        Div_Pe_dt_y = (mre/me)*Div_Pe_dt_y - (mre/mi)*Div_Pi_dt_y ;
+        %Div_Pe_dt_y = (mre/me)*Div_Pe_dt_y - (mre/mi)*Div_Pi_dt_y ;
 %    elseif (component == 3)
-        Div_Pe_dt_z = (mre/me)*Div_Pe_dt_z - (mre/mi)*Div_Pi_dt_z ;
+        %Div_Pe_dt_z = (mre/me)*Div_Pe_dt_z - (mre/mi)*Div_Pi_dt_z ;
 %end
 %----------------------------------------------------------------------
 
@@ -882,11 +882,11 @@ end
 % This is the correction of the div Pe
 %----------------------------------------------------------------------
 %if (component == 1)
-        Div_Pe_filt_x = (mre/me)*Div_Pe_filt_x - (mre/mi)*Div_Pi_filt_x ;
+        %Div_Pe_filt_x = (mre/me)*Div_Pe_filt_x - (mre/mi)*Div_Pi_filt_x ;
 %    elseif (component == 2)
-        Div_Pe_filt_y = (mre/me)*Div_Pe_filt_y - (mre/mi)*Div_Pi_filt_y ;
+        %Div_Pe_filt_y = (mre/me)*Div_Pe_filt_y - (mre/mi)*Div_Pi_filt_y ;
 %    elseif (component == 3)
-        Div_Pe_filt_z = (mre/me)*Div_Pe_filt_z - (mre/mi)*Div_Pi_filt_z ;
+        %Div_Pe_filt_z = (mre/me)*Div_Pe_filt_z - (mre/mi)*Div_Pi_filt_z ;
 %end
 %----------------------------------------------------------------------
 
@@ -1043,6 +1043,87 @@ clearvars sub_*
 
 %%% Select the components to plot
 
+%--------------------------------------------------------------------------
+%----------------------------------------------------------------------
+% terms from the owns law with no signs JXB has no correction before here
+%----------------------------------------------------------------------
+%if (component == 1)
+term1_dt_x = B0*v_a*(Ex_dt);
+term2_dt_x = B0*v_a*(v_x_B_x_dt);
+term3_dt_x = (mre/me)*B0*v_a*J_x_B_x_dt./n_0_dt;
+term4_dt_x = v_a*v_a*(Div_Pe_dt_x./n_0_dt);
+term5_dt_x = mre*v_a*v_a*((Div_vJ_dt_x + Div_Jv_dt_x - Div_JJ_dt_x)./n_0_dt);
+term6_dt_x = mre*v_a*v_a*L2Ex_dt./n_0_dt;
+term7_dt_x = - term2_dt_x + term3_dt_x - term4_dt_x + term5_dt_x + term6_dt_x;
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt_x = B0*v_a*(Ex_filt);
+term2_filt_x = B0*v_a*(v_filt_x_B_filt_x);
+term3_filt_x = (mre/me)*B0*v_a*J_filt_x_B_filt_x./n_filt;
+term4_filt_x = v_a*v_a*(Div_Pe_filt_x./n_filt);
+term5_filt_x = mre*v_a*v_a*((Div_vJ_filt_x + Div_Jv_filt_x - Div_JJ_filt_2n_x)./n_filt);
+term6_filt_x = mre*v_a*v_a*L2Ex_filt./n_0_dt;
+term7_filt_x = - term2_filt_x + term3_filt_x - term4_filt_x + term5_filt_x + term6_filt_x;
+%elseif (component == 2)
+term1_dt_y = B0*v_a*(Ey_dt);
+term2_dt_y = B0*v_a*(v_x_B_y_dt);
+term3_dt_y = (mre/me)*B0*v_a*J_x_B_y_dt./n_0_dt;
+term4_dt_y = v_a*v_a*(Div_Pe_dt_y./n_0_dt);
+term5_dt_y = mre*v_a*v_a*((Div_vJ_dt_y + Div_Jv_dt_y - Div_JJ_dt_y)./n_0_dt);
+term6_dt_y = mre*v_a*v_a*L2Ey_dt./n_0_dt;
+term7_dt_y = - term2_dt_y + term3_dt_y - term4_dt_y + term5_dt_y + term6_dt_y;
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt_y = B0*v_a*(Ey_filt);
+term2_filt_y = B0*v_a*(v_filt_x_B_filt_y);
+term3_filt_y = (mre/me)*B0*v_a*J_filt_x_B_filt_y./n_filt;
+term4_filt_y = v_a*v_a*(Div_Pe_filt_y./n_filt);
+term5_filt_y = me*v_a*v_a*((Div_vJ_filt_y + Div_Jv_filt_y - Div_JJ_filt_2n_y)./n_filt);
+term6_filt_y = mre*v_a*v_a*L2Ey_filt./n_0_dt;
+term7_filt_y = - term2_filt_y + term3_filt_y - term4_filt_y + term5_filt_y + term6_filt_y;
+%elseif (component ==3)
+term1_dt_z = B0*v_a*(Ez_dt);
+term2_dt_z = B0*v_a*(v_x_B_z_dt);
+term3_dt_z = (mre/me)*B0*v_a*J_x_B_z_dt./n_0_dt;
+term4_dt_z = v_a*v_a*(Div_Pe_dt_z./n_0_dt);
+term5_dt_z = me*v_a*v_a*((Div_vJ_dt_z + Div_Jv_dt_z - Div_JJ_dt_z)./n_0_dt);
+term6_dt_z = mre*v_a*v_a*L2Ez_dt./n_0_dt;
+term7_dt_z = - term2_dt_z + term3_dt_z - term4_dt_z + term5_dt_z + term6_dt_z;
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt_z = B0*v_a*(Ez_filt);
+term2_filt_z = B0*v_a*(v_filt_x_B_filt_z);
+term3_filt_z = (mre/me)*B0*v_a*J_filt_x_B_filt_z./n_filt;
+term4_filt_z = v_a*v_a*(Div_Pe_filt_z./n_filt);
+term5_filt_z = me*v_a*v_a*((Div_vJ_filt_z + Div_Jv_filt_z - Div_JJ_filt_2n_z)./n_filt);
+term6_filt_z = mre*v_a*v_a*L2Ez_filt./n_0_dt;
+term7_filt_z = - term2_filt_z + term3_filt_z - term4_filt_z + term5_filt_z + term6_filt_z;
+%end
+
+%correction
+%--------------------------------------------------------------------------
+term5_dt_x = term5_dt_x + term6_dt_x;
+term5_dt_y = term5_dt_y + term6_dt_y;
+term5_dt_z = term5_dt_z + term6_dt_z;
+
+term5_filt_x = term5_filt_x + term6_filt_x;
+term5_filt_y = term5_filt_y + term6_filt_y;
+term5_filt_z = term5_filt_z + term6_filt_z;
+
+term6_dt_x = term7_dt_x;
+term6_dt_y = term7_dt_y;
+term6_dt_z = term7_dt_z;
+
+term6_filt_x = term7_filt_x;
+term6_filt_y = term7_filt_y;
+term6_filt_z = term7_filt_z;
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
+
 %%% ----------------------------------------------------------------------
 %ext_fact = sqrt(1/mime);
 %tau_total_x = -tau_nE_tau -tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
@@ -1051,7 +1132,6 @@ tau_total_x = -tau_nE_tau_x -tau_v_x_B_tau_x + tau_J_x_B_tau_x + tau_Div_tau1_x;
 tau_total_y = -tau_nE_tau_y -tau_v_x_B_tau_y + tau_J_x_B_tau_y + tau_Div_tau1_y;
 tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 %--------------------------------------------------------------------------
-
 
 
 %%%
@@ -1250,9 +1330,52 @@ n_x_scatter = n_filt_x(rand_inds);
 n_y_scatter = n_filt_y(rand_inds);
 n_z_scatter = n_filt_z(rand_inds);
 
-Div_Pi_x_scatter = Div_Pi_filt_x(rand_inds);
-Div_Pi_y_scatter = Div_Pi_filt_y(rand_inds);
-Div_Pi_z_scatter = Div_Pi_filt_z(rand_inds);
+Div_Pe_x_scatter = Div_Pe_filt_x(rand_inds);
+Div_Pe_y_scatter = Div_Pe_filt_y(rand_inds);
+Div_Pe_z_scatter = Div_Pe_filt_z(rand_inds);
+
+
+tau_total_MHD_x = term2_filt_x - term3_filt_x + term5_filt_x + tau_total_x;
+tau_total_MHD_y = term2_filt_y - term3_filt_y + term5_filt_y + tau_total_y;
+tau_total_MHD_z = term2_filt_z - term3_filt_z + term5_filt_z + tau_total_z;
+
+tau_total_HMHD_x = tau_total_MHD_x - term2_filt_x;
+tau_total_HMHD_y = tau_total_MHD_y - term2_filt_y;
+tau_total_HMHD_z = tau_total_MHD_z - term2_filt_z;
+
+var_tau_total_MHD_x = tau_total_MHD_x(rand_inds);
+var_tau_total_MHD_y = tau_total_MHD_y(rand_inds);
+var_tau_total_MHD_z = tau_total_MHD_z(rand_inds);
+
+var_tau_total_HMHD_x = tau_total_HMHD_x(rand_inds);
+var_tau_total_HMHD_y = tau_total_HMHD_y(rand_inds);
+var_tau_total_HMHD_z = tau_total_HMHD_z(rand_inds);
+
+
+% I need to save these arrays. This is where I go
+
+
+
+term1_filt_x_scatter = term1_filt_x(rand_inds);
+term2_filt_x_scatter = term2_filt_x(rand_inds);
+term3_filt_x_scatter = term3_filt_x(rand_inds);
+term4_filt_x_scatter = term4_filt_x(rand_inds);
+term5_filt_x_scatter = term5_filt_x(rand_inds);
+term7_filt_x_scatter = term6_filt_x(rand_inds);
+
+term1_filt_y_scatter = term1_filt_y(rand_inds);
+term2_filt_y_scatter = term2_filt_y(rand_inds);
+term3_filt_y_scatter = term3_filt_y(rand_inds);
+term4_filt_y_scatter = term4_filt_y(rand_inds);
+term5_filt_y_scatter = term5_filt_y(rand_inds);
+term7_filt_y_scatter = term6_filt_y(rand_inds);
+
+term1_filt_z_scatter = term1_filt_z(rand_inds);
+term2_filt_z_scatter = term2_filt_z(rand_inds);
+term3_filt_z_scatter = term3_filt_z(rand_inds);
+term4_filt_z_scatter = term4_filt_z(rand_inds);
+term5_filt_z_scatter = term5_filt_z(rand_inds);
+term7_filt_z_scatter = term6_filt_z(rand_inds);
 
 %-----------------------------------------------------------------------
 
@@ -1799,9 +1922,9 @@ save(filename_beta_comp,...
     "KJ_scatter_z","HB_scatter_z","Wvort_scatter_z",...
     "KJ_mag_scatter","HB_mag_scatter","Wvort_mag_scatter",...
     "n_x_scatter","n_y_scatter","n_z_scatter",...
-    "Div_Pi_x_scatter","Div_Pi_y_scatter","Div_Pi_z_scatter",...
-    "-nocompression")
 
+    "-nocompression")
+    %"Div_Pe_x_scatter","Div_Pe_y_scatter","Div_Pe_z_scatter",...
 %-----------------------------------------------------------------------
 
 %%
