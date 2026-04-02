@@ -535,7 +535,7 @@ SGS_tau_Div_mean2vxB_mean = [0, 0.000291, 0.000282, 0.000334, 0.000324, 0.000348
 SGS_tau_total_mean2vxB_mean = [0, 0.021964, 0.018361, 0.019245, 0.017658, 0.016461, 0.016464, 0.015487, 0.01339];
 %--------------------------------------------------------------------------
 
-noma_array = MHD_E2vxB_mean;
+noma_array = MHD_E2vxB_mean./MHD_E2vxB_mean;
 
 fs=25; x0=45;y0=54;xx1=400;yy1=800;
 f21 = figure(21);
@@ -553,7 +553,7 @@ plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)'
 plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
 plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
 plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
-plot(time_in,J_rms_025./max(J_rms_025),'-r',LineWidth=2)
+%plot(time_in,J_rms_025./max(J_rms_025),'-r',LineWidth=2)
 %legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
 ylabel('$\beta_{i} = 0.25$','FontSize',fs,Interpreter='latex')
@@ -583,7 +583,7 @@ SGS_tau_Div_mean2vxB_mean = [0.000177, 0.000159, 0.000161, 0.000171, 0.000183, 0
 SGS_tau_total_mean2vxB_mean = [0.016358, 0.011651, 0.011605, 0.010349, 0.010112, 0.009038, 0.008281, 0.007358, 0.006919, 0.006938, 0.006961, 0.006953];
 %--------------------------------------------------------------------------
 
-noma_array = MHD_E2vxB_mean;
+noma_array = MHD_E2vxB_mean./MHD_E2vxB_mean;
 subplot(3,1,2)
 %plot(time_in,MHD_E2vxB_mean./noma_array,color=My_colors(1,:),LineWidth=2)
 %hold on
@@ -599,7 +599,7 @@ plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),
 plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
 plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
 %legend(legendsgsmhd_2,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
-plot(time_in,J_rms_1./max(J_rms_1),'-r',LineWidth=2)
+%plot(time_in,J_rms_1./max(J_rms_1),'-r',LineWidth=2)
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
 xlim([2,14])
 ylim([0,1.2])
@@ -627,7 +627,7 @@ SGS_tau_JxB_mean2vxB_mean = [0, 0.011574, 0.009533, 0.009626, 0.010101, 0.009736
 SGS_tau_Div_mean2vxB_mean = [0, 0.00013, 0.000124, 0.000143, 0.000168, 0.0002, 0.00023, 0.000256, 0.000279, 0.000309];
 SGS_tau_total_mean2vxB_mean = [0, 0.015344, 0.011266, 0.010674, 0.010744, 0.010168, 0.010171, 0.010075, 0.009839, 0.00926];
 %--------------------------------------------------------------------------
-noma_array = MHD_E2vxB_mean;
+noma_array = MHD_E2vxB_mean./MHD_E2vxB_mean;
 
 subplot(3,1,3)
 %plot(time_in,MHD_E2vxB_mean./noma_array,color=My_colors(1,:),LineWidth=2)
@@ -643,7 +643,7 @@ plot(time_in,10*SGS_tau_vxB_mean2vxB_mean./noma_array,'--',color=My_colors(2,:)'
 plot(time_in,10*SGS_tau_JxB_mean2vxB_mean./noma_array,'--',color=My_colors(3,:),LineWidth=2)
 plot(time_in,10*SGS_tau_Div_mean2vxB_mean./noma_array,'--',color=My_colors(5,:),LineWidth=2)
 plot(time_in,10*SGS_tau_total_mean2vxB_mean./noma_array,'--',color=My_colors(6,:),LineWidth=2)
-plot(time_in,J_rms_4./max(J_rms_4),'-r',LineWidth=2)
+%plot(time_in,J_rms_4./max(J_rms_4),'-r',LineWidth=2)
 xlabel('$t/t_{\Omega_{ci}}$','FontSize',fs,Interpreter='latex')
 xlim([2,14])
 ylim([0,1.2])

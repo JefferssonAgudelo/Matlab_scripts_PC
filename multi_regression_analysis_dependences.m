@@ -1,4 +1,5 @@
 
+
 cd('/JAAR-DATA/DATA_HVM/betai=4')
 %load("beta025_scatter_KJHBWO_time4.mat")
 %load("beta1_scatter_KJHBWO_time6.mat")
@@ -22,20 +23,34 @@ cd('/JAAR-DATA/DATA_HVM/betai=4')
 %load("beta1_scatter_KJHBWOgradndivPi_time6_AN8.mat")
 %load("beta1_scatter_KJHBWOgradndivPi_time6_AN16.mat")
 
-%  '/JAAR-DATA/DATA_HVM/betai=4'
-load("beta025_scatter_KJHBWOgradndivPi_time4_AN32_028.mat")
-%load("beta1_scatter_KJHBWOgradndivPi_time6_AN32.mat")
-%load("beta4_scatter_KJHBWOgradndivPi_AN32.mat")
 
+%cd('/JAAR-DATA/DATA_HVM/betai=0.25/02')
+%load("beta025_scatter_KJHBWOgradn_AN32_028.mat")
+
+%cd('/JAAR-DATA/DATA_HVM/betai=1/02')
+%load("beta1_scatter_KJHBWOgradn_AN32_028.mat")
+
+cd('/JAAR-DATA/DATA_HVM/betai=4')
+load("beta4_scatter_KJHBWOgradn_AN32_028.mat")
 
 % This is the part tha I will use to make the analysis fitting to total
 % tau, tau MHD, tau hall
 
-Yx = var_tau_total_x';
-Yy = var_tau_total_y';
-Yz = var_tau_total_z';
+tau_kinetic=3; %2 tau_MHD; 3 tau_HMHD;
 
-
+if tau_kinetic==1
+    Yx = var_tau_total_x';
+    Yy = var_tau_total_y';
+    Yz = var_tau_total_z';
+elseif tau_kinetic==2
+    Yx = var_tau_total_MHD_x';
+    Yy = var_tau_total_MHD_y';
+    Yz = var_tau_total_MHD_z';
+elseif tau_kinetic==3
+    Yx = var_tau_total_HMHD_x';
+    Yy = var_tau_total_HMHD_y';
+    Yz = var_tau_total_HMHD_z';
+end
 
 %--------------------------------------------------------------------------
 
@@ -65,10 +80,10 @@ Yz = var_tau_total_z';
 %--------------------------------------------------------------------------
 
 
-% To make the analysis 
+% To make the analysis
 % Remove outlayers IS NOT A GOOD IDEA AS THE VALUES REFLECT DIFFERENT
 % POPULLATIONS NOT ERRORS
-% Do the regression considering the coefficients erros and checking the significance of statistically different from zero  
+% Do the regression considering the coefficients erros and checking the significance of statistically different from zero
 %{
 %--------------------------------------------------------------------------
 nbins=80;
@@ -176,17 +191,17 @@ contour(C', nl, 'LineColor', 'k','LineWidth', 1); % 20 levels
 
 % % %--------------------------------------------------------------------------
 % % Xxgradn = [n_x_scatter', n_y_scatter', n_z_scatter'];
-% % 
+% %
 % % P = polyfit(n_x_scatter,Yx,1); Yxfit = P(1)*n_x_scatter+P(2);
 % % P = polyfit(n_y_scatter,Yy,1); Yyfit = P(1)*n_y_scatter+P(2);
 % % P = polyfit(n_z_scatter,Yz,1); Yzfit = P(1)*n_z_scatter+P(2);
-% % 
+% %
 % % grad_n_t = sqrt(n_x_scatter.^2 + n_y_scatter.^2 + n_z_scatter.^2 );
-% % 
+% %
 % % P = polyfit(grad_n_t,Yx,1); YGnxfit = P(1)*grad_n_t+P(2);
 % % P = polyfit(grad_n_t,Yy,1); YGnyfit = P(1)*grad_n_t+P(2);
 % % P = polyfit(grad_n_t,Yz,1); YGnzfit = P(1)*grad_n_t+P(2);
-% % 
+% %
 % % [resi_Xx1,coeffs_Xx1,Rs_Xx1, QR_Xx1] = multilinear_regression_var(Xxgradn,Yx);
 % % [resi_Xx2,coeffs_Xx2,Rs_Xx2, QR_Xx2] = multilinear_regression_var(Xxgradn,Yy);
 % % [resi_Xx3,coeffs_Xx3,Rs_Xx3, QR_Xx3] = multilinear_regression_var(Xxgradn,Yz);
@@ -194,7 +209,7 @@ contour(C', nl, 'LineColor', 'k','LineWidth', 1); % 20 levels
 
 
 
-% Plot residuals grad n 
+% Plot residuals grad n
 %--------------------------------------------------------------------------
 %{
 nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
@@ -405,12 +420,12 @@ title('|Residuals| vs |fitted| linear grad n');%ylim([0,10])
 % X_KHW_all = [KJ_scatter_x', HB_scatter_x',Wvort_scatter_x',...
 %              KJ_scatter_y', HB_scatter_y',Wvort_scatter_y',...
 %              KJ_scatter_z', HB_scatter_z',Wvort_scatter_z'];
-% 
+%
 % [resi_x,coeffs_x,Rs_x, QR_x] = multilinear_regression_var(X,Y);
 % [resi_KHW_x,coeffs_KHW_x,Rs_KHW_x,QR_KHW_x] = multilinear_regression_var(X_KHW,Y);
 % [resi_comp_x,coeffs_comp_x, Rs_comp_x, QR_comp_x] = multilinear_regression_var(X_comp,Y);
 % [resi_KHW_all_x,coeffs_KHW_all_x, Rs_KHW_all_x, QR_KHW_all_x] = multilinear_regression_var(X_KHW_all,Y);
-% 
+%
 % clearvars X X_KHW X_comp X_KHW_all
 
 %--------------------------------------------------------------------------
@@ -426,18 +441,18 @@ Xx_KHW = [KJ_scatter_x', HB_scatter_x',Wvort_scatter_x'];
 Xy_KHW = [KJ_scatter_y', HB_scatter_y',Wvort_scatter_y'];
 Xz_KHW = [KJ_scatter_z', HB_scatter_z',Wvort_scatter_z'];
 
-Xx_comp = [J_scatter_x', B_scatter_x',vort_scatter_x',v_scatter_x',E_scatter_x', n_scatter'];
-Xy_comp = [J_scatter_y', B_scatter_y',vort_scatter_y',v_scatter_y',E_scatter_y', n_scatter'];
-Xz_comp = [J_scatter_z', B_scatter_z',vort_scatter_z',v_scatter_z',E_scatter_z', n_scatter'];
-
-X_KHW_all = [KJ_scatter_x', HB_scatter_x',Wvort_scatter_x',...
-             KJ_scatter_y', HB_scatter_y',Wvort_scatter_y',...
-             KJ_scatter_z', HB_scatter_z',Wvort_scatter_z'];
-
-%Model 5 
-Xx_mod5 = [v_scatter_x',E_scatter_x', n_scatter'];
-Xy_mod5 = [v_scatter_y',E_scatter_y', n_scatter'];
-Xz_mod5 = [v_scatter_z',E_scatter_z', n_scatter'];
+% Xx_comp = [J_scatter_x', B_scatter_x',vort_scatter_x',v_scatter_x',E_scatter_x', n_scatter'];
+% Xy_comp = [J_scatter_y', B_scatter_y',vort_scatter_y',v_scatter_y',E_scatter_y', n_scatter'];
+% Xz_comp = [J_scatter_z', B_scatter_z',vort_scatter_z',v_scatter_z',E_scatter_z', n_scatter'];
+% 
+% X_KHW_all = [KJ_scatter_x', HB_scatter_x',Wvort_scatter_x',...
+%     KJ_scatter_y', HB_scatter_y',Wvort_scatter_y',...
+%     KJ_scatter_z', HB_scatter_z',Wvort_scatter_z'];
+% 
+% %Model 5
+% Xx_mod5 = [v_scatter_x',E_scatter_x', n_scatter'];
+% Xy_mod5 = [v_scatter_y',E_scatter_y', n_scatter'];
+% Xz_mod5 = [v_scatter_z',E_scatter_z', n_scatter'];
 %--------------------------------------------------------------------------
 
 
@@ -452,15 +467,15 @@ Xz_mod5 = [v_scatter_z',E_scatter_z', n_scatter'];
 [Xy_KHW, ~] = zscore_columns(Xy_KHW);
 [Xz_KHW, ~] = zscore_columns(Xz_KHW);
 
-[Xx_comp, ~] = zscore_columns(Xx_comp);
-[Xy_comp, ~] = zscore_columns(Xy_comp);
-[Xz_comp, ~] = zscore_columns(Xz_comp);
-
-[X_KHW_all, ~] = zscore_columns(X_KHW_all);
-
-[Xx_mod5, ~] = zscore_columns(Xx_mod5);
-[Xy_mod5, ~] = zscore_columns(Xy_mod5);
-[Xz_mod5, ~] = zscore_columns(Xz_mod5);
+% [Xx_comp, ~] = zscore_columns(Xx_comp);
+% [Xy_comp, ~] = zscore_columns(Xy_comp);
+% [Xz_comp, ~] = zscore_columns(Xz_comp);
+% 
+% [X_KHW_all, ~] = zscore_columns(X_KHW_all);
+% 
+% [Xx_mod5, ~] = zscore_columns(Xx_mod5);
+% [Xy_mod5, ~] = zscore_columns(Xy_mod5);
+% [Xz_mod5, ~] = zscore_columns(Xz_mod5);
 %--------------------------------------------------------------------------
 
 
@@ -473,17 +488,17 @@ Xz_mod5 = [v_scatter_z',E_scatter_z', n_scatter'];
 [resi_KHW_Xy,coeffs_KHW_Xy,Rs_KHW_Xy,QR_KHW_Xy] = multilinear_regression_var(Xy_KHW,Yy);
 [resi_KHW_Xz,coeffs_KHW_Xz,Rs_KHW_Xz,QR_KHW_Xz] = multilinear_regression_var(Xz_KHW,Yz);
 
-[resi_comp_Xx,coeffs_comp_Xx,Rs_comp_Xx,QR_comp_Xx] = multilinear_regression_var(Xx_comp,Yx);
-[resi_comp_Xy,coeffs_comp_Xy,Rs_comp_Xy,QR_comp_Xy] = multilinear_regression_var(Xy_comp,Yy);
-[resi_comp_Xz,coeffs_comp_Xz,Rs_comp_Xz,QR_comp_Xz] = multilinear_regression_var(Xz_comp,Yz);
-
-[resi_KHW_all_Xx,coeffs_KHW_all_Xx, Rs_KHW_all_Xx, QR_KHW_all_Xx] = multilinear_regression_var(X_KHW_all,Yx);
-[resi_KHW_all_Xy,coeffs_KHW_all_Xy, Rs_KHW_all_Xy, QR_KHW_all_Xy] = multilinear_regression_var(X_KHW_all,Yy);
-[resi_KHW_all_Xz,coeffs_KHW_all_Xz, Rs_KHW_all_Xz, QR_KHW_all_Xz] = multilinear_regression_var(X_KHW_all,Yz);
-
-[resi_mod5_Xx,coeffs_mod5_Xx, Rs_mod5_Xx, QR_mod5_Xx] = multilinear_regression_var(Xx_mod5,Yx);
-[resi_mod5_Xy,coeffs_mod5_Xy, Rs_mod5_Xy, QR_mod5_Xy] = multilinear_regression_var(Xy_mod5,Yy);
-[resi_mod5_Xz,coeffs_mod5_Xz, Rs_mod5_Xz, QR_mod5_Xz] = multilinear_regression_var(Xz_mod5,Yz);
+% [resi_comp_Xx,coeffs_comp_Xx,Rs_comp_Xx,QR_comp_Xx] = multilinear_regression_var(Xx_comp,Yx);
+% [resi_comp_Xy,coeffs_comp_Xy,Rs_comp_Xy,QR_comp_Xy] = multilinear_regression_var(Xy_comp,Yy);
+% [resi_comp_Xz,coeffs_comp_Xz,Rs_comp_Xz,QR_comp_Xz] = multilinear_regression_var(Xz_comp,Yz);
+% 
+% [resi_KHW_all_Xx,coeffs_KHW_all_Xx, Rs_KHW_all_Xx, QR_KHW_all_Xx] = multilinear_regression_var(X_KHW_all,Yx);
+% [resi_KHW_all_Xy,coeffs_KHW_all_Xy, Rs_KHW_all_Xy, QR_KHW_all_Xy] = multilinear_regression_var(X_KHW_all,Yy);
+% [resi_KHW_all_Xz,coeffs_KHW_all_Xz, Rs_KHW_all_Xz, QR_KHW_all_Xz] = multilinear_regression_var(X_KHW_all,Yz);
+% 
+% [resi_mod5_Xx,coeffs_mod5_Xx, Rs_mod5_Xx, QR_mod5_Xx] = multilinear_regression_var(Xx_mod5,Yx);
+% [resi_mod5_Xy,coeffs_mod5_Xy, Rs_mod5_Xy, QR_mod5_Xy] = multilinear_regression_var(Xy_mod5,Yy);
+% [resi_mod5_Xz,coeffs_mod5_Xz, Rs_mod5_Xz, QR_mod5_Xz] = multilinear_regression_var(Xz_mod5,Yz);
 %--------------------------------------------------------------------------
 
 
@@ -600,9 +615,9 @@ title('slopes')
 
 
 
-% Now let's make the other plots including the condition thing Y vs J including the fit for a single value of B and Omega    
+% Now let's make the other plots including the condition thing Y vs J including the fit for a single value of B and Omega
 
-% This doesn't look to promising 
+% This doesn't look to promising
 %--------------------------------------------------------------------------
 %{
 Bx_abs_mean = mean(abs(B_scatter_x));
@@ -639,9 +654,6 @@ title('Y vs a0 + a1J + a2Bo + a3Oo')
 %--------------------------------------------------------------------------
 
 
-
-
-
 %--------------------------------------------------------------------------
 % This section here is to estimate the RMS for each of the different models
 %--------------------------------------------------------------------------
@@ -664,24 +676,24 @@ title('Y vs a0 + a1J + a2Bo + a3Oo')
 
 
 
-% The idea is to check this on the models. That is Y and Yfit 
-% % 
+% The idea is to check this on the models. That is Y and Yfit
+% %
 % % Yfit_Xx =  coeffs_Xx(2:end,1).*Xx;
 % % Yfit_Xy = coeffs_Xy(1,1) + coeffs_Xy(2:end,1).*Xy;
 % % Yfit_Xz = coeffs_Xz(1,1) + coeffs_Xz(2:end,1).*Xz;
-% % 
+% %
 % % Yfit_KHW_Xx = coeffs_KHW_Xx(1,1) + coeffs_KHW_Xx(2:end,1).*Xx_KHW;
 % % Yfit_KHW_Xy = coeffs_KHW_Xy(1,1) + coeffs_KHW_Xy(2:end,1).*Xy_KHW;
 % % Yfit_KHW_Xz = coeffs_KHW_Xz(1,1) + coeffs_KHW_Xz(2:end,1).*Xz_KHW;
-% % 
+% %
 % % Yfit_comp_Xx = coeffs_comp_Xx(1,1) + coeffs_comp_Xx(2:end,1).*Xx_comp;
 % % Yfit_comp_Xy = coeffs_comp_Xy(1,1) + coeffs_comp_Xy(2:end,1).*Xy_comp;
 % % Yfit_comp_Xz = coeffs_comp_Xz(1,1) + coeffs_comp_Xz(2:end,1).*Xz_comp;
-% % 
+% %
 % % Yfit_KHW_all_Xx = coeffs_KHW_all_Xx(1,1) + coeffs_KHW_all_Xx(2:end,1).*Xx_KHW_all;
 % % Yfit_KHW_all_Xy = coeffs_KHW_all_Xy(1,1) + coeffs_KHW_all_Xy(2:end,1).*Xy_KHW_all;
 % % Yfit_KHW_all_Xz = coeffs_KHW_all_Xz(1,1) + coeffs_KHW_all_Xz(2:end,1).*Xz_KHW_all;
-% % 
+% %
 % % Yfit_mod5_Xx = coeffs_mod5_Xx(1,1) + coeffs_mod5_Xx(2:end,1).*Xx_mod5;
 % % Yfit_mod5_Xy = coeffs_mod5_Xy(1,1) + coeffs_mod5_Xy(2:end,1).*Xy_mod5;
 % % Yfit_mod5_Xz = coeffs_mod5_Xz(1,1) + coeffs_mod5_Xz(2:end,1).*Xz_mod5;
@@ -695,17 +707,17 @@ Yfit_KHW_Xx = Yx - resi_KHW_Xx;
 Yfit_KHW_Xy = Yy - resi_KHW_Xy;
 Yfit_KHW_Xz = Yz - resi_KHW_Xz;
 
-Yfit_comp_Xx = Yx - resi_comp_Xx;
-Yfit_comp_Xy = Yy - resi_comp_Xy;
-Yfit_comp_Xz = Yz - resi_comp_Xz;
-
-Yfit_KHW_all_Xx = Yx - resi_KHW_all_Xx;
-Yfit_KHW_all_Xy = Yy - resi_KHW_all_Xy;
-Yfit_KHW_all_Xz = Yz - resi_KHW_all_Xz;
-
-Yfit_mod5_Xx = Yx - resi_mod5_Xx;
-Yfit_mod5_Xy = Yy - resi_mod5_Xy;
-Yfit_mod5_Xz = Yz - resi_mod5_Xz;
+% Yfit_comp_Xx = Yx - resi_comp_Xx;
+% Yfit_comp_Xy = Yy - resi_comp_Xy;
+% Yfit_comp_Xz = Yz - resi_comp_Xz;
+% 
+% Yfit_KHW_all_Xx = Yx - resi_KHW_all_Xx;
+% Yfit_KHW_all_Xy = Yy - resi_KHW_all_Xy;
+% Yfit_KHW_all_Xz = Yz - resi_KHW_all_Xz;
+% 
+% Yfit_mod5_Xx = Yx - resi_mod5_Xx;
+% Yfit_mod5_Xy = Yy - resi_mod5_Xy;
+% Yfit_mod5_Xz = Yz - resi_mod5_Xz;
 
 pearson_coeff_Xx = Pearson_Coeff(Yfit_Xx,Yx);
 pearson_coeff_Xy = Pearson_Coeff(Yfit_Xy,Yy);
@@ -715,17 +727,17 @@ pearson_coeff_KHW_Xx = Pearson_Coeff(Yfit_KHW_Xx,Yx);
 pearson_coeff_KHW_Xy = Pearson_Coeff(Yfit_KHW_Xy,Yy);
 pearson_coeff_KHW_Xz = Pearson_Coeff(Yfit_KHW_Xz,Yz);
 
-pearson_coeff_comp_Xx = Pearson_Coeff(Yfit_comp_Xx,Yx);
-pearson_coeff_comp_Xy = Pearson_Coeff(Yfit_comp_Xy,Yy);
-pearson_coeff_comp_Xz = Pearson_Coeff(Yfit_comp_Xz,Yz);
-
-pearson_coeff_KHW_all_Xx = Pearson_Coeff(Yfit_KHW_all_Xx,Yx);
-pearson_coeff_KHW_all_Xy = Pearson_Coeff(Yfit_KHW_all_Xy,Yy);
-pearson_coeff_KHW_all_Xz = Pearson_Coeff(Yfit_KHW_all_Xz,Yz);
-
-pearson_coeff_mod5_Xx = Pearson_Coeff(Yfit_mod5_Xx,Yx);
-pearson_coeff_mod5_Xy = Pearson_Coeff(Yfit_mod5_Xy,Yy);
-pearson_coeff_mod5_Xz = Pearson_Coeff(Yfit_mod5_Xz,Yz);
+% pearson_coeff_comp_Xx = Pearson_Coeff(Yfit_comp_Xx,Yx);
+% pearson_coeff_comp_Xy = Pearson_Coeff(Yfit_comp_Xy,Yy);
+% pearson_coeff_comp_Xz = Pearson_Coeff(Yfit_comp_Xz,Yz);
+% 
+% pearson_coeff_KHW_all_Xx = Pearson_Coeff(Yfit_KHW_all_Xx,Yx);
+% pearson_coeff_KHW_all_Xy = Pearson_Coeff(Yfit_KHW_all_Xy,Yy);
+% pearson_coeff_KHW_all_Xz = Pearson_Coeff(Yfit_KHW_all_Xz,Yz);
+% 
+% pearson_coeff_mod5_Xx = Pearson_Coeff(Yfit_mod5_Xx,Yx);
+% pearson_coeff_mod5_Xy = Pearson_Coeff(Yfit_mod5_Xy,Yy);
+% pearson_coeff_mod5_Xz = Pearson_Coeff(Yfit_mod5_Xz,Yz);
 
 
 %Get Pearson coeffitiens.
@@ -733,11 +745,13 @@ pearson_coeff_mod5_Xz = Pearson_Coeff(Yfit_mod5_Xz,Yz);
 %--------------------------------------------------------------------------
 % --- Model names for table indexing
 % --- Define model names for looping
+%model_names = {'Xx','Xy','Xz',...
+%    'KHW_Xx','KHW_Xy','KHW_Xz',...
+%    'comp_Xx','comp_Xy','comp_Xz',...
+%    'KHW_all_Xx','KHW_all_Xy','KHW_all_Xz',...
+%    'mod5_Xx','mod5_Xy','mod5_Xz'};
 model_names = {'Xx','Xy','Xz',...
-               'KHW_Xx','KHW_Xy','KHW_Xz',...
-               'comp_Xx','comp_Xy','comp_Xz',...
-               'KHW_all_Xx','KHW_all_Xy','KHW_all_Xz',...
-               'mod5_Xx','mod5_Xy','mod5_Xz'};
+    'KHW_Xx','KHW_Xy','KHW_Xz'};
 
 % --- Initialize containers
 Pearson_coeff_struct = struct();
@@ -765,15 +779,18 @@ disp(Pearson_coeff_table);
 %stopp
 
 
-%get the RMS of the residuals 
+%get the RMS of the residuals
 %--------------------------------------------------------------------------
 RMS_xyz = sqrt( mean( resi_Xx.^2 + resi_Xy.^2 + resi_Xz.^2 )) / sqrt(mean(Yx.^2 + Yy.^2 + Yz.^2));
 RMS_KHW_xyz = sqrt( mean( resi_KHW_Xx.^2 + resi_KHW_Xy.^2 + resi_KHW_Xz.^2 )) / sqrt(mean(Yx.^2 + Yy.^2 + Yz.^2));
-RMS_comp_xyz = sqrt( mean( resi_comp_Xx.^2 + resi_comp_Xy.^2 + resi_comp_Xz.^2 )) / sqrt(mean(Yx.^2 + Yy.^2 + Yz.^2));
-RMS_KHW_all_xyz = sqrt( mean( resi_KHW_all_Xx.^2 + resi_KHW_all_Xy.^2 + resi_KHW_all_Xz.^2 )) / sqrt(mean(Yx.^2 + Yy.^2 + Yz.^2));
-RMS_mod5_xyz = sqrt( mean( resi_mod5_Xx.^2 + resi_mod5_Xy.^2 + resi_mod5_Xz.^2 )) / sqrt(mean(Yx.^2 + Yy.^2 + Yz.^2));
+%RMS_comp_xyz = sqrt( mean( resi_comp_Xx.^2 + resi_comp_Xy.^2 + resi_comp_Xz.^2 )) / sqrt(mean(Yx.^2 + Yy.^2 + Yz.^2));
+%RMS_KHW_all_xyz = sqrt( mean( resi_KHW_all_Xx.^2 + resi_KHW_all_Xy.^2 + resi_KHW_all_Xz.^2 )) / sqrt(mean(Yx.^2 + Yy.^2 + Yz.^2));
+%RMS_mod5_xyz = sqrt( mean( resi_mod5_Xx.^2 + resi_mod5_Xy.^2 + resi_mod5_Xz.^2 )) / sqrt(mean(Yx.^2 + Yy.^2 + Yz.^2));
 
-table_rms = [RMS_xyz RMS_KHW_xyz RMS_comp_xyz RMS_KHW_all_xyz RMS_mod5_xyz];
+%table_rms = [RMS_xyz RMS_KHW_xyz RMS_comp_xyz RMS_KHW_all_xyz RMS_mod5_xyz];
+%disp(table_rms);
+
+table_rms = [RMS_xyz RMS_KHW_xyz ];
 disp(table_rms);
 %--------------------------------------------------------------------------
 
@@ -790,17 +807,17 @@ nboot = 500;
 [CI95_KHW_Xy, SE_KHW_Xy] = Confidence_Intervals2(Xy_KHW, Yy, nboot);
 [CI95_KHW_Xz, SE_KHW_Xz] = Confidence_Intervals2(Xz_KHW, Yz, nboot);
 
-[CI95_comp_Xx, SE_comp_Xx] = Confidence_Intervals2(Xx_comp, Yx, nboot);
-[CI95_comp_Xy, SE_comp_Xy] = Confidence_Intervals2(Xy_comp, Yy, nboot);
-[CI95_comp_Xz, SE_comp_Xz] = Confidence_Intervals2(Xz_comp, Yz, nboot);
+%[CI95_comp_Xx, SE_comp_Xx] = Confidence_Intervals2(Xx_comp, Yx, nboot);
+%[CI95_comp_Xy, SE_comp_Xy] = Confidence_Intervals2(Xy_comp, Yy, nboot);
+%[CI95_comp_Xz, SE_comp_Xz] = Confidence_Intervals2(Xz_comp, Yz, nboot);
 
-[CI95_KHW_all_Xx, SE_KHW_all_Xx] = Confidence_Intervals2(X_KHW_all, Yx, nboot);
-[CI95_KHW_all_Xy, SE_KHW_all_Xy] = Confidence_Intervals2(X_KHW_all, Yy, nboot);
-[CI95_KHW_all_Xz, SE_KHW_all_Xz] = Confidence_Intervals2(X_KHW_all, Yz, nboot);
+%[CI95_KHW_all_Xx, SE_KHW_all_Xx] = Confidence_Intervals2(X_KHW_all, Yx, nboot);
+%[CI95_KHW_all_Xy, SE_KHW_all_Xy] = Confidence_Intervals2(X_KHW_all, Yy, nboot);
+%[CI95_KHW_all_Xz, SE_KHW_all_Xz] = Confidence_Intervals2(X_KHW_all, Yz, nboot);
 
-[CI95_mod5_Xx, SE_mod5_Xx] = Confidence_Intervals2(Xx_mod5, Yx, nboot);
-[CI95_mod5_Xy, SE_mod5_Xy] = Confidence_Intervals2(Xy_mod5, Yy, nboot);
-[CI95_mod5_Xz, SE_mod5_Xz] = Confidence_Intervals2(Xz_mod5, Yz, nboot);
+%[CI95_mod5_Xx, SE_mod5_Xx] = Confidence_Intervals2(Xx_mod5, Yx, nboot);
+%[CI95_mod5_Xy, SE_mod5_Xy] = Confidence_Intervals2(Xy_mod5, Yy, nboot);
+%[CI95_mod5_Xz, SE_mod5_Xz] = Confidence_Intervals2(Xz_mod5, Yz, nboot);
 
 
 
@@ -812,7 +829,7 @@ nboot = 500;
 
 
 % This is the section related to the statistical checking of the robustness
-% of the models 
+% of the models
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
@@ -840,7 +857,7 @@ nboot = 500;
 
 
 % Bootstrap the regression <------- This option takes a lot of time because
-% of the iteration processes. 
+% of the iteration processes.
 %Why: Evaluate how coefficient estimates vary with resampled data → gives empirical CIs and stability check.
 % Narrow bootstrap CI → robust coefficient.
 % Highly variable bootstrap distribution → unstable model.
@@ -851,11 +868,11 @@ nboot = 500;
 %CI_bootstrap_Xx = CIBoot_strap(Xx,Yx);
 % CI_bootstrap_Xy = CIBoot_strap(Xy,Yy);
 % CI_bootstrap_Xz = CIBoot_strap(Xz,Yz);
-% 
+%
 % CI_bootstrap_Xx_KHW = CIBoot_strap(Xx_KHW,Yx);
 % CI_bootstrap_Xy_KHW = CIBoot_strap(Xy_KHW,Yy);
 % CI_bootstrap_Xz_KHW = CIBoot_strap(Xz_KHW,Yz);
-% 
+%
 % CI_bootstrap_Xx_comp = CIBoot_strap(Xx_comp,Yx);
 % CI_bootstrap_Xy_comp = CIBoot_strap(Xy_comp,Yy);
 % CI_bootstrap_Xz_comp = CIBoot_strap(Xz_comp,Yz);
@@ -867,19 +884,19 @@ nboot = 500;
 
 %stopp
 
-% % 
+% %
 % % CI95_Xx = Confidence_Intervals(Xx,Yx);
 % % CI95_Xy = Confidence_Intervals(Xy,Yy);
 % % CI95_Xz = Confidence_Intervals(Xz,Yz);
-% % 
+% %
 % % CI95_Xx_KHW = Confidence_Intervals(Xx_KHW,Yx);
 % % CI95_Xy_KHW = Confidence_Intervals(Xy_KHW,Yy);
 % % CI95_Xz_KHW = Confidence_Intervals(Xz_KHW,Yz);
-% % 
+% %
 % % CI95_Xx_comp = Confidence_Intervals(Xx_comp,Yx);
 % % CI95_Xy_comp = Confidence_Intervals(Xy_comp,Yy);
 % % CI95_Xz_comp = Confidence_Intervals(Xz_comp,Yz);
-% % 
+% %
 % % CI95_Xx_KHW_all = Confidence_Intervals(X_KHW_all,Yx);
 % % CI95_Xy_KHW_all = Confidence_Intervals(X_KHW_all,Yy);
 % % CI95_Xz_KHW_all = Confidence_Intervals(X_KHW_all,Yz);
@@ -892,17 +909,17 @@ vif_KHW_Xx = compute_vif(Xx_KHW);
 vif_KHW_Xy = compute_vif(Xy_KHW);
 vif_KHW_Xz = compute_vif(Xz_KHW);
 
-vif_comp_Xx = compute_vif(Xx_comp);
-vif_comp_Xy = compute_vif(Xy_comp);
-vif_comp_Xz = compute_vif(Xz_comp);
+%vif_comp_Xx = compute_vif(Xx_comp);
+%vif_comp_Xy = compute_vif(Xy_comp);
+%vif_comp_Xz = compute_vif(Xz_comp);
 
-vif_KHW_all_Xx = compute_vif(X_KHW_all); %????
-vif_KHW_all_Xy = vif_KHW_all_Xx;
-vif_KHW_all_Xz = vif_KHW_all_Xx;
+%vif_KHW_all_Xx = compute_vif(X_KHW_all); %????
+%vif_KHW_all_Xy = vif_KHW_all_Xx;
+%vif_KHW_all_Xz = vif_KHW_all_Xx;
 
-vif_mod5_Xx = compute_vif(Xx_mod5);
-vif_mod5_Xy = compute_vif(Xy_mod5);
-vif_mod5_Xz = compute_vif(Xz_mod5);
+%vif_mod5_Xx = compute_vif(Xx_mod5);
+%vif_mod5_Xy = compute_vif(Xy_mod5);
+%vif_mod5_Xz = compute_vif(Xz_mod5);
 
 
 
@@ -911,11 +928,14 @@ vif_mod5_Xz = compute_vif(Xz_mod5);
 %--------------------------------------------------------------------------
 % --- Model names for table indexing
 % --- Define model names for looping
+%model_names = {'Xx','Xy','Xz',...
+%    'KHW_Xx','KHW_Xy','KHW_Xz',...
+%    'comp_Xx','comp_Xy','comp_Xz',...
+%    'KHW_all_Xx','KHW_all_Xy','KHW_all_Xz',...
+%    'mod5_Xx','mod5_Xy','mod5_Xz'};
+
 model_names = {'Xx','Xy','Xz',...
-               'KHW_Xx','KHW_Xy','KHW_Xz',...
-               'comp_Xx','comp_Xy','comp_Xz',...
-               'KHW_all_Xx','KHW_all_Xy','KHW_all_Xz',...
-               'mod5_Xx','mod5_Xy','mod5_Xz'};
+    'KHW_Xx','KHW_Xy','KHW_Xz'};
 
 % --- Initialize containers
 coeff_struct = struct();
@@ -1004,12 +1024,13 @@ writetable(Pearson_coeff_table, 'Pearson_coefficients_beta4_norm.csv');
 % This is to make the table for the statistical things
 %--------------------------------------------------------------------------
 % --- Define model names (used in your variables)
+%model_tags = {'Xx','Xy','Xz',...
+%    'KHW_Xx','KHW_Xy','KHW_Xz',...
+%    'comp_Xx','comp_Xy','comp_Xz',...
+%    'KHW_all_Xx','KHW_all_Xy','KHW_all_Xz',...
+%    'mod5_Xx','mod5_Xy','mod5_Xz'};
 model_tags = {'Xx','Xy','Xz',...
-               'KHW_Xx','KHW_Xy','KHW_Xz',...
-               'comp_Xx','comp_Xy','comp_Xz',...
-               'KHW_all_Xx','KHW_all_Xy','KHW_all_Xz',...
-               'mod5_Xx','mod5_Xy','mod5_Xz'};
-
+    'KHW_Xx','KHW_Xy','KHW_Xz'};
 
 % --- Initialize CI and VIF containers
 ci_struct = struct();
@@ -1021,7 +1042,7 @@ for i = 1:length(model_tags)
     tag = model_tags{i};
     ci_struct.(tag) = eval(['CI95_' tag]);
     vif_struct.(tag) = eval(['vif_' tag]);
-    %SE_struct.(tag) = eval(['SE_' tag]);    
+    %SE_struct.(tag) = eval(['SE_' tag]);
 end
 
 % --- Find maximum number of coefficients (pad shorter vectors with NaN)
@@ -1049,11 +1070,11 @@ vif_table = table((1:max_n_vif)', 'VariableNames', {'Variable_Index'});
 for i = 1:length(model_tags)
     tag = model_tags{i};
     vif = vif_struct.(tag);
-    
+
     % Pad with NaNs if needed
     pad_vif = nan(max_n_vif,1);
     pad_vif(1:numel(vif)) = vif(:);
-    
+
     vif_table.(tag) = pad_vif;
 end
 
@@ -1065,8 +1086,8 @@ disp('--- VIF Table ---');
 disp(vif_table);
 
 % === Optionally export to CSV ===
-writetable(ci_table, 'confidence_intervals_summary_beta4_norm.csv');
-writetable(vif_table, 'vif_summary_beta4_norm.csv');
+writetable(ci_table, 'confidence_intervals_summary_beta025_norm.csv');
+writetable(vif_table, 'vif_summary_beta25_norm.csv');
 %--------------------------------------------------------------------------
 
 stoop
@@ -1105,7 +1126,7 @@ stoop
 % % % %xscale log
 % % % %yscale log
 % % % %ylim([0,10])
-% % % 
+% % %
 % % % subplot(1,4,2)
 % % % Yfit = sqrt( (Yx-resi_KHW_Xx).^2 + (Yy-resi_KHW_Xy).^2 + (Yz-resi_KHW_Xz).^2);
 % % % resid = sqrt(resi_KHW_Xx.^2 + resi_KHW_Xy.^2 + resi_KHW_Xz.^2);
@@ -1124,7 +1145,7 @@ stoop
 % % % xlabel('$|Yfit|$','Interpreter','latex')
 % % % ylabel('$|Residuals|$','Interpreter','latex')
 % % % title('$\Sigma \tau = a_{0} + a_{1}KJ + a_{2}HB + a_{3}W\Omega$','Interpreter','latex');
-% % % 
+% % %
 % % % subplot(1,4,3)
 % % % Yfit = sqrt( (Yx-resi_comp_Xx).^2 + (Yy-resi_comp_Xy).^2 + (Yz-resi_comp_Xz).^2);
 % % % resid = sqrt(resi_comp_Xx.^2 + resi_comp_Xy.^2 + resi_comp_Xz.^2);
@@ -1143,7 +1164,7 @@ stoop
 % % % xlabel('$|Yfit|$','Interpreter','latex')
 % % % ylabel('$|Residuals|$','Interpreter','latex')
 % % % title('$\Sigma \tau = a_{0} + a_{1}J + ... + a_{6}n $','Interpreter','latex');
-% % % 
+% % %
 % % % subplot(1,4,4)
 % % % Yfit = sqrt( (Yx-resi_KHW_all_Xx).^2 + (Yy-resi_KHW_all_Xy).^2 + (Yz-resi_KHW_all_Xz).^2);
 % % % resid = sqrt(resi_KHW_all_Xx.^2 + resi_KHW_all_Xy.^2 + resi_KHW_all_Xz.^2);
@@ -1169,7 +1190,7 @@ stoop
 Ymod = sqrt( (Yx).^2 + (Yy).^2 + (Yz).^2);
 %--------------------------------------------------------------------------
 
-a=min(abs(Ymod)); 
+a=min(abs(Ymod));
 b=max(abs(Ymod));
 
 % This is the part to check the residual plots using toy models to see how
@@ -1243,7 +1264,7 @@ subplot(2,3,3)
 plot(abs(Yxfit),abs(residx),'.k')
 %plot(resi_fake2,'.b')
 title('abs(resi) vs abs(yfit) normal')
-yscale log 
+yscale log
 xscale log
 subplot(2,3,4)
 plot(xx2,yy2,'.b')
@@ -1265,7 +1286,7 @@ xscale log
 nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 
 % This is to see if there is any threshold that can tell something about
-% the distribution 
+% the distribution
 %--------------------------------------------------------------------------
 %
 f33=figure(33)
@@ -1441,7 +1462,7 @@ nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 % % %xscale log
 % % %yscale log
 % % %ylim([0,10])
-% % 
+% %
 % % subplot(2,4,2)
 % % Yfit = sqrt( (Yx-resi_KHW_Xx).^2 + (Yy-resi_KHW_Xy).^2 + (Yz-resi_KHW_Xz).^2);
 % % resid = sqrt(resi_KHW_Xx.^2 + resi_KHW_Xy.^2 + resi_KHW_Xz.^2);
@@ -1453,7 +1474,7 @@ nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 % % xlabel('$|Yfit|$','Interpreter','latex')
 % % ylabel('$|Residuals|$','Interpreter','latex')
 % % title('$\Sigma \tau = a_{0} + a_{1}KJ + a_{2}HB + a_{3}W\Omega$','Interpreter','latex');
-% % 
+% %
 % % subplot(2,4,3)
 % % Yfit = sqrt( (Yx-resi_comp_Xx).^2 + (Yy-resi_comp_Xy).^2 + (Yz-resi_comp_Xz).^2);
 % % resid = sqrt(resi_comp_Xx.^2 + resi_comp_Xy.^2 + resi_comp_Xz.^2);
@@ -1465,7 +1486,7 @@ nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 % % xlabel('$|Yfit|$','Interpreter','latex')
 % % ylabel('$|Residuals|$','Interpreter','latex')
 % % title('$\Sigma \tau = a_{0} + a_{1}J + ... + a_{6}n $','Interpreter','latex');
-% % 
+% %
 % % subplot(2,4,4)
 % % Yfit = sqrt( (Yx-resi_KHW_all_Xx).^2 + (Yy-resi_KHW_all_Xy).^2 + (Yz-resi_KHW_all_Xz).^2);
 % % resid = sqrt(resi_KHW_all_Xx.^2 + resi_KHW_all_Xy.^2 + resi_KHW_all_Xz.^2);
@@ -1478,8 +1499,8 @@ nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 % % ylabel('$|Residuals|$','Interpreter','latex')
 % % title('$\Sigma \tau = a_{0} + a_{1}KJ_{x} + ... + W\Omega_{z}n $','Interpreter','latex');
 % % %--------------------------------------------------------------------------
-% % 
-% % 
+% %
+% %
 % % %f128=figure(128);
 % % %set(gcf,'position',[x0,y0,xx1,yy1/4.5])
 % % subplot(2,4,5)
@@ -1496,7 +1517,7 @@ nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 % % %xscale log
 % % %yscale log
 % % %ylim([0,10])
-% % 
+% %
 % % subplot(2,4,6)
 % % Yfit = sqrt( (Yx-resi_KHW_Xx).^2 + (Yy-resi_KHW_Xy).^2 + (Yz-resi_KHW_Xz).^2);
 % % resid = sqrt(resi_KHW_Xx.^2 + resi_KHW_Xy.^2 + resi_KHW_Xz.^2);
@@ -1508,7 +1529,7 @@ nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 % % xlabel('$|Y|$','Interpreter','latex')
 % % ylabel('$|Residuals|$','Interpreter','latex')
 % % title('$\Sigma \tau = a_{0} + a_{1}KJ + a_{2}HB + a_{3}W\Omega$','Interpreter','latex');
-% % 
+% %
 % % subplot(2,4,7)
 % % Yfit = sqrt( (Yx-resi_comp_Xx).^2 + (Yy-resi_comp_Xy).^2 + (Yz-resi_comp_Xz).^2);
 % % resid = sqrt(resi_comp_Xx.^2 + resi_comp_Xy.^2 + resi_comp_Xz.^2);
@@ -1520,7 +1541,7 @@ nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 % % xlabel('$|Y|$','Interpreter','latex')
 % % ylabel('$|Residuals|$','Interpreter','latex')
 % % title('$\Sigma \tau = a_{0} + a_{1}J + ... + a_{6}n $','Interpreter','latex');
-% % 
+% %
 % % subplot(2,4,8)
 % % Yfit = sqrt( (Yx-resi_KHW_all_Xx).^2 + (Yy-resi_KHW_all_Xy).^2 + (Yz-resi_KHW_all_Xz).^2);
 % % resid = sqrt(resi_KHW_all_Xx.^2 + resi_KHW_all_Xy.^2 + resi_KHW_all_Xz.^2);
@@ -1532,8 +1553,8 @@ nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 % % xlabel('$|Y|$','Interpreter','latex')
 % % ylabel('$|Residuals|$','Interpreter','latex')
 % % title('$\Sigma \tau = a_{0} + a_{1}KJ_{x} + ... + W\Omega_{z}n $','Interpreter','latex');
-% % 
-% % 
+% %
+% %
 
 
 
@@ -1745,7 +1766,7 @@ xlim([1e-5, 0.1])
 % % xlabel('$Yfit_{x}$','Interpreter','latex')
 % % ylabel('$Residuals_{x}$','Interpreter','latex')
 % % title('$\Sigma \tau = a_{0} + a_{1}J + a_{2}B + a_{3}\Omega$','Interpreter','latex');
-% % 
+% %
 % % subplot(1,4,2)
 % % Yfit = Yx-resi_KHW_Xx;
 % % resid = resi_KHW_Xx;
@@ -1757,7 +1778,7 @@ xlim([1e-5, 0.1])
 % % xlabel('$Yfit_{x}$','Interpreter','latex')
 % % ylabel('$Residuals_{x}$','Interpreter','latex')
 % % title('$\Sigma \tau = a_{0} + a_{1}KJ + a_{2}HB + a_{3}W\Omega$','Interpreter','latex');
-% % 
+% %
 % % subplot(1,4,3)
 % % Yfit = Yx-resi_comp_Xx;
 % % resid = resi_comp_Xx;
@@ -1769,7 +1790,7 @@ xlim([1e-5, 0.1])
 % % xlabel('$Yfit_{x}$','Interpreter','latex')
 % % ylabel('$Residuals_{x}$','Interpreter','latex')
 % % title('$\Sigma \tau = a_{0} + a_{1}J + ... + a_{6}n $','Interpreter','latex');
-% % 
+% %
 % % subplot(1,4,4)
 % % Yfit = Yx-resi_KHW_all_Xx;
 % % resid = resi_KHW_all_Xx;
@@ -1948,7 +1969,7 @@ legend('')
 % % %     LineStyle="-");
 % % % s.Color = {'Red'};
 % % % title('Residuals vs fitted JBO ');ylim([-0.1,0.1])
-% % % 
+% % %
 % % % subplot(2,4,2)
 % % % Yfit = Y-resi_KHW_x;
 % % % resid = resi_KHW_x;
@@ -1958,7 +1979,7 @@ legend('')
 % % %     LineStyle="-");
 % % % s.Color = {'blue'};
 % % % title('Residuals vs fitted KJHBWO');ylim([-0.1,0.1])
-% % % 
+% % %
 % % % subplot(2,4,3)
 % % % Yfit = Y-resi_comp_x;
 % % % resid = resi_comp_x;
@@ -1968,7 +1989,7 @@ legend('')
 % % %     LineStyle="-");
 % % % s.Color = {'c'};
 % % % title('Residuals vs fitted Jton_x');ylim([-0.1,0.1])
-% % % 
+% % %
 % % % subplot(2,4,4)
 % % % Yfit = Y-resi_KHW_all_x;
 % % % resid = resi_KHW_all_x;
@@ -1978,7 +1999,7 @@ legend('')
 % % %     LineStyle="-");
 % % % s.Color = {'k'};
 % % % title('Residuals vs fitted KJHBWO_{xyz}');ylim([-0.1,0.1])
-% % % 
+% % %
 % % % subplot(2,4,5)
 % % % semilogy(abs(QR_x),'*r')
 % % % hold on
@@ -1987,7 +2008,7 @@ legend('')
 % % % semilogy(abs(QR_KHW_all_x),'ok')
 % % % title('QRs')
 % % % legend('JBO','KJHBWO','Jton','KJHBWO_{xyz}')
-% % % 
+% % %
 % % % subplot(2,4,6)
 % % % semilogy(Rs_x,'*r')
 % % % hold on
@@ -2000,12 +2021,12 @@ legend('')
 
 %%% Same QR coeficients changing
 %%% this is to compare with each of  the components and capture the full
-% dependence 
+% dependence
 % % % %--------------------------------------------------------------------------
 % % % Yx = var_tau_total_x';
 % % % Yy = var_tau_total_y';
 % % % Yz = var_tau_total_z';
-% % % 
+% % %
 % % % f43=figure(43);
 % % % subplot(1,3,1)
 % % % plot(Yx,Yy,'*')
@@ -2014,7 +2035,7 @@ legend('')
 % % % subplot(1,3,3)
 % % % plot(Yy,Yz,'*')
 % % % %--------------------------------------------------------------------------
-% % % 
+% % %
 % % % %--------------------------------------------------------------------------
 % % % nbins=60; fs=16; x0=45;y0=54;xx1=1300;yy1=850;
 % % % f26=figure(26);
@@ -2028,7 +2049,7 @@ legend('')
 % % %     LineStyle="-");
 % % % s.Color = {'Red'};
 % % % title('Residuals_x vs fitted_x JBO ');ylim([-0.1,0.1])
-% % % 
+% % %
 % % % subplot(2,4,2)
 % % % Yyfit = Yy-resi_Xy;
 % % % residy = resi_Xy;
@@ -2038,7 +2059,7 @@ legend('')
 % % %     LineStyle="-");
 % % % s.Color = {'blue'};
 % % % title('Residuals_y vs fitted_y JBO ');ylim([-0.1,0.1])
-% % % 
+% % %
 % % % subplot(2,4,3)
 % % % Yzfit = Yz-resi_Xz;
 % % % residz = resi_Xz;
@@ -2048,7 +2069,7 @@ legend('')
 % % %     LineStyle="-");
 % % % s.Color = {'c'};
 % % % title('Residuals_z vs fitted_z JBO ');ylim([-0.1,0.1])
-% % % 
+% % %
 % % % subplot(2,4,4)
 % % % Yfit = sqrt( (Yx-resi_Xx).^2 + (Yy-resi_Xy).^2 + (Yz-resi_Xz).^2);
 % % % resid = sqrt(resi_Xx.^2 + resi_Xy.^2 + resi_Xz.^2);
@@ -2058,7 +2079,7 @@ legend('')
 % % %     LineStyle="-");
 % % % s.Color = {'k'};
 % % % title('|Residuals| vs |fitted|');ylim([-0.1,0.1])
-% % % 
+% % %
 % % % subplot(2,4,5)
 % % % semilogy(abs(QR_x),'*r')
 % % % hold on
@@ -2067,7 +2088,7 @@ legend('')
 % % % semilogy(abs(QR_KHW_all_x),'ok')
 % % % title('QRs')
 % % % legend('JBO','KJHBWO','Jton','KJHBWO_{xyz}')
-% % % 
+% % %
 % % % subplot(2,4,6)
 % % % semilogy(Rs_x,'*r')
 % % % hold on
@@ -2207,7 +2228,7 @@ end
 
 
 function[residuals,coeffs,R_squared,diagonalR] = multilinear_regression_var(X,Y)
-% X is a 3 vector array of predictors, Y is one vector array,  
+% X is a 3 vector array of predictors, Y is one vector array,
 %--------------------------------------------------------------------------
 % Check rank
 r = rank(X);
@@ -2283,22 +2304,22 @@ vif_values = zeros(1, p);
 for j = 1:p
     % Set X_j as the target
     y = X(:,j);
-    
+
     % Set the other predictors as inputs
     X_others = X(:, setdiff(1:p, j));
-    
+
     % Add intercept
     X_aug = [ones(n,1), X_others];
-    
+
     % Compute coefficients
     beta = (X_aug' * X_aug) \ (X_aug' * y);
-    
+
     % Predicted y and R²
     y_pred = X_aug * beta;
     SS_res = sum((y - y_pred).^2);
     SS_tot = sum((y - mean(y)).^2);
     R2_j = 1 - SS_res / SS_tot;
-    
+
     % Compute VIF
     vif_values(j) = 1 / (1 - R2_j);
 end
@@ -2343,28 +2364,28 @@ function [CI95, SE] = Confidence_Intervals2(X, Y, nboot)
 %   CI95   - 95% confidence intervals [lower, upper] for each coefficient (p+1 x 2)
 %   SE     - Standard error for each coefficient (p+1 x 1)
 
-    if nargin < 3
-        nboot = 1000;
-    end
+if nargin < 3
+    nboot = 1000;
+end
 
-    [n, p] = size(X);
-    X_aug = [ones(n, 1), X];  % Include intercept
-    coefs_boot = zeros(nboot, p + 1);  % (intercept + p predictors)
+[n, p] = size(X);
+X_aug = [ones(n, 1), X];  % Include intercept
+coefs_boot = zeros(nboot, p + 1);  % (intercept + p predictors)
 
-    % Bootstrap loop
-    for i = 1:nboot
-        idx = randi(n, n, 1);  % Sample with replacement
-        Xb = X_aug(idx, :);
-        Yb = Y(idx);
-        % Solve least-squares: β = (XᵗX)⁻¹ XᵗY
-        coefs_boot(i, :) = (Xb' * Xb) \ (Xb' * Yb);
-    end
+% Bootstrap loop
+for i = 1:nboot
+    idx = randi(n, n, 1);  % Sample with replacement
+    Xb = X_aug(idx, :);
+    Yb = Y(idx);
+    % Solve least-squares: β = (XᵗX)⁻¹ XᵗY
+    coefs_boot(i, :) = (Xb' * Xb) \ (Xb' * Yb);
+end
 
-    % Compute 95% confidence intervals (2.5 and 97.5 percentiles)
-    CI95 = prctile(coefs_boot, [2.5, 97.5])';  % Transpose to get (p+1) x 2
+% Compute 95% confidence intervals (2.5 and 97.5 percentiles)
+CI95 = prctile(coefs_boot, [2.5, 97.5])';  % Transpose to get (p+1) x 2
 
-    % Standard error = std deviation across bootstrap samples
-    SE = std(coefs_boot, 0, 1)';  % Column vector (p+1 x 1)
+% Standard error = std deviation across bootstrap samples
+SE = std(coefs_boot, 0, 1)';  % Column vector (p+1 x 1)
 end
 
 %--------------------------------------------------------------------------
@@ -2391,9 +2412,9 @@ end
 %
 %--------------------------------------------------------------------------
 function [Xz, mu, sigma] = zscore_columns(X)
-    mu = mean(X, 1);
-    sigma = std(X, 0, 1);
-    Xz = (X - mu) ./ sigma;
+mu = mean(X, 1);
+sigma = std(X, 0, 1);
+Xz = (X - mu) ./ sigma;
 end
 
 %--------------------------------------------------------------------------

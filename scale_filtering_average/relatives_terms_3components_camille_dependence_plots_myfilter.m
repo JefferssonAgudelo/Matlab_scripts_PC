@@ -3,29 +3,29 @@
 
 %dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/02';
 
-dir = '/JAAR-DATA/DATA_HVM/betai=4';
-%dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
-%dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
+dir = '/JAAR-DATA/DATA_HVM/betai=0.25/01';
+%dir = '/JAAR-DATA/DATA_HVM/betai=1/01';
+%dir = '/JAAR-DATA/DATA_HVM/betai=4';
 
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;
 outformat = 0;
 
-%ns = 5;
-%tt = 4;
-%beta_i = 0.25;
-%Ti02Te0 =2.5;
+ns = 4;
+tt = 2;
+beta_i = 0.25;
+Ti02Te0 =2.5;
 
 %ns = 6;
-%tt = 3;
+%tt = 1;
 %beta_i = 1.0;
 %Ti02Te0 = 10.0;
 
-ns = 10;
-tt = 10;
-beta_i = 4.0;
-Ti02Te0 = 40.0;
+%ns = 10;
+%tt = 2;
+%beta_i = 4.0;
+%Ti02Te0 = 40.0;
 
 pressure_on = 0;
 l_wind = 4;
@@ -36,7 +36,7 @@ absolute = 1;
 
 % How many to randomly sample
 AN = 256*256*32;
-filename_beta_comp = "beta4_scatter_KJHBWOgradndivPe_AN32_028.mat";
+filename_beta_comp = "beta4_scatter_KJHBWOgradn_AN32_028.mat";
 
 f_path = [dir, '/'];
 fprintf('FILE PATH = %s\n', f_path);
@@ -461,6 +461,8 @@ clearvars uxp_t uyp_t uzp_t uxe_t uye_t uze_t
 
 %beta_i = input('set the beta_i % : ');
 %Ti02Te0 = input('set the Ti0/Te0 % : ');
+
+stopp
 
 mu0 = 1;
 
@@ -1120,6 +1122,8 @@ term6_dt_z = term7_dt_z;
 term6_filt_x = term7_filt_x;
 term6_filt_y = term7_filt_y;
 term6_filt_z = term7_filt_z;
+
+clearvars term6_dt_x term6_dt_y term6_dt_z term6_filt_x term6_filt_y term6_filt_z
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 
@@ -1330,10 +1334,9 @@ n_x_scatter = n_filt_x(rand_inds);
 n_y_scatter = n_filt_y(rand_inds);
 n_z_scatter = n_filt_z(rand_inds);
 
-Div_Pe_x_scatter = Div_Pe_filt_x(rand_inds);
-Div_Pe_y_scatter = Div_Pe_filt_y(rand_inds);
-Div_Pe_z_scatter = Div_Pe_filt_z(rand_inds);
-
+%Div_Pe_x_scatter = Div_Pe_filt_x(rand_inds);
+%Div_Pe_y_scatter = Div_Pe_filt_y(rand_inds);
+%Div_Pe_z_scatter = Div_Pe_filt_z(rand_inds);
 
 tau_total_MHD_x = term2_filt_x - term3_filt_x + term5_filt_x + tau_total_x;
 tau_total_MHD_y = term2_filt_y - term3_filt_y + term5_filt_y + tau_total_y;
@@ -1356,26 +1359,6 @@ var_tau_total_HMHD_z = tau_total_HMHD_z(rand_inds);
 
 
 
-term1_filt_x_scatter = term1_filt_x(rand_inds);
-term2_filt_x_scatter = term2_filt_x(rand_inds);
-term3_filt_x_scatter = term3_filt_x(rand_inds);
-term4_filt_x_scatter = term4_filt_x(rand_inds);
-term5_filt_x_scatter = term5_filt_x(rand_inds);
-term7_filt_x_scatter = term6_filt_x(rand_inds);
-
-term1_filt_y_scatter = term1_filt_y(rand_inds);
-term2_filt_y_scatter = term2_filt_y(rand_inds);
-term3_filt_y_scatter = term3_filt_y(rand_inds);
-term4_filt_y_scatter = term4_filt_y(rand_inds);
-term5_filt_y_scatter = term5_filt_y(rand_inds);
-term7_filt_y_scatter = term6_filt_y(rand_inds);
-
-term1_filt_z_scatter = term1_filt_z(rand_inds);
-term2_filt_z_scatter = term2_filt_z(rand_inds);
-term3_filt_z_scatter = term3_filt_z(rand_inds);
-term4_filt_z_scatter = term4_filt_z(rand_inds);
-term5_filt_z_scatter = term5_filt_z(rand_inds);
-term7_filt_z_scatter = term6_filt_z(rand_inds);
 
 %-----------------------------------------------------------------------
 
@@ -1913,16 +1896,19 @@ cd(f_path)
 %filename = "beta4_scatter.mat";
 
 save(filename_beta_comp,...
-    "J_scatter_x","B_scatter_x","vort_scatter_x","v_scatter_x","E_scatter_x","var_tau_total_x",...
-    "J_scatter_y","B_scatter_y","vort_scatter_y","v_scatter_y","E_scatter_y","var_tau_total_y",...
-    "J_scatter_z","B_scatter_z","vort_scatter_z","v_scatter_z","E_scatter_z","var_tau_total_z",...
+    "J_scatter_x","B_scatter_x","vort_scatter_x","v_scatter_x","E_scatter_x",...
+    "J_scatter_y","B_scatter_y","vort_scatter_y","v_scatter_y","E_scatter_y",...
+    "J_scatter_z","B_scatter_z","vort_scatter_z","v_scatter_z","E_scatter_z",...
     "J_mag_scatter","B_mag_scatter","vort_mag_scatter","v_mag_scatter","E_mag_scatter","var_tau_total","n_scatter",...
     "KJ_scatter_x","HB_scatter_x","Wvort_scatter_x",...
     "KJ_scatter_y","HB_scatter_y","Wvort_scatter_y",...
     "KJ_scatter_z","HB_scatter_z","Wvort_scatter_z",...
     "KJ_mag_scatter","HB_mag_scatter","Wvort_mag_scatter",...
+    "KJ_mag_scatter","HB_mag_scatter","Wvort_mag_scatter",...
     "n_x_scatter","n_y_scatter","n_z_scatter",...
-
+    "var_tau_total_x","var_tau_total_y","var_tau_total_z",...
+    "var_tau_total_MHD_x", "var_tau_total_MHD_y", "var_tau_total_MHD_z",...
+    "var_tau_total_HMHD_x", "var_tau_total_HMHD_y", "var_tau_total_HMHD_z",...    
     "-nocompression")
     %"Div_Pe_x_scatter","Div_Pe_y_scatter","Div_Pe_z_scatter",...
 %-----------------------------------------------------------------------

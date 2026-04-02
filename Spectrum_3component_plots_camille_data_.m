@@ -64,6 +64,50 @@ if(rho_terms == 0)
     %fs=20;
     threshold =pi/resx; %
 
+    [Ek_B,~]=Omni1DSpectra3c(Bx_dt,By_dt,Bz_dt,Lx,threshold);
+    [Ek_ui,k_bins]=Omni1DSpectra3c(v_x_dt,v_y_dt,v_z_dt,Lx,threshold);
+
+    %Ek_B_beta4 = Ek_B;
+    %Ek_ui_beta4 = Ek_ui;
+    %Ek_B_beta1 = Ek_B;
+    %Ek_ui_beta1 = Ek_ui; 
+    %Ek_B_beta025 = Ek_B;
+    %Ek_ui_beta025 = Ek_ui;    
+    stoop
+    
+    sp = 0; % This is for E
+    f13=figure(13);
+    set(gcf,'position',[x0,y0,2*xx1,yy1*2])
+    dump = Ek_B_beta025.*(k_bins.^(sp));
+    loglog(k_bins,dump,'r--',LineWidth=lwm)
+    hold on
+    dump = Ek_B_beta1.*(k_bins.^(sp));
+    loglog(k_bins,dump,'b--',LineWidth=lwm)
+    dump = Ek_B_beta4.*(k_bins.^(sp));
+    loglog(k_bins,dump,'k--',LineWidth=lwm)    
+    dump = Ek_ui_beta025.*(k_bins.^(sp));
+    loglog(k_bins,dump,'r',LineWidth=lwm)
+    dump = 1*Ek_ui_beta1.*(k_bins.^(sp));
+    loglog(k_bins,dump,'b',LineWidth=lwm)
+    dump = 1*Ek_ui_beta4.*(k_bins.^(sp));
+    loglog(k_bins,dump,'k',LineWidth=lwm)
+    legend('dB \beta 025', 'dB \beta 1', 'dB \beta 4',...
+        'dui \beta 025', 'dui \beta 1', 'dui \beta 4')
+    ylim([1e-12, 1e0])
+    xlim([1e-1, 1e2])
+    hold off
+
+    f14=figure(14);
+    set(gcf,'position',[x0,y0,2*xx1,yy1*2])
+    loglog(k_bins,sqrt(Ek_B_beta1./Ek_B_beta025),'--r',LineWidth=lwm)
+    hold on
+    loglog(k_bins,sqrt(Ek_B_beta4./Ek_B_beta1),'--b',LineWidth=lwm)
+    loglog(k_bins,sqrt(Ek_B_beta4./Ek_B_beta025),'--k',LineWidth=lwm)
+    loglog(k_bins,sqrt(Ek_ui_beta1./Ek_ui_beta025),'r',LineWidth=lwm)
+    loglog(k_bins,sqrt(Ek_ui_beta4./Ek_ui_beta1),'b',LineWidth=lwm)
+    loglog(k_bins,sqrt(Ek_ui_beta4./Ek_ui_beta025),'k',LineWidth=lwm)    
+    hold off    
+    stopp
 
     %
     [Ek_B_dt,~]=Omni1DSpectra3c(Bx_dt,By_dt,Bz_dt,Lx,threshold);
@@ -103,6 +147,7 @@ if(rho_terms == 0)
 
     [Ek_sum_tau,k_bins]=Omni1DSpectra3c(sum_tau_x,sum_tau_y,sum_tau_z,Lx,threshold);
 
+ 
 
     %}
     %----------------------------------------------------------------------
@@ -291,12 +336,11 @@ if(rho_terms == 0)
 
 
 
-    % Lets make also plots for the ratios julia style fo
 
-    %--------------------------------------------------------------------------
+
     %fs=20;
     sp = 0; % This is for E
-    f10014=figure(10014);
+    f100145=figure(100145);
     set(gcf,'position',[x0,y0,1*xx1,yy1*1])
     dump = Ek_term3_dt./Ek_term2_dt;
     loglog(k_bins,dump,'-',color=My_colors(3,:),LineWidth=lwm)
@@ -332,6 +376,128 @@ if(rho_terms == 0)
     set(gca,'FontSize',fs)
     hold off
     %--------------------------------------------------------------------------
+
+    % Lets make also plots for the ratios julia style fo
+
+    %--------------------------------------------------------------------------
+    %Ek_term1_dt_beta4 = Ek_term1_dt;
+    %Ek_term2_dt_beta4 = Ek_term2_dt;
+    %Ek_term3_dt_beta4 = Ek_term3_dt;
+    %Ek_term4_dt_beta4 = Ek_term4_dt;
+    %Ek_term5_dt_beta4 = Ek_term5_dt;
+
+    %Ek_term1_dt_beta025 = Ek_term1_dt;
+    %Ek_term2_dt_beta025 = Ek_term2_dt;
+    %Ek_term3_dt_beta025 = Ek_term3_dt;
+    %Ek_term4_dt_beta025 = Ek_term4_dt;
+    %Ek_term5_dt_beta025 = Ek_term5_dt;
+
+    %Ek_term1_dt_beta1 = Ek_term1_dt;
+    %Ek_term2_dt_beta1 = Ek_term2_dt;
+    %Ek_term3_dt_beta1 = Ek_term3_dt;
+    %Ek_term4_dt_beta1 = Ek_term4_dt;
+    %Ek_term5_dt_beta1 = Ek_term5_dt;
+
+    %sttoop
+
+    sp = 0; % This is for E
+    f1001416=figure(1001416);
+    set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    dump = Ek_term1_dt_beta4./Ek_term1_dt_beta1;
+    loglog(k_bins,dump,'-',color=My_colors(1,:),LineWidth=lwm)
+    hold on
+    dump = Ek_term2_dt_beta4./Ek_term2_dt_beta1;
+    loglog(k_bins,dump,'-',color=My_colors(2,:),LineWidth=lwm)
+    dump = Ek_term3_dt_beta4./Ek_term3_dt_beta1;
+    loglog(k_bins,dump,'-',color=My_colors(3,:),LineWidth=lwm)
+    dump = Ek_term4_dt_beta4./Ek_term4_dt_beta1;
+    loglog(k_bins,dump,'-',color=My_colors(4,:),LineWidth=lwm)
+    dump = Ek_term5_dt_beta4./Ek_term5_dt_beta1;
+    loglog(k_bins,dump,'-',color=My_colors(5,:),LineWidth=lwm)  
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    %ylim([10^(-7),10^(0)])
+    xlim([min(k_bins),threshold])
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P^{1D}_{E,\beta_{i}=4} /P^{1D}_{E,\beta_{i}=1}$';
+    xline(10,'--')
+    xline(1,'--')
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
+    xlim([min(k_bins),threshold])
+    %ax.YTick = [10^-9 10^-6, 10^-3];
+    ax.XTick = [10^0, 10^1];
+    legend('$E$','$E_{MHD}$','$E_{Hall}$','$E_{P_{e}}$','$E_{Ine}$',...
+        'Interpreter','latex','NumColumns',5,'Location','Northout')
+    hold off
+
+    % Ratios
+    f1001417=figure(1001417);
+    set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    dump = (Ek_term3_dt_beta4./Ek_term2_dt_beta4)./(Ek_term3_dt_beta1./Ek_term2_dt_beta1);
+    loglog(k_bins,dump,'-',color=My_colors(3,:),LineWidth=lwm)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    %ylim([10^(-7),10^(0)])
+    xlim([min(k_bins),threshold])
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P^{1D}_{E,\beta_{i}=4} /P^{1D}_{E,\beta_{i}=1}$';
+    xline(10,'--')
+    xline(1,'--')
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
+    xlim([min(k_bins),threshold])
+    %ax.YTick = [10^-9 10^-6, 10^-3];
+    ax.XTick = [10^0, 10^1];
+    legend('$E_{Hall}/E_{MHD}$',...
+        'Interpreter','latex','NumColumns',5,'Location','Northout')
+    hold off
+
+    f1001418=figure(1001418);
+    set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    dump = (Ek_term3_dt_beta1./Ek_term2_dt_beta1)./(Ek_term3_dt_beta025./Ek_term2_dt_beta025);
+    loglog(k_bins,dump,'-',color=My_colors(3,:),LineWidth=lwm)
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    %ylim([10^(-7),10^(0)])
+    xlim([min(k_bins),threshold])
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P^{1D}_{E,\beta_{i}=1} /P^{1D}_{E,\beta_{i}=0.25}$';
+    xline(10,'--')
+    xline(1,'--')
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
+    xlim([min(k_bins),threshold])
+    %ax.YTick = [10^-9 10^-6, 10^-3];
+    ax.XTick = [10^0, 10^1];
+    legend('$E_{Hall}/E_{MHD}$',...
+        'Interpreter','latex','NumColumns',5,'Location','Northout')
+    hold off
+
+    f1001419=figure(1001419);
+    set(gcf,'position',[x0,y0,1*xx1,yy1*1])
+    dump = (Ek_term3_dt_beta1./Ek_term2_dt_beta1)./(Ek_term3_dt_beta025./Ek_term2_dt_beta025);
+    loglog(k_bins,dump,'-',color=My_colors(1,:),LineWidth=lwm)
+    hold on
+    dump = (Ek_term3_dt_beta4./Ek_term2_dt_beta4)./(Ek_term3_dt_beta1./Ek_term2_dt_beta1);
+    loglog(k_bins,dump,'-',color=My_colors(2,:),LineWidth=lwm)
+    dump = (Ek_term3_dt_beta4./Ek_term2_dt_beta4)./(Ek_term3_dt_beta025./Ek_term2_dt_beta025);
+    loglog(k_bins,dump,'-',color=My_colors(3,:),LineWidth=lwm)    
+    ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+    ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+    %ylim([10^(-7),10^(0)])
+    xlim([min(k_bins),threshold])
+    ax.XLabel.String = '$kd_i$';
+    ax.YLabel.String = '$P^{1D}_{E,\beta_{i}=1} /P^{1D}_{E,\beta_{i}=0.25}$';
+    xline(10,'--')
+    xline(1,'--')
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
+    xlim([min(k_bins),threshold])
+    %ax.YTick = [10^-9 10^-6, 10^-3];
+    ax.XTick = [10^0, 10^1];
+    legend('$\beta_{i,1}/\beta_{i,0.25}$','$\beta_{i,4}/\beta_{i,1}$','$\beta_{i,4}/\beta_{i,0.25}$',...
+        'Interpreter','latex','NumColumns',5,'Location','Northout')
+    hold off
+
+    
+    stopp
 
 
         % This is for the plot of the phase differences
@@ -445,7 +611,7 @@ if(rho_terms == 0)
     ax.YTick = [0, 90, 180];
     %yline(135,'--')
     yline(90,'--')
-    ylim([30,110])
+    ylim([30,10])
 
     xline(10,'--')
     xline(1,'--')

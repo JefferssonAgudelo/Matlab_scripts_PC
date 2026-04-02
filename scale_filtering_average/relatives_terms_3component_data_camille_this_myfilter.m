@@ -3,8 +3,8 @@
 %dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
 
 %dir = '/JAAR-DATA/DATA_HVM/betai=4';
-dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
-%dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
+%dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
+dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
 
 xl = 3.0;
 yl = 3.0;
@@ -12,11 +12,11 @@ zl = 3.0;
 outformat = 0;
 
 %ns = 4; tt = 4;
-ns = 5; tt = 5;
-beta_i = 0.25; Ti02Te0 = 2.5;
+%ns = 5; tt = 4;
+%beta_i = 0.25; Ti02Te0 = 2.5;
 
-%ns = 6; tt = 6;
-%beta_i = 1; Ti02Te0 = 10;
+ns = 6; tt = 3;
+beta_i = 1; Ti02Te0 = 10;
 
 %ns = 10; tt = 10;
 %beta_i = 4; Ti02Te0 = 40;
@@ -1177,7 +1177,7 @@ lwm=2;
 
 % Plot for the magnitude instead of the x  component 
 
-
+stopp
 
 fs=25; x0=45;y0=54;xx1=1400;yy1=500;
 i = 50;
