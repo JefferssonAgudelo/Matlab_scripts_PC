@@ -3,7 +3,7 @@
 
 %dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/02';
 
-dir = '/JAAR-DATA/DATA_HVM/betai=0.25/01';
+dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
 %dir = '/JAAR-DATA/DATA_HVM/betai=1/01';
 %dir = '/JAAR-DATA/DATA_HVM/betai=4';
 
@@ -12,8 +12,8 @@ yl = 3.0;
 zl = 3.0;
 outformat = 0;
 
-ns = 4;
-tt = 2;
+ns = 5;
+tt = 4;
 beta_i = 0.25;
 Ti02Te0 =2.5;
 
@@ -31,7 +31,6 @@ pressure_on = 0;
 l_wind = 4;
 rms_value = 1;
 absolute = 1;
-
 
 
 % How many to randomly sample
@@ -135,7 +134,6 @@ end
 dim1 = a1;
 dim2 = a2;
 dim3 = a3;
-
 
 
 kx = (0:dim1-1) - dim1 / 2 + 1;
@@ -462,11 +460,11 @@ clearvars uxp_t uyp_t uzp_t uxe_t uye_t uze_t
 %beta_i = input('set the beta_i % : ');
 %Ti02Te0 = input('set the Ti0/Te0 % : ');
 
-stopp
+%%stopp
 
 mu0 = 1;
 
-Te0 = beta_i/(2*mu0*Ti02Te0);
+Te0 = beta_i/(2*mu0*Ti02Te0); %?
 %Te0 = beta_i/(8*pi*Ti02Te0);
 
 Pe_dt = n_0_dt * Te0;
@@ -560,18 +558,24 @@ me = 1/100;
 %L2Ex_dt = me*4*del2(Ex_dt)/(grad_fact.*resx)^2;
 %L2Ey_dt = me*4*del2(Ey_dt)/(grad_fact.*resx)^2;
 %L2Ez_dt = me*4*del2(Ez_dt)/(grad_fact.*resx)^2;
-
-[Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
-[Ex_dt_yy, ~, ~] = gradient(Ex_dt_y); [~, Ex_dt_xx, ~] = gradient(Ex_dt_x); [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
-L2Ex_dt = me*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
-
-[Ey_dt_y, Ey_dt_x, Ey_dt_z] = gradient(Ey_dt);
-[Ey_dt_yy, ~, ~] = gradient(Ey_dt_y); [~, Ey_dt_xx, ~] = gradient(Ey_dt_x); [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
-L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
-
-[Ez_dt_y, Ez_dt_x, Ez_dt_z] = gradient(Ez_dt);
-[Ez_dt_yy, ~, ~] = gradient(Ez_dt_y); [~, Ez_dt_xx, ~] = gradient(Ez_dt_x); [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
-L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
+% 
+% [Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
+% [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y); 
+% [~, Ex_dt_xx, ~] = gradient(Ex_dt_x); 
+% [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
+% L2Ex_dt = me*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+% 
+% [Ey_dt_y, Ey_dt_x, Ey_dt_z] = gradient(Ey_dt);
+% [Ey_dt_yy, ~, ~] = gradient(Ey_dt_y); 
+% [~, Ey_dt_xx, ~] = gradient(Ey_dt_x); 
+% [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
+% L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
+% 
+% [Ez_dt_y, Ez_dt_x, Ez_dt_z] = gradient(Ez_dt);
+% [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y); 
+% [~, Ez_dt_xx, ~] = gradient(Ez_dt_x); 
+% [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
+% L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
 
 %Correction (electron inertia) (I should not substract this )
 %----------------------------------------------------------------------
@@ -775,7 +779,7 @@ end
     [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y);
     [~, Ex_dt_xx, ~] = gradient(Ex_dt_x);
     [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
-    L2Ex_dt = me*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+    L2Ex_dt = (me^0)*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ex_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ex_dt);
     %----------------------------------------------------------------------
@@ -784,7 +788,7 @@ end
     [Ey_dt_yy, ~, ~] = gradient(Ey_dt_y);
     [~, Ey_dt_xx, ~] = gradient(Ey_dt_x);
     [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
-    L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
+    L2Ey_dt = (me^0)*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ey_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ey_dt);
     %----------------------------------------------------------------------
@@ -793,7 +797,7 @@ end
     [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y);
     [~, Ez_dt_xx, ~] = gradient(Ez_dt_x);
     [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
-    L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
+    L2Ez_dt = (me^0)*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ez_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ez_dt);
     %----------------------------------------------------------------------
@@ -885,9 +889,9 @@ end
 %----------------------------------------------------------------------
 %if (component == 1)
         %Div_Pe_filt_x = (mre/me)*Div_Pe_filt_x - (mre/mi)*Div_Pi_filt_x ;
-%    elseif (component == 2)
+ %  elseif (component == 2)
         %Div_Pe_filt_y = (mre/me)*Div_Pe_filt_y - (mre/mi)*Div_Pi_filt_y ;
-%    elseif (component == 3)
+  % elseif (component == 3)
         %Div_Pe_filt_z = (mre/me)*Div_Pe_filt_z - (mre/mi)*Div_Pi_filt_z ;
 %end
 %----------------------------------------------------------------------
@@ -1115,17 +1119,18 @@ term5_filt_x = term5_filt_x + term6_filt_x;
 term5_filt_y = term5_filt_y + term6_filt_y;
 term5_filt_z = term5_filt_z + term6_filt_z;
 
-term6_dt_x = term7_dt_x;
-term6_dt_y = term7_dt_y;
-term6_dt_z = term7_dt_z;
+%term6_dt_x = term7_dt_x;
+%term6_dt_y = term7_dt_y;
+%term6_dt_z = term7_dt_z;
 
-term6_filt_x = term7_filt_x;
-term6_filt_y = term7_filt_y;
-term6_filt_z = term7_filt_z;
+%term6_filt_x = term7_filt_x;
+%term6_filt_y = term7_filt_y;
+%term6_filt_z = term7_filt_z;
 
 clearvars term6_dt_x term6_dt_y term6_dt_z term6_filt_x term6_filt_y term6_filt_z
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
+
 
 
 %%% ----------------------------------------------------------------------
@@ -1137,6 +1142,7 @@ tau_total_y = -tau_nE_tau_y -tau_v_x_B_tau_y + tau_J_x_B_tau_y + tau_Div_tau1_y;
 tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 %--------------------------------------------------------------------------
 
+stoppp
 
 %%%
 % This is to compute the voritcity 

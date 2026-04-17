@@ -67,14 +67,17 @@ if(rho_terms == 0)
     [Ek_B,~]=Omni1DSpectra3c(Bx_dt,By_dt,Bz_dt,Lx,threshold);
     [Ek_ui,k_bins]=Omni1DSpectra3c(v_x_dt,v_y_dt,v_z_dt,Lx,threshold);
 
+    % This part is to compare the different betas 
+
     %Ek_B_beta4 = Ek_B;
     %Ek_ui_beta4 = Ek_ui;
     %Ek_B_beta1 = Ek_B;
     %Ek_ui_beta1 = Ek_ui; 
     %Ek_B_beta025 = Ek_B;
     %Ek_ui_beta025 = Ek_ui;    
-    stoop
+    %stoop
     
+    %{
     sp = 0; % This is for E
     f13=figure(13);
     set(gcf,'position',[x0,y0,2*xx1,yy1*2])
@@ -108,6 +111,7 @@ if(rho_terms == 0)
     loglog(k_bins,sqrt(Ek_ui_beta4./Ek_ui_beta025),'k',LineWidth=lwm)    
     hold off    
     stopp
+    %}
 
     %
     [Ek_B_dt,~]=Omni1DSpectra3c(Bx_dt,By_dt,Bz_dt,Lx,threshold);
@@ -131,6 +135,8 @@ if(rho_terms == 0)
     [Ek_term2_filt,~]=Omni1DSpectra3c(term2_filt_x,term2_filt_y,term2_filt_z,Lx,threshold);
     [Ek_term3_filt,~]=Omni1DSpectra3c(term3_filt_x,term3_filt_y,term3_filt_z,Lx,threshold);
     [Ek_term4_filt,~]=Omni1DSpectra3c(term4_filt_x,term4_filt_y,term4_filt_z,Lx,threshold);
+
+    %[Ek_term8_dt,~] = Omni1DSpectra3c(term7_dt_x - term6_dt_x,term7_dt_y - term6_dt_y,term7_dt_z - term6_dt_z,Lx,threshold);
 
     [Ek_term5_filt,~]=Omni1DSpectra3c(term5_filt_x ,term5_filt_y,term5_filt_z,Lx,threshold);
     %[Ek_term6_filt,~]=Omni1DSpectra3c(term6_filt_x ,term6_filt_y,term6_filt_z,Lx,threshold);
@@ -188,7 +194,7 @@ if(rho_terms == 0)
     ax.YLabel.String = '$P^{1D}$';
     xline(10,'--')
     xline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
     set(gca,'FontSize',fs)
@@ -197,7 +203,7 @@ if(rho_terms == 0)
         'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
     hold off
 
-    subplot(2,2,2)
+    subplot(2,2,3)
     dump = Ek_term1_dt.*(k_bins.^(sp));
     loglog(k_bins,dump,'--',color=My_colors(1,:),LineWidth=lwm)
     hold on
@@ -219,7 +225,7 @@ if(rho_terms == 0)
     ax.YLabel.String = '$P^{1D}$';
     xline(10,'--')
     xline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     xlim([min(k_bins),threshold])
     ax.YTick = [10^-9 10^-6, 10^-3];
     ax.XTick = [10^0, 10^1];
@@ -249,7 +255,7 @@ if(rho_terms == 0)
     hold off
 
 
-    subplot(2,2,3)
+    subplot(2,2,2)
     dump = Ek_term1_filt.*(k_bins.^(sp));
     loglog(k_bins,dump,'-',color=My_colors(1,:),LineWidth=1.5)
     hold on
@@ -277,7 +283,7 @@ if(rho_terms == 0)
     ax.XTick = [10^0, 10^1];
     xline(10,'--')
     xline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     set(gca,'FontSize',fs)
     legend( '$\overline{\mathbf{E}}$', ...
         '$\overline{\mathbf{E}}_{MHD}$',...
@@ -324,7 +330,7 @@ if(rho_terms == 0)
     ax.XTick = [10^0, 10^1];
     xline(10,'--')
     xline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     legend( '${\tau}_{nE}$', ...
         '$\tau_{nu \times B}$', ...
         '$\tau_{J \times B}$',...
@@ -334,7 +340,7 @@ if(rho_terms == 0)
     hold off
 
 
-
+%stopp
 
 
 
@@ -400,7 +406,9 @@ if(rho_terms == 0)
 
     %sttoop
 
+    % This is for contrasting the betas
     sp = 0; % This is for E
+    %{
     f1001416=figure(1001416);
     set(gcf,'position',[x0,y0,1*xx1,yy1*1])
     dump = Ek_term1_dt_beta4./Ek_term1_dt_beta1;
@@ -495,12 +503,12 @@ if(rho_terms == 0)
     legend('$\beta_{i,1}/\beta_{i,0.25}$','$\beta_{i,4}/\beta_{i,1}$','$\beta_{i,4}/\beta_{i,0.25}$',...
         'Interpreter','latex','NumColumns',5,'Location','Northout')
     hold off
-
+    %}
     
-    stopp
+    %stopp
 
 
-        % This is for the plot of the phase differences
+    % This is for the plot of the phase differences
     %----------------------------------------------------------------------
     %[phase_diff_uxB,~] = Phase_difference(term2_filt_x,tau_v_x_B_tau_x,Lx,threshold);
     % [phase_diff_JxB,~] = Phase_difference(term3_filt_x,tau_J_x_B_tau_x,Lx,threshold);
@@ -611,7 +619,7 @@ if(rho_terms == 0)
     ax.YTick = [0, 90, 180];
     %yline(135,'--')
     yline(90,'--')
-    ylim([30,10])
+    %ylim([30,10])
 
     xline(10,'--')
     xline(1,'--')
@@ -627,9 +635,10 @@ if(rho_terms == 0)
         '$\Sigma \tau / \overline{\mathbf{E}}_{RHS}$',...
         'Interpreter','latex','NumColumns',4,'Location','southeastoutside')
     %title('$\Delta_{l} = 0.59 d_{i}$','Interpreter','latex')
+    xlim([min(k_bins),20])
     hold off
 
-    stopp
+    %stopp
 
   f1006=figure(1006);
     set(gcf,'position',[x0,y0,1*xx1,yy1*2])
@@ -657,7 +666,7 @@ if(rho_terms == 0)
     ylim([0,180])
     xline(10,'--')
     xline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     ax.XTick = [10^0, 10^1];
     legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
@@ -690,7 +699,7 @@ if(rho_terms == 0)
     ylim([0,180])
     xline(10,'--')
     xline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     ax.XTick = [10^0, 10^1];
     legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
@@ -722,7 +731,7 @@ if(rho_terms == 0)
     ylim([0,180])
     xline(10,'--')
     xline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     ax.XTick = [10^0, 10^1];
     legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...
@@ -754,7 +763,7 @@ if(rho_terms == 0)
     ylim([0,180])
     xline(10,'--')
     xline(1,'--')
-    xline(1*pi/(sqrt(12)*0.59),'k--', LineWidth=1.5)
+    xline(1*pi/(sqrt(12)*0.28),'k--', LineWidth=1.5)
     xlim([min(k_bins),20])
     ax.XTick = [10^0, 10^1];
     legend('$\tau_{nu \times B}/\overline{\mathbf{E}}_{MHD}$', ...

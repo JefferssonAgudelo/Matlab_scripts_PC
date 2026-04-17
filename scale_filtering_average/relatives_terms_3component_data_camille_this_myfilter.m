@@ -2,9 +2,9 @@
 %dir = input('Name of the directory? (Like ./low_amplitude/12 or ./large_amplitude/01): ', 's');
 %dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
 
-%dir = '/JAAR-DATA/DATA_HVM/betai=4';
+dir = '/JAAR-DATA/DATA_HVM/betai=4';
 %dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
-dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
+%dir = '/JAAR-DATA/DATA_HVM/betai=1/02';
 
 xl = 3.0;
 yl = 3.0;
@@ -15,14 +15,14 @@ outformat = 0;
 %ns = 5; tt = 4;
 %beta_i = 0.25; Ti02Te0 = 2.5;
 
-ns = 6; tt = 3;
-beta_i = 1; Ti02Te0 = 10;
+%ns = 6; tt = 3;
+%beta_i = 1; Ti02Te0 = 10;
 
-%ns = 10; tt = 10;
-%beta_i = 4; Ti02Te0 = 40;
+ns = 10; tt = 10;
+beta_i = 4; Ti02Te0 = 40;
 
 pressure_on = 0; % This is ion pressure correction (dosen't actually add mutch)
-l_wind = 4;
+l_wind = 16;
 rms_value = 1;
 absolute = 1;
 
@@ -549,15 +549,15 @@ me = 1/100;
 
 [Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
 [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y); [~, Ex_dt_xx, ~] = gradient(Ex_dt_x); [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
-L2Ex_dt = (me^1)*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+L2Ex_dt = (me^0)*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
 
 [Ey_dt_y, Ey_dt_x, Ey_dt_z] = gradient(Ey_dt);
 [Ey_dt_yy, ~, ~] = gradient(Ey_dt_y); [~, Ey_dt_xx, ~] = gradient(Ey_dt_x); [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
-L2Ey_dt = (me^1)*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
+L2Ey_dt = (me^0)*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
 
 [Ez_dt_y, Ez_dt_x, Ez_dt_z] = gradient(Ez_dt);
 [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y); [~, Ez_dt_xx, ~] = gradient(Ez_dt_x); [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
-L2Ez_dt = (me^1)*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
+L2Ez_dt = (me^0)*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
 
 %Correction (electron inertia) (I should not substract this )
 %----------------------------------------------------------------------
@@ -1142,13 +1142,13 @@ term5_filt_x = term5_filt_x + term6_filt_x;
 term5_filt_y = term5_filt_y + term6_filt_y;
 term5_filt_z = term5_filt_z + term6_filt_z;
 
-term6_dt_x = term7_dt_x;
-term6_dt_y = term7_dt_y;
-term6_dt_z = term7_dt_z;
+%term6_dt_x = term7_dt_x;
+%term6_dt_y = term7_dt_y;
+%term6_dt_z = term7_dt_z;
 
-term6_filt_x = term7_filt_x;
-term6_filt_y = term7_filt_y;
-term6_filt_z = term7_filt_z;
+%term6_filt_x = term7_filt_x;
+%term6_filt_y = term7_filt_y;
+%term6_filt_z = term7_filt_z;
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
@@ -1160,9 +1160,11 @@ tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 
 % Thos part here is to make the plot for the contributions. This has the
 % correct labels and colours
+
+%  HERE beggings the block for the plots and phase coherence plots <-----------------
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
-%
+%{
 My_colors = [ 204, 121, 167; 
 0, 114, 178; 
 128, 128, 128
@@ -1177,7 +1179,7 @@ lwm=2;
 
 % Plot for the magnitude instead of the x  component 
 
-stopp
+%stopp
 
 fs=25; x0=45;y0=54;xx1=1400;yy1=500;
 i = 50;
@@ -1298,7 +1300,7 @@ hold off
 %--------------------------------------------------------------------------
 
 %stopp
-
+%{
 % lets Compute the Curl %<----------------- to compute the curl and make
 % the plots
 %--------------------------------------------------------------------------
@@ -1481,6 +1483,7 @@ TT = [Q1_nE, Q2_nE, Q3_nE, Q4_nE;...
 %}
 %--------------------------------------------------------------------------
 
+%{
 threshold =pi/resx;
 
 % It is still important to look at the phase.
@@ -1642,6 +1645,10 @@ hold off
 % 
 %<---- this is where the latest phase analysis is 25/03/2026
 
+%Making arrays of random numbers to see how the phase diff behaves
+
+
+%{
 [phase_diff_B_curl_tau_nE,~] = Phase_difference3D(Bx_filt,By_filt,Bz_filt, ...
     curl_tau_nE_tau_x,curl_tau_nE_tau_y,curl_tau_nE_tau_z,Lx,threshold);
 
@@ -1677,6 +1684,11 @@ hold off
 
 %--------------------------------------------------------------------------
 % Make the phase difference plot now
+
+
+
+
+
 
 fs=25; 
 %x0=45;y0=54;xx1=1400;yy1=500;
@@ -1753,13 +1765,14 @@ hold off
 %}
 %-------------------------
 
-
+%} %<---------------------------------- here ends the bloque of the plots
+%with the phase coherence
 
 
 
 
 %--------------------------------------------------------------------------
-stoopp
+%stoopp
 %--------------------------------------------------------------------------
 
 % Now this is to compute the total amplitude
@@ -1775,7 +1788,7 @@ if rms_value==0
     term3_filt = sqrt(term3_filt_x.^2 + term3_filt_y.^2 + term3_filt_z.^2) ;
     term4_filt = sqrt(term4_filt_x.^2 + term4_filt_y.^2 + term4_filt_z.^2) ;
     term5_filt = sqrt(term5_filt_x.^2 + term5_filt_y.^2 + term5_filt_z.^2) ;
-    term6_filt = sqrt(term6_filt_x.^2 + term6_filt_y.^2 + term6_filt_z.^2) ;
+    term7_filt = sqrt(term7_filt_x.^2 + term7_filt_y.^2 + term7_filt_z.^2) ;
 
     tau_nE_tau = sqrt(tau_nE_tau_x.^2 + tau_nE_tau_y.^2 + tau_nE_tau_z.^2) ;
     tau_v_x_B_tau = sqrt(tau_v_x_B_tau_x.^2 + tau_v_x_B_tau_y.^2 + tau_v_x_B_tau_z.^2) ;
@@ -1794,7 +1807,7 @@ if rms_value==0
         MHD_JxB_mean = mean(abs(term3_filt),'all');
         MHD_divP_mean = mean(abs(term4_filt),'all');
         MHD_divvJall_mean = mean(abs(term5_filt),'all');
-        MHD_RHS_mean = mean(abs(term6_filt),'all');
+        MHD_RHS_mean = mean(abs(term7_filt),'all');
 
         SGS_tau_nE_mean = mean(abs(tau_nE_tau),'all');
         SGS_tau_vxB_mean = mean(abs(tau_v_x_B_tau),'all');
@@ -1802,18 +1815,18 @@ if rms_value==0
         SGS_tau_Div_mean = mean(abs(tau_Div_tau1),'all');
         SGS_tau_total_mean = mean(abs(tau_total),'all');
 
-        MHD_E2vxB_mean(1,in) = MHD_E_mean/MHD_vxB_mean;
-        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean/MHD_vxB_mean;
-        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean/MHD_vxB_mean;
-        MHD_divP2vxB_mean(1,in) = MHD_divP_mean/MHD_vxB_mean;
-        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean/MHD_vxB_mean;
-        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean/MHD_vxB_mean;
+        MHD_E2vxB_mean(1,in) = MHD_E_mean;
+        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean;
+        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean;
+        MHD_divP2vxB_mean(1,in) = MHD_divP_mean;
+        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean;
+        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean;
 
-        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean/MHD_vxB_mean;
-        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean/MHD_vxB_mean;
-        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean/MHD_vxB_mean;
-        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean/MHD_vxB_mean;
-        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean/MHD_vxB_mean;
+        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean;
+        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean;
+        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean;
+        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean;
+        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean;
 
         %-----------------------------------------------------------------------
     elseif absolute==0
@@ -1825,7 +1838,7 @@ if rms_value==0
         MHD_JxB_mean = mean((term3_filt),'all');
         MHD_divP_mean = mean((term4_filt),'all');
         MHD_divvJall_mean = mean((term5_filt),'all');
-        MHD_RHS_mean = mean(abs(term6_filt),'all');
+        MHD_RHS_mean = mean(abs(term7_filt),'all');
 
         SGS_tau_nE_mean = mean((tau_nE_tau),'all');
         SGS_tau_vxB_mean = mean((tau_v_x_B_tau),'all');
@@ -1833,18 +1846,18 @@ if rms_value==0
         SGS_tau_Div_mean = mean((tau_Div_tau1),'all');
         SGS_tau_total_mean = mean((tau_total),'all');
 
-        MHD_E2vxB_mean(1,in) = MHD_E_mean/MHD_vxB_mean;
-        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean/MHD_vxB_mean;
-        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean/MHD_vxB_mean;
-        MHD_divP2vxB_mean(1,in) = MHD_divP_mean/MHD_vxB_mean;
-        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean/MHD_vxB_mean;
-        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean/MHD_vxB_mean;
+        MHD_E2vxB_mean(1,in) = MHD_E_mean;
+        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean;
+        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean;
+        MHD_divP2vxB_mean(1,in) = MHD_divP_mean;
+        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean;
+        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean;
 
-        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean/MHD_vxB_mean;
-        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean/MHD_vxB_mean;
-        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean/MHD_vxB_mean;
-        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean/MHD_vxB_mean;
-        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean/MHD_vxB_mean;
+        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean;
+        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean;
+        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean;
+        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean;
+        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean;
         %-----------------------------------------------------------------------
 
     end
@@ -1858,7 +1871,7 @@ elseif rms_value == 1
     term3_filt = term3_filt_x.^2 + term3_filt_y.^2 + term3_filt_z.^2 ;
     term4_filt = term4_filt_x.^2 + term4_filt_y.^2 + term4_filt_z.^2 ;
     term5_filt = term5_filt_x.^2 + term5_filt_y.^2 + term5_filt_z.^2 ;
-    term6_filt = term6_filt_x.^2 + term6_filt_y.^2 + term6_filt_z.^2 ;
+    term7_filt = term7_filt_x.^2 + term7_filt_y.^2 + term7_filt_z.^2 ;
 
     tau_nE_tau = tau_nE_tau_x.^2 + tau_nE_tau_y.^2 + tau_nE_tau_z.^2 ;
     tau_v_x_B_tau = tau_v_x_B_tau_x.^2 + tau_v_x_B_tau_y.^2 + tau_v_x_B_tau_z.^2 ;
@@ -1878,7 +1891,7 @@ elseif rms_value == 1
         MHD_JxB_mean = sqrt(mean(abs(term3_filt),'all'));
         MHD_divP_mean = sqrt(mean(abs(term4_filt),'all'));
         MHD_divvJall_mean = sqrt(mean(abs(term5_filt),'all'));
-        MHD_RHS_mean = sqrt(mean(abs(term6_filt),'all'));
+        MHD_RHS_mean = sqrt(mean(abs(term7_filt),'all'));
 
         SGS_tau_nE_mean = sqrt(mean(abs(tau_nE_tau),'all'));
         SGS_tau_vxB_mean = sqrt(mean(abs(tau_v_x_B_tau),'all'));
@@ -1886,18 +1899,18 @@ elseif rms_value == 1
         SGS_tau_Div_mean = sqrt(mean(abs(tau_Div_tau1),'all'));
         SGS_tau_total_mean = sqrt(mean(abs(tau_total),'all'));
 
-        MHD_E2vxB_mean(1,in) = MHD_E_mean/MHD_vxB_mean;
-        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean/MHD_vxB_mean;
-        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean/MHD_vxB_mean;
-        MHD_divP2vxB_mean(1,in) = MHD_divP_mean/MHD_vxB_mean;
-        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean/MHD_vxB_mean;
-        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean/MHD_vxB_mean;
+        MHD_E2vxB_mean(1,in) = MHD_E_mean;
+        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean;
+        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean;
+        MHD_divP2vxB_mean(1,in) = MHD_divP_mean;
+        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean;
+        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean;
 
-        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean/MHD_vxB_mean;
-        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean/MHD_vxB_mean;
-        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean/MHD_vxB_mean;
-        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean/MHD_vxB_mean;
-        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean/MHD_vxB_mean;
+        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean;
+        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean;
+        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean;
+        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean;
+        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean;
 
         %-----------------------------------------------------------------------
     elseif absolute==0
@@ -1909,7 +1922,7 @@ elseif rms_value == 1
         MHD_JxB_mean = sqrt(mean((term3_filt),'all'));
         MHD_divP_mean = sqrt(mean((term4_filt),'all'));
         MHD_divvJall_mean = sqrt(mean((term5_filt),'all'));
-        MHD_RHS_mean = sqrt(mean(abs(term6_filt),'all'));
+        MHD_RHS_mean = sqrt(mean(abs(term7_filt),'all'));
 
         SGS_tau_nE_mean = sqrt(mean((tau_nE_tau),'all'));
         SGS_tau_vxB_mean = sqrt(mean((tau_v_x_B_tau),'all'));
@@ -1917,18 +1930,18 @@ elseif rms_value == 1
         SGS_tau_Div_mean = sqrt(mean((tau_Div_tau1),'all'));
         SGS_tau_total_mean = sqrt(mean((tau_total),'all'));
 
-        MHD_E2vxB_mean(1,in) = MHD_E_mean/MHD_vxB_mean;
-        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean/MHD_vxB_mean;
-        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean/MHD_vxB_mean;
-        MHD_divP2vxB_mean(1,in) = MHD_divP_mean/MHD_vxB_mean;
-        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean/MHD_vxB_mean;
-        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean/MHD_vxB_mean;
+        MHD_E2vxB_mean(1,in) = MHD_E_mean;
+        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean;
+        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean;
+        MHD_divP2vxB_mean(1,in) = MHD_divP_mean;
+        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean;
+        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean;
 
-        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean/MHD_vxB_mean;
-        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean/MHD_vxB_mean;
-        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean/MHD_vxB_mean;
-        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean/MHD_vxB_mean;
-        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean/MHD_vxB_mean;
+        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean;
+        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean;
+        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean;
+        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean;
+        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean;
         %-----------------------------------------------------------------------
 
     end
@@ -2236,6 +2249,11 @@ for k = 1:kmax
     if any(mask(:))
         % use mean of absolute phase difference magnitude
         spec_phi1(k) = mean(abs(phi1(mask)));
+        
+        %C = fgcon(mask); % <---- this has the problem of unstable for
+        %random
+        %spec_phi1(k) = rad2deg(angle(mean(C)));
+
     end
 end
 

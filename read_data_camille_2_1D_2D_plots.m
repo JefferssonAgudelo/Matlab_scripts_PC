@@ -6,6 +6,36 @@ dir = input('Name of the directory? (Like ./low_amplitude/12 or ./large_amplitud
 f_path = [dir, '/'];
 fprintf('FILE PATH = %s\n', f_path);
 
+%dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
+%dir = '/JAAR-DATA/DATA_HVM/betai=1/01';
+%dir = '/JAAR-DATA/DATA_HVM/betai=4';
+
+xl = 3.0;
+yl = 3.0;
+zl = 3.0;
+outformat = 0;
+
+ns = 5;
+tt = 4;
+beta_i = 0.25;
+Ti02Te0 =2.5;
+
+%ns = 6;
+%tt = 1;
+%beta_i = 1.0;
+%Ti02Te0 = 10.0;
+
+%ns = 10;
+%tt = 2;
+%beta_i = 4.0;
+%Ti02Te0 = 40.0;
+
+pressure_on = 0;
+l_wind = 4;
+rms_value = 1;
+absolute = 1;
+
+
 
 % Box dimensions
 xl = input('Box length in x-direction in 2*pi unity? (xl): ');
@@ -1531,28 +1561,71 @@ legends_x = {'$E$', '$-u \times B$','$m^{*}J \times B/n e m_{e}$',...
 
 % Figure 1
 %----------------------------------------------------------------------
+%{
+fs=15;
+normi = mean(abs(term1_dt_x),'all');
 i=50; j=50;
-%
 f1=figure(1)
-set(gcf,'position',[x0,y0,xx1,yy1])
-subplot(1,2,1)
-dum = term1_dt;
+%set(gcf,'position',[x0,y0,xx1,yy1])
+%subplot(1,2,1)
+dum = term1_dt_x./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-r',LineWidth=1.5)
 hold on
-dum = -term2_dt;
+dum = -term2_dt_x./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-b',LineWidth=1.5)
-dum = term3_dt;
+dum = term3_dt_x./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-g',LineWidth=1.5)
-dum = -term4_dt;
+dum = -term4_dt_x./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-m',LineWidth=1.5)
-dum = term5_dt;
+dum = (term5_dt_x)./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-c',LineWidth=1.5)
-dum = -term2_dt + term3_dt -term4_dt + term5_dt + term6_dt;
+%dum = (-term2_dt_x + term3_dt_x -term4_dt_x + term5_dt_x - 0.*term6_dt_x )./normi;
+dum = (term7_dt_x)./normi;
+%dum = term2to5_dt;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'--k',LineWidth=1.5)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$y/d_i$';
+ax.YLabel.String = '$E_{x}$';
+%legend(legends_x ,'Interpreter','latex','NumColumns',1,'Location','southoutside')
+title('Unfiltered','Interpreter','latex')
+xlim([min(xl),max(xl)])
+%ylim([-0.6, 0.6]);
+hold off
+%}
+
+
+i=50; j=50;
+%
+normi = mean(abs(term1_dt),'all');
+
+f1=figure(1)
+set(gcf,'position',[x0,y0,xx1,yy1])
+subplot(1,2,1)
+dum = term1_dt./normi;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-r',LineWidth=1.5)
+hold on
+dum = -term2_dt./normi;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-b',LineWidth=1.5)
+dum = term3_dt./normi;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-g',LineWidth=1.5)
+dum = -term4_dt./normi;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-m',LineWidth=1.5)
+dum = (term5_dt + term6_dt)./normi;
+dump = squeeze(dum(:,i,j));
+plot(xl,dump,'-c',LineWidth=1.5)
+dum = (-term2_dt + term3_dt -term4_dt + term5_dt + term6_dt)./normi;
 %dum = term2to5_dt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'--k',LineWidth=1.5)
@@ -1568,23 +1641,23 @@ ylim([-0.6, 0.6]);
 hold off
 
 subplot(1,2,2)
-dum = term1_filt;
+dum = term1_filt./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-r',LineWidth=1.5)
 hold on
-dum = -term2_filt;
+dum = -term2_filt./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-b',LineWidth=1.5)
-dum = term3_filt;
+dum = term3_filt./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-g',LineWidth=1.5)
-dum = -term4_filt;
+dum = -term4_filt./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-m',LineWidth=1.5)
-dum = term5_filt;
+dum = (term5_filt + term6_filt)./normi ;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-c',LineWidth=1.5)
-dum = -term2_filt + term3_filt -term4_filt + term5_filt + term6_filt;
+dum = (-term2_filt + term3_filt -term4_filt + term5_filt + term6_filt)./normi;
 %dum = term2to5_filt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'--k',LineWidth=1.5)
@@ -1616,7 +1689,7 @@ f10=figure(10);
 set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(2,5,1)
 %dum = LHD_x_dt;
-dum = term1_dt;
+dum = term1_dt./normi;
 dump = squeeze(dum(:,:,i));
 y_lim = max(max(max(abs(dump))));
 hc=pcolor(xl,yl,dump);
@@ -1635,11 +1708,11 @@ ax.YLabel.String = '$y/d_i$';
 xline(xl(1,j),'--k','LineWidth',1.5)
 %title('$E_{x}$','Interpreter','latex')
 pbaspect([1 1 1])
-title('$E$','Interpreter','latex')
+title('$\mathbf{E}$','Interpreter','latex','FontSize',fs)
 hold off
 
 subplot(2,5,2)
-dum = -term2_dt;
+dum = -term2_dt./normi;
 dump = squeeze(dum(:,:,i));
 y_lim = max(max(max(abs(dump))));
 hc=pcolor(xl,yl,dump);
@@ -1658,11 +1731,11 @@ ax.YLabel.String = '$y/d_i$';
 xline(xl(1,j),'--k','LineWidth',1.5)
 %title('$E_{x}$','Interpreter','latex')
 pbaspect([1 1 1])
-title('$-u \times B$','Interpreter','latex')
+title('$-\mathbf{E}_{MHD}$','Interpreter','latex','FontSize',fs)
 hold off
 
 subplot(2,5,3)
-dum = term3_dt;
+dum = term3_dt./normi;
 dump = squeeze(dum(:,:,i));
 y_lim = max(max(max(abs(dump))));
 hc=pcolor(xl,yl,dump);
@@ -1682,11 +1755,11 @@ xline(xl(1,j),'--k','LineWidth',1.5)
 %title('$E_{x}$','Interpreter','latex')
 pbaspect([1 1 1])
 %title('$J \times B/nq$','Interpreter','latex')
-title('$m^{*}J \times B /n e m_{e}$','Interpreter','latex')
+title('$\mathbf{E}_{Hall}$','Interpreter','latex','FontSize',fs)
 hold off
 
 subplot(2,5,4)
-dum = -term4_dt;
+dum = -term4_dt./normi;
 dump = squeeze(dum(:,:,i));
 y_lim = max(max(max(abs(dump))));
 hc=pcolor(xl,yl,dump);
@@ -1706,11 +1779,11 @@ xline(xl(1,j),'--k','LineWidth',1.5)
 %title('$E_{x}$','Interpreter','latex')
 pbaspect([1 1 1])
 %title('$-\nabla \cdot P_{e}/ne$','Interpreter','latex')
-title('$-\nabla \cdot P/ne$','Interpreter','latex')
+title('$-\mathbf{E}_{P_{e}}$','Interpreter','latex','FontSize',fs)
 hold off
 
 subplot(2,5,5)
-dum = term5_dt + term6_dt;
+dum = (term5_dt + term6_dt)./normi;
 dump = squeeze(dum(:,:,i));
 y_lim = max(max(max(abs(dump))));
 hc=pcolor(xl,yl,dump);
@@ -1730,7 +1803,7 @@ xline(xl(1,j),'--k','LineWidth',1.5)
 %title('$E_{x}$','Interpreter','latex')
 pbaspect([1 1 1])
 %title('$\nabla \cdot (uJ+Ju-JJ/ne)m_{e}/ne^{2}$','Interpreter','latex')
-title('$\frac{m^{*}}{ne^{2}}\left(\nabla \cdot (uJ + Ju - JJ/ne) + \nabla^{2}E/\mu_{0}\right)$','Interpreter','latex')
+title('$\mathbf{E}_{Ine}$','Interpreter','latex','FontSize',fs)
 hold off
 %----------------------------------------------------------------------
 
@@ -1739,7 +1812,7 @@ hold off
 %f10=figure(10);
 subplot(2,5,6)
 %dum = LHD_dt;
-dum = term1_filt;
+dum = term1_filt./normi;
 dump = squeeze(dum(:,:,i));
 y_lim = max(max(max(abs(dump))));
 hc=pcolor(xl,yl,dump);
@@ -1755,13 +1828,13 @@ ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$x/d_i$';
 ax.YLabel.String = '$y/d_i$';
 xline(xl(1,j),'--k','LineWidth',1.5)
-%title('$E_{x}$','Interpreter','latex')
+title('$\overline{\mathbf{E}}$','Interpreter','latex','FontSize',fs)
 pbaspect([1 1 1])
 hold off
 
 subplot(2,5,7)
 %dum = RHD_x_dt;
-dum = -term2_filt;
+dum = -term2_filt./normi;
 dump = squeeze(dum(:,:,i));
 y_lim = max(max(max(abs(dump))));
 hc=pcolor(xl,yl,dump);
@@ -1769,7 +1842,7 @@ hold on
 set(hc,'edgecolor','none')
 clim([-y_lim y_lim]);
 %title('RHS')
-%title('$-u \times B$','Interpreter','latex')
+title('$-\overline{\mathbf{E}}_{MHD}$','Interpreter','latex','FontSize',fs)
 cb = colorbar; cb.TickLabelInterpreter = 'Latex';
 colormap(BWR)
 set(gca,'FontSize',fs)
@@ -1782,7 +1855,7 @@ pbaspect([1 1 1])
 hold off
 
 subplot(2,5,8)
-dum = term3_filt;
+dum = term3_filt./normi;
 dump = squeeze(dum(:,:,i));
 hc=pcolor(xl,yl,dump);
 y_lim = max(max(max(abs(dump))));
@@ -1797,12 +1870,12 @@ ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$x/d_i$';
 ax.YLabel.String = '$y/d_i$';
 xline(xl(1,j),'--k','LineWidth',1.5)
-%title('$J \times B/nq$','Interpreter','latex')
+title('$\overline{\mathbf{E}}_{Hall}$','Interpreter','latex','FontSize',fs)
 pbaspect([1 1 1])
 hold off
 
 subplot(2,5,9)
-dum = -term4_filt;
+dum = -term4_filt./normi;
 dump = squeeze(dum(:,:,i));
 hc=pcolor(xl,yl,dump);
 y_lim = max(max(max(abs(dump))));
@@ -1819,12 +1892,12 @@ ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$x/d_i$';
 ax.YLabel.String = '$y/d_i$';
 xline(xl(1,j),'--k','LineWidth',1.5)
-%title('$-\nabla \cdot P_{e}/nq$','Interpreter','latex')
+title('$-\overline{\mathbf{E}}_{P_{e}}$','Interpreter','latex','FontSize',fs)
 pbaspect([1 1 1])
 hold off
 
 subplot(2,5,10)
-dum = term5_filt + term6_filt;
+dum = (term5_filt + term6_filt)./normi;
 dump = squeeze(dum(:,:,i));
 hc=pcolor(xl,yl,dump);
 y_lim = max(max(max(abs(dump))));
@@ -1839,17 +1912,118 @@ ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
 ax.XLabel.String = '$x/d_i$';
 ax.YLabel.String = '$y/d_i$';
 xline(xl(1,j),'--k','LineWidth',1.5)
-%title('$\nabla \cdot (uJ+Ju-JJ/qn)(m_{e}/q^{2}n)$','Interpreter','latex')
+title('$\overline{\mathbf{E}}_{Ine}$','Interpreter','latex','FontSize',fs)
 pbaspect([1 1 1])
 hold off
-sgtitle('$$ Unfiltered $$','Interpreter','latex','FontSize',fs)
+%sgtitle('$$ Unfiltered $$','Interpreter','latex','FontSize',fs)
+
+fs=15; x0=45;y0=54;xx1=1200;yy1=250;
+%----------------------------------------------------------------------
+f12=figure(12);
+set(gcf,'position',[x0,y0,1.0*xx1,1.0*yy1])
+ax1=subplot(1,4,1);
+dum = (-tau_nE_tau/(10^(0)))./normi;
+dump = squeeze(dum(:,:,i));
+hc=pcolor(xl,yl,dump);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]);
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(ax1,BWR)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$x/d_i$';
+ax.YLabel.String = '$y/d_i$';
+%title('$m_{e} \nabla cdot \tau(vJ+Jv-JJ/nq))/n$','Interpreter','latex')
+%xlim([-15.2 15.2]);
+%ylim([-15.2 15.2]);
+pbaspect([1 1 1])
+title('$-\tau_{nE} $','Interpreter','latex')
+hold off
+
+ax2=subplot(1,4,2);
+dum = (-tau_v_x_B_tau/(10^(0)))./normi;
+dump = squeeze(dum(:,:,i));
+hc=pcolor(xl,yl,dump);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]);
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(ax2,BWR)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$x/d_i$';
+ax.YLabel.String = '$y/d_i$';
+%title('$m_{e} \nabla cdot \tau(vJ+Jv-JJ/nq))/n$','Interpreter','latex')
+%xlim([-15.2 15.2]);
+%ylim([-15.2 15.2]);
+pbaspect([1 1 1])
+title('$-\tau_{nu_{i} \times B} $','Interpreter','latex')
+%xlim([-15.2 15.2]);
+hold off
+
+ax3=subplot(1,4,3);
+dum = (tau_J_x_B_tau/(10^(0)))./normi;
+dump = squeeze(dum(:,:,i));
+hc=pcolor(xl,yl,dump);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]);
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(ax3,BWR)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$x/d_i$';
+ax.YLabel.String = '$y/d_i$';
+%title('$m_{e} \nabla cdot \tau(vJ+Jv-JJ/nq))/n$','Interpreter','latex')
+%xlim([-15.2 15.2]);
+%ylim([-15.2 15.2]);
+pbaspect([1 1 1])
+title('$\tau_{J \times B} $','Interpreter','latex')
+%xlim([-15.2 15.2]);
+hold off
+
+ax4=subplot(1,4,4);
+dum = (tau_Div_tau1/(10^(-0)))./normi;
+dump = squeeze(dum(:,:,i));
+hc=pcolor(xl,yl,dump);
+y_lim = max(max(max(abs(dump))));
+hold on
+set(hc,'edgecolor','none')
+clim([-y_lim y_lim]);
+xline(xl(1,j),'--k','LineWidth',1.5)
+cb = colorbar; cb.TickLabelInterpreter = 'Latex';
+colormap(ax4,BWR)
+set(gca,'FontSize',fs)
+ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
+ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
+ax.XLabel.String = '$x/d_i$';
+ax.YLabel.String = '$y/d_i$';
+%title('$m_{e} \nabla cdot \tau(vJ+Jv-JJ/nq))/n$','Interpreter','latex')
+%xlim([-15.2 15.2]);
+%ylim([-15.2 15.2]);
+pbaspect([1 1 1])
+title('$ \tau_{Ine}$','Interpreter','latex')
+%xlim([-15.2 15.2]);
+hold off
+
+
 
 
 
 cd(path_color)
 fs=15; x0=45;y0=54;xx1=1400;yy1=500;
 f345=figure(345)
-dum = term1_dt -(-term2_dt + term3_dt - term4_dt + term5_dt + 0.*term6_dt);
+dum = term1_dt -(-term2_dt + term3_dt - term4_dt + term5_dt + 1.*term6_dt);
 dump = squeeze(dum(:,:,i));
 hc=pcolor(xl,yl,dump);
 y_lim = max(max(max(abs(dump))));
@@ -1867,7 +2041,7 @@ xline(xl(1,j),'--k','LineWidth',1.5)
 %title('$\nabla \cdot (uJ+Ju-JJ/qn)(m_{e}/q^{2}n)$','Interpreter','latex')
 pbaspect([1 1 1])
 hold off
-sgtitle('$$ Unfiltered $$','Interpreter','latex','FontSize',fs)
+sgtitle('$$ Residual \ unfiltered $$','Interpreter','latex','FontSize',fs)
 
 
 %--------------------------------------------------------------------------
@@ -1884,7 +2058,7 @@ lwm=2;
 
 
 % Plot for the magnitude instead of the x  component
-
+%{
 term1_dt = sqrt(term1_dt_x.^2 + term1_dt_y.^2 + term1_dt_z.^2 );
 term2_dt = sqrt(term2_dt_x.^2 + term2_dt_y.^2 + term2_dt_z.^2 );
 term3_dt = sqrt(term3_dt_x.^2 + term3_dt_y.^2 + term3_dt_z.^2 );
@@ -1902,29 +2076,30 @@ tau_nE_tau = sqrt(tau_nE_tau_x.^2 + tau_nE_tau_y.^2 + tau_nE_tau_z.^2);
 tau_v_x_B_tau = sqrt(tau_v_x_B_tau_x.^2 + tau_v_x_B_tau_y.^2 + tau_v_x_B_tau_z.^2);
 tau_J_x_B_tau = sqrt(tau_J_x_B_tau_x.^2 + tau_J_x_B_tau_y.^2 + tau_J_x_B_tau_z.^2);
 tau_Div_tau1 = sqrt(tau_Div_tau1_x.^2 + tau_Div_tau1_y.^2 + tau_Div_tau1_z.^2);
+%}
 
-fs=15; x0=45;y0=54;xx1=1400;yy1=500;
+fs=15; x0=45;y0=54;xx1=1400;yy1=320;
 
 %this is for the x-component
 %--------------------------------------------------------------------------
 f100=figure(100)
 set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(1,2,2)
-dum = -tau_nE_tau_x;
+dum = -tau_nE_tau./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(1,:),LineWidth=lwm)
 hold on
-dum = -tau_v_x_B_tau_x;
+dum = -tau_v_x_B_tau./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(2,:),LineWidth=lwm)
-dum = tau_J_x_B_tau_x;
+dum = tau_J_x_B_tau./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(3,:),LineWidth=lwm)
-dum = tau_Div_tau1_x;
+dum = tau_Div_tau1./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(5,:),LineWidth=lwm)
 set(gca,'FontSize',fs)
-dum = -tau_nE_tau_x -tau_v_x_B_tau_x + tau_J_x_B_tau_x + tau_Div_tau1_x;
+dum = (-tau_nE_tau -tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1)./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(6,:),LineWidth=lwm)
 set(gca,'FontSize',fs)
@@ -1945,45 +2120,45 @@ xlim([min(xl),max(xl)])
 %    '$-\frac{\nabla \cdot \overline{P}_{e}}{\overline{n}e}$', ...
 %    '$\frac{m_{e}\nabla \cdot (\overline{u}\overline{J} + \overline{J}\overline{u} - \overline{J}\overline{J}/ne)}{\overline{n}e^{2}}$',...
 %    'Interpreter','latex','NumColumns',1,'Location','southeastoutside')
-%ylim([-0.045,0.045])
+%ylim([-y_lim,y_lim])
 hold off
 
 subplot(1,2,1)
-dum = term1_filt_x;
+dum = term1_filt./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(1,:),LineWidth=lwm)
 hold on
-dum = -term2_filt_x;
+dum = -term2_filt./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(2,:),LineWidth=lwm)
-dum = term3_filt_x;
+dum = term3_filt./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(3,:),LineWidth=lwm)
-dum = -term4_filt_x;
+dum = -term4_filt./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(4,:),LineWidth=lwm)
-dum = term5_filt_x;
+dum = (term5_filt + term6_filt)./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(5,:),LineWidth=lwm)
-sum_filt_x = - term2_filt_x + term3_filt_x - term4_filt_x + term5_filt_x + 0.*term6_filt_x;
-dum = sum_filt_x;
+sum_filt_x = (-term2_filt + term3_filt - term4_filt + term5_filt + 1.*term6_filt);
+dum = sum_filt_x./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(6,:),LineWidth=lwm)
 
-dum = -tau_nE_tau_x;
+dum = -tau_nE_tau./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(1,:),LineWidth=lwm)
-dum = -tau_v_x_B_tau_x;
+dum = -tau_v_x_B_tau./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(2,:),LineWidth=lwm)
-dum = tau_J_x_B_tau_x;
+dum = tau_J_x_B_tau./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(3,:),LineWidth=lwm)
-dum = tau_Div_tau1_x;
+dum = tau_Div_tau1./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(5,:),LineWidth=lwm)
 set(gca,'FontSize',fs)
-dum = -tau_nE_tau_x -tau_v_x_B_tau_x + tau_J_x_B_tau_x + tau_Div_tau1_x;
+dum = (-tau_nE_tau -tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1)./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(6,:),LineWidth=lwm)
 set(gca,'FontSize',fs)
@@ -2000,7 +2175,7 @@ legend( '$\overline{\mathbf{E}}$', '$-\overline{\mathbf{E}}_{MHD}$',...
     '$\overline{\mathbf{E}}_{Ine}$',...
     '$\overline{\mathbf{E}}_{RHS}$',...
     '$-\mathbf{\tau}_{nE}$', ...
-    '$-\tau_{nu \times B}$', ...
+    '$-\tau_{nu_{i} \times B}$', ...
     '$\tau_{J \times B}$',...
     '$\tau_{Ine}$',...
     '$\Sigma \tau$',...
@@ -2018,25 +2193,29 @@ legend( '$\overline{\mathbf{E}}$', '$-\overline{\mathbf{E}}_{MHD}$',...
 %     'Interpreter','latex','NumColumns',2,'Location','southoutside')
 hold off
 
+
+
+
+
 % This is for the amplitude
 f101=figure(101)
 set(gcf,'position',[x0,y0,xx1,yy1])
 subplot(1,2,2)
-dum = tau_nE_tau;
+dum = -tau_nE_tau./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(1,:),LineWidth=lwm)
 hold on
-dum = tau_v_x_B_tau;
+dum = -tau_v_x_B_tau./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(2,:),LineWidth=lwm)
-dum = tau_J_x_B_tau;
+dum = tau_J_x_B_tau./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(3,:),LineWidth=lwm)
-dum = tau_Div_tau1;
+dum = tau_Div_tau1./normi;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(5,:),LineWidth=lwm)
 set(gca,'FontSize',fs)
-dum = tau_nE_tau +tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
+dum = -tau_nE_tau -tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(6,:),LineWidth=lwm)
 set(gca,'FontSize',fs)
@@ -2065,27 +2244,27 @@ dum = term1_filt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(1,:),LineWidth=lwm)
 hold on
-dum = term2_filt;
+dum = -term2_filt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(2,:),LineWidth=lwm)
 dum = term3_filt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(3,:),LineWidth=lwm)
-dum = term4_filt;
+dum = -term4_filt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(4,:),LineWidth=lwm)
 dum = term5_filt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(5,:),LineWidth=lwm)
-sum_filt = term2_filt + term3_filt + term4_filt + term5_filt + 0.*term6_filt;
+sum_filt = -term2_filt + term3_filt - term4_filt + term5_filt + 1.*term6_filt;
 dum = sum_filt;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-',color=My_colors(6,:),LineWidth=lwm)
 
-dum = tau_nE_tau;
+dum = -tau_nE_tau;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(1,:),LineWidth=lwm)
-dum = tau_v_x_B_tau;
+dum = -tau_v_x_B_tau;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(2,:),LineWidth=lwm)
 dum = tau_J_x_B_tau;
@@ -2095,7 +2274,7 @@ dum = tau_Div_tau1;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(5,:),LineWidth=lwm)
 set(gca,'FontSize',fs)
-dum = tau_nE_tau + tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
+dum = -tau_nE_tau - tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
 dump = squeeze(dum(:,i,j));
 plot(xl,dump,'-.',color=My_colors(6,:),LineWidth=lwm)
 set(gca,'FontSize',fs)
@@ -2119,105 +2298,8 @@ legend( '$\overline{\mathbf{E}}$', '$-\overline{\mathbf{E}}_{MHD}$',...
 hold off
 %-----------------------------------------------------------------------
 
+stopp
 
-fs=15; x0=45;y0=54;xx1=1200;yy1=250;
-%----------------------------------------------------------------------
-f12=figure(12);
-set(gcf,'position',[x0,y0,1.0*xx1,1.0*yy1])
-ax1=subplot(1,4,1);
-dum = -tau_nE_tau/(10^(0));
-dump = squeeze(dum(:,:,i));
-hc=pcolor(xl,yl,dump);
-y_lim = max(max(max(abs(dump))));
-hold on
-set(hc,'edgecolor','none')
-clim([-y_lim y_lim]);
-xline(xl(1,j),'--k','LineWidth',1.5)
-cb = colorbar; cb.TickLabelInterpreter = 'Latex';
-colormap(ax1,BWR)
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-ax.XLabel.String = '$x/d_i$';
-ax.YLabel.String = '$y/d_i$';
-%title('$m_{e} \nabla cdot \tau(vJ+Jv-JJ/nq))/n$','Interpreter','latex')
-%xlim([-15.2 15.2]);
-%ylim([-15.2 15.2]);
-pbaspect([1 1 1])
-title('$-\tau_{nE} $','Interpreter','latex')
-hold off
-
-ax2=subplot(1,4,2);
-dum = -tau_v_x_B_tau/(10^(0));
-dump = squeeze(dum(:,:,i));
-hc=pcolor(xl,yl,dump);
-y_lim = max(max(max(abs(dump))));
-hold on
-set(hc,'edgecolor','none')
-clim([-y_lim y_lim]);
-xline(xl(1,j),'--k','LineWidth',1.5)
-cb = colorbar; cb.TickLabelInterpreter = 'Latex';
-colormap(ax2,BWR)
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-ax.XLabel.String = '$x/d_i$';
-ax.YLabel.String = '$y/d_i$';
-%title('$m_{e} \nabla cdot \tau(vJ+Jv-JJ/nq))/n$','Interpreter','latex')
-%xlim([-15.2 15.2]);
-%ylim([-15.2 15.2]);
-pbaspect([1 1 1])
-title('$-\tau_{nu \times B} $','Interpreter','latex')
-%xlim([-15.2 15.2]);
-hold off
-
-ax3=subplot(1,4,3);
-dum = tau_J_x_B_tau/(10^(0));
-dump = squeeze(dum(:,:,i));
-hc=pcolor(xl,yl,dump);
-y_lim = max(max(max(abs(dump))));
-hold on
-set(hc,'edgecolor','none')
-clim([-y_lim y_lim]);
-xline(xl(1,j),'--k','LineWidth',1.5)
-cb = colorbar; cb.TickLabelInterpreter = 'Latex';
-colormap(ax3,BWR)
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-ax.XLabel.String = '$x/d_i$';
-ax.YLabel.String = '$y/d_i$';
-%title('$m_{e} \nabla cdot \tau(vJ+Jv-JJ/nq))/n$','Interpreter','latex')
-%xlim([-15.2 15.2]);
-%ylim([-15.2 15.2]);
-pbaspect([1 1 1])
-title('$\tau_{J \times B} $','Interpreter','latex')
-%xlim([-15.2 15.2]);
-hold off
-
-ax4=subplot(1,4,4);
-dum = tau_Div_tau1/(10^(-2));
-dump = squeeze(dum(:,:,i));
-hc=pcolor(xl,yl,dump);
-y_lim = max(max(max(abs(dump))));
-hold on
-set(hc,'edgecolor','none')
-clim([-y_lim y_lim]);
-xline(xl(1,j),'--k','LineWidth',1.5)
-cb = colorbar; cb.TickLabelInterpreter = 'Latex';
-colormap(ax4,BWR)
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ax.FontSize=fs; %ax.XTick = []; ax.YTick = [];
-ax.XLabel.String = '$x/d_i$';
-ax.YLabel.String = '$y/d_i$';
-%title('$m_{e} \nabla cdot \tau(vJ+Jv-JJ/nq))/n$','Interpreter','latex')
-%xlim([-15.2 15.2]);
-%ylim([-15.2 15.2]);
-pbaspect([1 1 1])
-title('$ \tau_{\nabla \cdot (uJ+Ju-JJ/ne)} \times 10^2$','Interpreter','latex')
-%xlim([-15.2 15.2]);
-hold off
 %----------------------------------------------------------------------
 
 
@@ -2333,11 +2415,11 @@ hold off
 % % % pbaspect([1 1 1])
 % % % hold off
 
-% cd('~/Downloads')
+cd('~/Downloads')
 % saveas(f1,strcat(num2str(component),'E_unfiltered_filtered_025_02.png'));
-% saveas(f10,strcat(num2str(component),'E_filters_025_02.png'));
-% saveas(f12,strcat(num2str(component),'taus_025_02.png'));
-% saveas(f101,strcat(num2str(component),'E_taus_1D_025_02.png'));
+ saveas(f10,strcat(num2str(component),'E_filters_025_4_z_dis.png'));
+ saveas(f12,strcat(num2str(component),'taus_025_4_z_dis.png'));
+ saveas(f100,strcat(num2str(component),'E_taus_1D_025_4_z_dis.png'));
 
 %----------------------------------------------------------------------
 function[Jx_filt] = Gauss_filter_3D_xyz(Dx,Kx,Ky,Kz,Jx_dt) 
