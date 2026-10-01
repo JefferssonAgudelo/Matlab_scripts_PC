@@ -1,5 +1,4 @@
-
-+%% FILE PATH
+%% FILE PATH
 %dir = input('Name of the directory? (Like ./low_amplitude/12 or ./large_amplitude/01): ', 's');
 %dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
 
@@ -7,18 +6,16 @@ dir = '/JAAR-DATA/DATA_HVM/betai=4';
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;
-outformat = 1;
+outformat = 0;
 ns = 10;
 tt = 10;
 pressure_on = 1;
-l_wind = 8;
+l_wind = 16;
 rms_value = 1;
 absolute = 1;
 beta_i = 4.0;
 Ti02Te0 = 40.0;
-% How many to randomly sample
-AN = 256*256*32;
-filename_beta_comp = "beta4_scatter_KJHBWOgradndivPi_AN32.mat";
+
 
 f_path = [dir, '/'];
 fprintf('FILE PATH = %s\n', f_path);
@@ -169,7 +166,6 @@ if llion
 
             TOTAL_SIZE = nx * ny * nz;
             SHAPE = [nx, ny, nz];
-            %SHAPE = []; % <---
 
             % Skip 8 bytes (int32 padding)
             fseek(fid, 8, 'cof');
@@ -177,8 +173,7 @@ if llion
             px = cat(4, px, reshape(fread(fid, TOTAL_SIZE, 'float64'), SHAPE));
             py = cat(4, py, reshape(fread(fid, TOTAL_SIZE, 'float64'), SHAPE));
             pz = cat(4, pz, reshape(fread(fid, TOTAL_SIZE, 'float64'), SHAPE));
-            rho = cat(4, rho, reshape(fread(fid, TOTAL_SIZE, 'float64'), SHAPE));            
-            %rho = cat(4, rho, reshape(fread(fid, TOTAL_SIZE, 'float64'),SHAPE));%<---
+            rho = cat(4, rho, reshape(fread(fid, TOTAL_SIZE, 'float64'), SHAPE));
 
             % Skip 8 bytes (int32 padding)
             fseek(fid, 8, 'cof');
@@ -476,6 +471,7 @@ end
 %select the component % component x=1, y=2, z=3;
 %component = input('select the component % component x=1, y=2, z=3: ');
 
+
 %----------------------------------------------------------------------
 me = 1/100;
 mi=1;
@@ -531,7 +527,6 @@ grad_fact = 1; % This always need to be two??
 sigma_g = 1;
 %Grad_Pe
 %----------------------------------------------------------------------
-
 
 %----------------------------------------------------------------------
 %correction of the electric field
@@ -592,7 +587,7 @@ if(pressure_on == 1)
         Div_Pi_dt_z = Pij_ixz_dt_x/(grad_fact.*resx) + Pij_iyz_dt_y/(grad_fact.*resy) + Pij_izz_dt_z/(grad_fact.*resz);
     %end
     clearvars Pij_ixx_dt_* Pij_ixy_dt_* Pij_ixz_dt_* ...
-        Pij_iyy_dt_* Pij_iyz_dt_* Pij_izz_dt_* ...
+        Pij_iyy_dt_* Pij_iyz_dt_* Pij_izz_dt_* 
         %----------------------------------------------------------------------
 end
 
@@ -776,6 +771,7 @@ end
     L2Ez_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ez_dt);
     %----------------------------------------------------------------------
 %end
+
 
 
 %%% Computing non-linear terms for the generalised Ohms law
@@ -976,6 +972,9 @@ me = 1/100;
 [sub_tau1_zz_y, sub_tau1_zz_x, sub_tau1_zz_z] = gradient(sub_tau1_zz);
 %----------------------------------------------------------------------
 
+%----------------------------------------------------------------------
+%if (component == 1)
+%(<nE> - <n><E>)/<n>
 % % %----------------------------------------------------------------------
 tau_nE_tau_x = (B0*c)^(1)*((Gauss_filter_3D_xyz(Dx,Kx,Ky,Kz,n_0_dt.*Ex_dt))./n_filt - Ex_filt);
 %(<nevxB> - <n><v>x<B>)/<ne>
@@ -1025,764 +1024,524 @@ clearvars sub_*
 
 %%% ----------------------------------------------------------------------
 %ext_fact = sqrt(1/mime);
-%tau_total_x = -tau_nE_tau -tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
+
+% This is to estimate the three term in the Ohm's law. for the plots 111
+% and 222
+
+
+%--------------------------------------------------------------------------
+%if (component == 1)
+v_x_B_x_dt = v_y_dt.*Bz_dt - v_z_dt.*By_dt;
+J_x_B_x_dt = Jy_dt.*Bz_dt - Jz_dt.*By_dt;
+%Div_Pe_dt_x = Pe_dt_x/(grad_fact.*resx);
+v_x_B_x_filt = v_y_filt.*Bz_filt - v_z_filt.*By_filt;
+J_x_B_x_filt = Jy_filt.*Bz_filt - Jz_filt.*By_filt;
+%Div_Pe_filt_x = Pe_filt_x/(grad_fact.*resx);
+%elseif (component == 2)
+v_x_B_y_dt = v_z_dt.*Bx_dt - v_x_dt.*Bz_dt;
+J_x_B_y_dt = Jz_dt.*Bx_dt - Jx_dt.*Bz_dt;
+%Div_Pe_dt_y = Pe_dt_y/(grad_fact.*resy);
+v_x_B_y_filt = v_z_dt.*Bx_filt - v_x_filt.*Bz_filt;
+J_x_B_y_filt = Jz_dt.*Bx_filt - Jx_filt.*Bz_filt;
+%Div_Pe_filt_y = Pe_filt_y/(grad_fact.*resy);
+%elseif (component == 3)
+v_x_B_z_dt = v_x_dt.*By_dt - v_y_dt.*Bx_dt;
+J_x_B_z_dt = Jx_dt.*By_dt - Jy_dt.*Bx_dt;
+%Div_Pe_dt_z = Pe_dt_z/(grad_fact.*resz);
+v_x_B_z_filt = v_x_filt.*By_filt - v_y_filt.*Bx_filt;
+J_x_B_z_filt = Jx_filt.*By_filt - Jy_filt.*Bx_filt;
+%Div_Pe_filt_z = Pe_filt_z/(grad_fact.*resz);
+%end
+clearvars Pe_dt_*
+clearvars Pe_filt_*
+%--------------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+% terms from the owns law with no signs JXB has no correction before here
+%----------------------------------------------------------------------
+%if (component == 1)
+term1_dt_x = B0*v_a*(Ex_dt);
+term2_dt_x = B0*v_a*(v_x_B_x_dt);
+term3_dt_x = (mre/me)*B0*v_a*J_x_B_x_dt./n_0_dt;
+term4_dt_x = v_a*v_a*(Div_Pe_dt_x./n_0_dt);
+term5_dt_x = mre*v_a*v_a*((Div_vJ_dt_x + Div_Jv_dt_x - Div_JJ_dt_x)./n_0_dt);
+term6_dt_x = mre*v_a*v_a*L2Ex_dt./n_0_dt;
+term7_dt_x = - term2_dt_x + term3_dt_x - term4_dt_x + term5_dt_x + term6_dt_x;
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt_x = B0*v_a*(Ex_filt);
+term2_filt_x = B0*v_a*(v_filt_x_B_filt_x);
+term3_filt_x = (mre/me)*B0*v_a*J_filt_x_B_filt_x./n_filt;
+term4_filt_x = v_a*v_a*(Div_Pe_filt_x./n_filt);
+term5_filt_x = mre*v_a*v_a*((Div_vJ_filt_x + Div_Jv_filt_x - Div_JJ_filt_2n_x)./n_filt);
+term6_filt_x = mre*v_a*v_a*L2Ex_filt./n_0_dt;
+term7_filt_x = - term2_filt_x + term3_filt_x - term4_filt_x + term5_filt_x + term6_filt_x;
+%elseif (component == 2)
+term1_dt_y = B0*v_a*(Ey_dt);
+term2_dt_y = B0*v_a*(v_x_B_y_dt);
+term3_dt_y = (mre/me)*B0*v_a*J_x_B_y_dt./n_0_dt;
+term4_dt_y = v_a*v_a*(Div_Pe_dt_y./n_0_dt);
+term5_dt_y = mre*v_a*v_a*((Div_vJ_dt_y + Div_Jv_dt_y - Div_JJ_dt_y)./n_0_dt);
+term6_dt_y = mre*v_a*v_a*L2Ey_dt./n_0_dt;
+term7_dt_y = - term2_dt_y + term3_dt_y - term4_dt_y + term5_dt_y + term6_dt_y;
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt_y = B0*v_a*(Ey_filt);
+term2_filt_y = B0*v_a*(v_filt_x_B_filt_y);
+term3_filt_y = (mre/me)*B0*v_a*J_filt_x_B_filt_y./n_filt;
+term4_filt_y = v_a*v_a*(Div_Pe_filt_y./n_filt);
+term5_filt_y = me*v_a*v_a*((Div_vJ_filt_y + Div_Jv_filt_y - Div_JJ_filt_2n_y)./n_filt);
+term6_filt_y = mre*v_a*v_a*L2Ey_filt./n_0_dt;
+term7_filt_y = - term2_filt_y + term3_filt_y - term4_filt_y + term5_filt_y + term6_filt_y;
+%elseif (component ==3)
+term1_dt_z = B0*v_a*(Ez_dt);
+term2_dt_z = B0*v_a*(v_x_B_z_dt);
+term3_dt_z = (mre/me)*B0*v_a*J_x_B_z_dt./n_0_dt;
+term4_dt_z = v_a*v_a*(Div_Pe_dt_z./n_0_dt);
+term5_dt_z = me*v_a*v_a*((Div_vJ_dt_z + Div_Jv_dt_z - Div_JJ_dt_z)./n_0_dt);
+term6_dt_z = mre*v_a*v_a*L2Ez_dt./n_0_dt;
+term7_dt_z = - term2_dt_z + term3_dt_z - term4_dt_z + term5_dt_z + term6_dt_z;
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt_z = B0*v_a*(Ez_filt);
+term2_filt_z = B0*v_a*(v_filt_x_B_filt_z);
+term3_filt_z = (mre/me)*B0*v_a*J_filt_x_B_filt_z./n_filt;
+term4_filt_z = v_a*v_a*(Div_Pe_filt_z./n_filt);
+term5_filt_z = me*v_a*v_a*((Div_vJ_filt_z + Div_Jv_filt_z - Div_JJ_filt_2n_z)./n_filt);
+term6_filt_z = mre*v_a*v_a*L2Ez_filt./n_0_dt;
+term7_filt_z = - term2_filt_z + term3_filt_z - term4_filt_z + term5_filt_z + term6_filt_z;
+%end
+
+%correction
+%--------------------------------------------------------------------------
+term5_dt_x = term5_dt_x + term6_dt_x;
+term5_dt_y = term5_dt_y + term6_dt_y;
+term5_dt_z = term5_dt_z + term6_dt_z;
+
+term5_filt_x = term5_filt_x + term6_filt_x;
+term5_filt_y = term5_filt_y + term6_filt_y;
+term5_filt_z = term5_filt_z + term6_filt_z;
+
+term6_dt_x = term7_dt_x; 
+term6_dt_y = term7_dt_y; 
+term6_dt_z = term7_dt_z;
+
+term6_filt_x = term7_filt_x; 
+term6_filt_y = term7_filt_y; 
+term6_filt_z = term7_filt_z;
+%--------------------------------------------------------------------------
+
 %--------------------------------------------------------------------------
 tau_total_x = -tau_nE_tau_x -tau_v_x_B_tau_x + tau_J_x_B_tau_x + tau_Div_tau1_x;
 tau_total_y = -tau_nE_tau_y -tau_v_x_B_tau_y + tau_J_x_B_tau_y + tau_Div_tau1_y;
 tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 %--------------------------------------------------------------------------
 
+% Now this is to compute the total amplitude
+
+in = 1;
+if rms_value==0
+
+    % This is average of th absolute value <sqrt(Ex^2 + Ey^2 + Ez^2)>;
+    %----------------------------------------------------------------------
+    term1_filt = sqrt(term1_filt_x.^2 + term1_filt_y.^2 + term1_filt_z.^2) ;
+    term2_filt = sqrt(term2_filt_x.^2 + term2_filt_y.^2 + term2_filt_z.^2) ;
+    term3_filt = sqrt(term3_filt_x.^2 + term3_filt_y.^2 + term3_filt_z.^2) ;
+    term4_filt = sqrt(term4_filt_x.^2 + term4_filt_y.^2 + term4_filt_z.^2) ;
+    term5_filt = sqrt(term5_filt_x.^2 + term5_filt_y.^2 + term5_filt_z.^2) ;
+    term6_filt = sqrt(term6_filt_x.^2 + term6_filt_y.^2 + term6_filt_z.^2) ;
+
+    tau_nE_tau = sqrt(tau_nE_tau_x.^2 + tau_nE_tau_y.^2 + tau_nE_tau_z.^2) ;
+    tau_v_x_B_tau = sqrt(tau_v_x_B_tau_x.^2 + tau_v_x_B_tau_y.^2 + tau_v_x_B_tau_z.^2) ;
+    tau_J_x_B_tau = sqrt(tau_J_x_B_tau_x.^2 + tau_J_x_B_tau_y.^2 + tau_J_x_B_tau_z.^2) ;
+    tau_Div_tau1 = sqrt(tau_Div_tau1_x.^2 + tau_Div_tau1_y.^2 + tau_Div_tau1_z.^2) ;
+    tau_total = sqrt(tau_total_x.^2 + tau_total_y.^2 + tau_total_z.^2) ;
+
+    % The idea for the new analysis is to plot the <SGSMhD>rms/<MHD>rms
+    % This analysis should be done with the three components not just one
+
+    % The idea of this is to compute relative importance with absolute values
+    if absolute==1
+        %-----------------------------------------------------------------------
+        MHD_E_mean = mean(abs(term1_filt),'all');
+        MHD_vxB_mean = mean(abs(term2_filt),'all');
+        MHD_JxB_mean = mean(abs(term3_filt),'all');
+        MHD_divP_mean = mean(abs(term4_filt),'all');
+        MHD_divvJall_mean = mean(abs(term5_filt),'all');
+        MHD_RHS_mean = mean(abs(term6_filt),'all');
+
+        SGS_tau_nE_mean = mean(abs(tau_nE_tau),'all');
+        SGS_tau_vxB_mean = mean(abs(tau_v_x_B_tau),'all');
+        SGS_tau_JxB_mean = mean(abs(tau_J_x_B_tau),'all');
+        SGS_tau_Div_mean = mean(abs(tau_Div_tau1),'all');
+        SGS_tau_total_mean = mean(abs(tau_total),'all');
+
+        MHD_E2vxB_mean(1,in) = MHD_E_mean/MHD_vxB_mean;
+        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean/MHD_vxB_mean;
+        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean/MHD_vxB_mean;
+        MHD_divP2vxB_mean(1,in) = MHD_divP_mean/MHD_vxB_mean;
+        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean/MHD_vxB_mean;
+        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean/MHD_vxB_mean;
+
+        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean/MHD_vxB_mean;
+        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean/MHD_vxB_mean;
+        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean/MHD_vxB_mean;
+        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean/MHD_vxB_mean;
+        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean/MHD_vxB_mean;
+
+        %-----------------------------------------------------------------------
+    elseif absolute==0
+
+        % The idea of this is to compute relative importance with NO absolute values
+        %-----------------------------------------------------------------------
+        MHD_E_mean = mean((term1_filt),'all');
+        MHD_vxB_mean = mean((term2_filt),'all');
+        MHD_JxB_mean = mean((term3_filt),'all');
+        MHD_divP_mean = mean((term4_filt),'all');
+        MHD_divvJall_mean = mean((term5_filt),'all');
+        MHD_RHS_mean = mean(abs(term6_filt),'all');
+
+        SGS_tau_nE_mean = mean((tau_nE_tau),'all');
+        SGS_tau_vxB_mean = mean((tau_v_x_B_tau),'all');
+        SGS_tau_JxB_mean = mean((tau_J_x_B_tau),'all');
+        SGS_tau_Div_mean = mean((tau_Div_tau1),'all');
+        SGS_tau_total_mean = mean((tau_total),'all');
+
+        MHD_E2vxB_mean(1,in) = MHD_E_mean/MHD_vxB_mean;
+        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean/MHD_vxB_mean;
+        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean/MHD_vxB_mean;
+        MHD_divP2vxB_mean(1,in) = MHD_divP_mean/MHD_vxB_mean;
+        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean/MHD_vxB_mean;
+        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean/MHD_vxB_mean;
+
+        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean/MHD_vxB_mean;
+        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean/MHD_vxB_mean;
+        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean/MHD_vxB_mean;
+        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean/MHD_vxB_mean;
+        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean/MHD_vxB_mean;
+        %-----------------------------------------------------------------------
+
+    end
+    %----------------------------------------------------------------------
+
+elseif rms_value == 1
+    % This is sqrt( <Ex^2 + Ey^2 + Ez^2 >);
+    %----------------------------------------------------------------------
+    term1_filt = term1_filt_x.^2 + term1_filt_y.^2 + term1_filt_z.^2 ;
+    term2_filt = term2_filt_x.^2 + term2_filt_y.^2 + term2_filt_z.^2 ;
+    term3_filt = term3_filt_x.^2 + term3_filt_y.^2 + term3_filt_z.^2 ;
+    term4_filt = term4_filt_x.^2 + term4_filt_y.^2 + term4_filt_z.^2 ;
+    term5_filt = term5_filt_x.^2 + term5_filt_y.^2 + term5_filt_z.^2 ;
+    term6_filt = term6_filt_x.^2 + term6_filt_y.^2 + term6_filt_z.^2 ;
+
+    tau_nE_tau = tau_nE_tau_x.^2 + tau_nE_tau_y.^2 + tau_nE_tau_z.^2 ;
+    tau_v_x_B_tau = tau_v_x_B_tau_x.^2 + tau_v_x_B_tau_y.^2 + tau_v_x_B_tau_z.^2 ;
+    tau_J_x_B_tau = tau_J_x_B_tau_x.^2 + tau_J_x_B_tau_y.^2 + tau_J_x_B_tau_z.^2 ;
+    tau_Div_tau1 = tau_Div_tau1_x.^2 + tau_Div_tau1_y.^2 + tau_Div_tau1_z.^2 ;
+    tau_total = tau_total_x.^2 + tau_total_y.^2 + tau_total_z.^2 ;
+
+    % The idea for the new analysis is to plot the <SGSMhD>rms/<MHD>rms
+    % This analysis should be done with the three components not just one
+
+    % The idea of this is to compute relative importance with absolute values
+    in=1;
+    if absolute==1
+        %-----------------------------------------------------------------------
+        MHD_E_mean = sqrt(mean(abs(term1_filt),'all'));
+        MHD_vxB_mean = sqrt(mean(abs(term2_filt),'all'));
+        MHD_JxB_mean = sqrt(mean(abs(term3_filt),'all'));
+        MHD_divP_mean = sqrt(mean(abs(term4_filt),'all'));
+        MHD_divvJall_mean = sqrt(mean(abs(term5_filt),'all'));
+        MHD_RHS_mean = sqrt(mean(abs(term6_filt),'all'));
+
+        SGS_tau_nE_mean = sqrt(mean(abs(tau_nE_tau),'all'));
+        SGS_tau_vxB_mean = sqrt(mean(abs(tau_v_x_B_tau),'all'));
+        SGS_tau_JxB_mean = sqrt(mean(abs(tau_J_x_B_tau),'all'));
+        SGS_tau_Div_mean = sqrt(mean(abs(tau_Div_tau1),'all'));
+        SGS_tau_total_mean = sqrt(mean(abs(tau_total),'all'));
+
+        MHD_E2vxB_mean(1,in) = MHD_E_mean/MHD_vxB_mean;
+        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean/MHD_vxB_mean;
+        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean/MHD_vxB_mean;
+        MHD_divP2vxB_mean(1,in) = MHD_divP_mean/MHD_vxB_mean;
+        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean/MHD_vxB_mean;
+        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean/MHD_vxB_mean;
+
+        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean/MHD_vxB_mean;
+        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean/MHD_vxB_mean;
+        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean/MHD_vxB_mean;
+        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean/MHD_vxB_mean;
+        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean/MHD_vxB_mean;
+
+        %-----------------------------------------------------------------------
+    elseif absolute==0
+
+        % The idea of this is to compute relative importance with NO absolute values
+        %-----------------------------------------------------------------------
+        MHD_E_mean = sqrt(mean((term1_filt),'all'));
+        MHD_vxB_mean = sqrt(mean((term2_filt),'all'));
+        MHD_JxB_mean = sqrt(mean((term3_filt),'all'));
+        MHD_divP_mean = sqrt(mean((term4_filt),'all'));
+        MHD_divvJall_mean = sqrt(mean((term5_filt),'all'));
+        MHD_RHS_mean = sqrt(mean(abs(term6_filt),'all'));
+
+        SGS_tau_nE_mean = sqrt(mean((tau_nE_tau),'all'));
+        SGS_tau_vxB_mean = sqrt(mean((tau_v_x_B_tau),'all'));
+        SGS_tau_JxB_mean = sqrt(mean((tau_J_x_B_tau),'all'));
+        SGS_tau_Div_mean = sqrt(mean((tau_Div_tau1),'all'));
+        SGS_tau_total_mean = sqrt(mean((tau_total),'all'));
+
+        MHD_E2vxB_mean(1,in) = MHD_E_mean/MHD_vxB_mean;
+        MHD_vxB2vxB_mean(1,in) = MHD_vxB_mean/MHD_vxB_mean;
+        MHD_JxB2vxB_mean(1,in) = MHD_JxB_mean/MHD_vxB_mean;
+        MHD_divP2vxB_mean(1,in) = MHD_divP_mean/MHD_vxB_mean;
+        MHD_divvJall2vxB_mean(1,in) = MHD_divvJall_mean/MHD_vxB_mean;
+        MHD_RHS2vxB_mean(1,in) = MHD_RHS_mean/MHD_vxB_mean;
+
+        SGS_tau_nE_mean2vxB_mean(1,in) = SGS_tau_nE_mean/MHD_vxB_mean;
+        SGS_tau_vxB_mean2vxB_mean(1,in) = SGS_tau_vxB_mean/MHD_vxB_mean;
+        SGS_tau_JxB_mean2vxB_mean(1,in) = SGS_tau_JxB_mean/MHD_vxB_mean;
+        SGS_tau_Div_mean2vxB_mean(1,in) = SGS_tau_Div_mean/MHD_vxB_mean;
+        SGS_tau_total_mean2vxB_mean(1,in) = SGS_tau_total_mean/MHD_vxB_mean;
+        %-----------------------------------------------------------------------
+
+    end
+
+end
+
+% Table of relatives values
+
+% clearvars MHD_E_mean MHD_vxB_mean...
+%     MHD_JxB_mean MHD_divP_mean ...
+% MHD_divvJall_mean SGS_tau_nE_mean ...
+% SGS_tau_vxB_mean SGS_tau_JxB_mean...
+% SGS_tau_Div_mean SGS_tau_total_mean
 
 
-%%%
-% This is to compute the voritcity 
+AA = MHD_E2vxB_mean(1,in);
+BB = MHD_vxB2vxB_mean(1,in);
+CC = MHD_JxB2vxB_mean(1,in);
+DD = MHD_divP2vxB_mean(1,in);
+EE = MHD_divvJall2vxB_mean(1,in);
+FF = MHD_RHS2vxB_mean(1,in);
+
+AS = SGS_tau_nE_mean2vxB_mean(1,in);
+BS = SGS_tau_vxB_mean2vxB_mean(1,in);
+CS = SGS_tau_JxB_mean2vxB_mean(1,in);
+ES = SGS_tau_Div_mean2vxB_mean(1,in);
+FS = SGS_tau_total_mean2vxB_mean(1,in);
+
+T = table([AA;AS],[BB;BS],[CC;CS],[DD;0],[EE;ES],[FF;FS],...
+    'VariableNames',{'E','vxB','JxB','divP','divvJ','RHS'},'RowName',{'Resolved','Unresolved'}); 
+
+
+disp(T) 
+
+
+
+%end
+
 %--------------------------------------------------------------------------
-[v_x_dt_y, v_x_dt_x, v_x_dt_z] = gradient(v_x_dt);
-[v_y_dt_y, v_y_dt_x, v_y_dt_z] = gradient(v_y_dt);
-[v_z_dt_y, v_z_dt_x, v_z_dt_z] = gradient(v_z_dt);
-
-vort_x_dt = (v_z_dt_y - v_y_dt_z)./(grad_fact.*resx);
-vort_y_dt = (v_x_dt_z - v_z_dt_x)./(grad_fact.*resy);
-vort_z_dt = (v_y_dt_x - v_x_dt_y)./(grad_fact.*resz);
- 
-[v_x_filt_y, v_x_filt_x, v_x_filt_z] = gradient(v_x_filt);
-[v_y_filt_y, v_y_filt_x, v_y_filt_z] = gradient(v_y_filt);
-[v_z_filt_y, v_z_filt_x, v_z_filt_z] = gradient(v_z_filt);
-
-vort_x_filt = (v_z_filt_y - v_y_filt_z)./(grad_fact.*resx);
-vort_y_filt = (v_x_filt_z - v_z_filt_x)./(grad_fact.*resy);
-vort_z_filt = (v_y_filt_x - v_x_filt_y)./(grad_fact.*resz);
-%--------------------------------------------------------------------------
-
-% This is to get the unresolved terms to compute the turbulent energy, the
-% turbulent cross helicity and the turbulent helicity
-%
-% this has to be in alfven units
-%----------------------------------------------------------------------
-% H = <-u' . w' + b' . j' >; 
-% K = <u'^2 + b'^2>; 
-% KR = <u'^2 - b'^2>; 
-% W = <u' . b'>;
-%----------------------------------------------------------------------
-
-
-% compute the fluctuating quantities (prime quantities)
-%----------------------------------------------------------------------
-% This has to be donein alfven units
-%----------------------------------------------------------------------
-
-% Using a constant dencity for the alfven units
-%----------------------------------------------------------------------
-Bx_pri = (Bx_dt - Bx_filt)./sqrt(4*pi*n_filt);
-Jx_pri = (Jx_dt - Jx_filt)./sqrt(4*pi*n_filt);
-v_x_pri = v_x_dt - v_x_filt;
-vort_x_pri = vort_x_dt - vort_x_filt;
-
-By_pri = (By_dt - By_filt)./sqrt(4*pi*n_filt);
-Jy_pri = (Jy_dt - Jy_filt)./sqrt(4*pi*n_filt);
-v_y_pri = v_y_dt - v_y_filt;
-vort_y_pri = vort_y_dt - vort_y_filt;
-
-Bz_pri = (Bz_dt - Bz_filt)./sqrt(4*pi*n_filt);
-Jz_pri = (Jz_dt - Jz_filt)./sqrt(4*pi*n_filt);
-v_z_pri = v_z_dt - v_z_filt;
-vort_z_pri = vort_z_dt - vort_z_filt;
-
-WW = v_x_pri.*Bx_pri + v_y_pri.*By_pri + v_z_pri.*Bz_pri;
-
-HH = -(v_x_pri.*vort_x_pri + v_y_pri.*vort_y_pri + v_z_pri.*vort_z_pri)...
-    + (Bx_pri.*Jx_pri + By_pri.*Jy_pri +Bz_pri.*Jz_pri);
-KK = 0.5.*(v_x_pri.^2 + v_y_pri.^2 + v_z_pri.^2 ...
-    + Bx_pri.^2 + By_pri.^2 + Bz_pri.^2  );
-KK_R = 0.5.*(v_x_pri.^2 + v_y_pri.^2 + v_z_pri.^2 ...
-    - Bx_pri.^2 - By_pri.^2 - Bz_pri.^2  );
-
-W_filt = Gauss_filter_3D_xyz(Dx,Kx,Ky,Kz,WW);
-H_filt = Gauss_filter_3D_xyz(Dx,Kx,Ky,Kz,HH);
-K_filt = Gauss_filter_3D_xyz(Dx,Kx,Ky,Kz,KK);
-KR_filt = Gauss_filter_3D_xyz(Dx,Kx,Ky,Kz,KK_R);
-
-% This is including the correction from Nobu
-%--------------------------------------------------------------------------
-K_filt_J_filt_x = (K_filt - KR_filt).*Jx_filt ;
-H_filt_B_filt_x = H_filt.*Bx_filt ;
-W_filt_ome_filt_x = W_filt.*vort_x_filt ;
-
-K_filt_J_filt_y = (K_filt - KR_filt).*Jy_filt ;
-H_filt_B_filt_y = H_filt.*By_filt ;
-W_filt_ome_filt_y= W_filt.*vort_y_filt ;
-
-K_filt_J_filt_z = (K_filt - KR_filt).*Jz_filt ;
-H_filt_B_filt_z = H_filt.*Bz_filt ;
-W_filt_ome_filt_z = W_filt.*vort_z_filt ;
-%}
-%--------------------------------------------------------------------------
-
-% This is to compute the gradient of the resolved density 
-%--------------------------------------------------------------------------
-[n_filt_y, n_filt_x, n_filt_z] = gradient(n_filt);
-n_filt_x =  n_filt_x/(grad_fact.*resx);
-n_filt_y =  n_filt_y/(grad_fact.*resx);
-n_filt_z =  n_filt_z/(grad_fact.*resx);
+%grid_dt = info.Groups(20).Attributes;
+%dt = double(grid_dt(15).Value); %this is in omega_pe
+%str = string(S(in).name);
+%newstr = extractBetween(str,"pfd.","_p000000.h5");
+%N_steps = str2double(newstr);
+%time = dt*N_steps/sqrt(mime); % This is in omega pi^-1
+%time_nl = time/Tau_nl; % This time nonlinear
+%time_in = linspace(0,time_nl,N2);
 %--------------------------------------------------------------------------
 
 
-%%%
-% Now actually computing point by point thing <<-----
-%--------------------------------------------------------------------------
-%
-%AN = input('input for the size of the sample for the correlation plots must be integer and the matrix must be divisible: ');
-num_elements = numel(Jx_filt);
-
-% Generate random linear indices
-rand_inds = randperm(num_elements, AN);
-
-% Get values
-%-----------------------------------------------------------------------
-J_scatter_x = Jx_filt(rand_inds);
-B_scatter_x = Bx_filt(rand_inds);
-vort_scatter_x = vort_x_filt(rand_inds);
-v_scatter_x = v_x_filt(rand_inds);
-E_scatter_x = Ex_filt(rand_inds);
-
-KJ_scatter_x = K_filt_J_filt_x(rand_inds); 
-HB_scatter_x = H_filt_B_filt_x(rand_inds); 
-Wvort_scatter_x = W_filt_ome_filt_x(rand_inds); 
-% var_tau1_x = tau_v_x_B_tau_x(rand_inds); 
-% var_tau2_x = tau_nE_tau_x(rand_inds); 
-% var_tau3_x = tau_J_x_B_tau_x(rand_inds); 
-% var_tau4_x = tau_Div_tau1_x(rand_inds); 
-var_tau_total_x = tau_total_x(rand_inds); 
-
-J_scatter_y = Jy_filt(rand_inds);
-B_scatter_y = By_filt(rand_inds);
-vort_scatter_y = vort_y_filt(rand_inds); 
-v_scatter_y = v_y_filt(rand_inds);
-E_scatter_y = Ey_filt(rand_inds);
-
-KJ_scatter_y = K_filt_J_filt_y(rand_inds); 
-HB_scatter_y = H_filt_B_filt_y(rand_inds); 
-Wvort_scatter_y = W_filt_ome_filt_y(rand_inds); 
-% var_tau1_y = tau_v_x_B_tau_y(rand_inds); 
-% var_tau2_y = tau_nE_tau_y(rand_inds); 
-% var_tau3_y = tau_J_x_B_tau_y(rand_inds); 
-% var_tau4_y = tau_Div_tau1_y(rand_inds); 
-var_tau_total_y = tau_total_y(rand_inds); 
-
-J_scatter_z = Jz_filt(rand_inds);
-B_scatter_z = Bz_filt(rand_inds);
-vort_scatter_z = vort_z_filt(rand_inds); 
-v_scatter_z = v_z_filt(rand_inds);
-E_scatter_z = Ez_filt(rand_inds);
-
-KJ_scatter_z = K_filt_J_filt_z(rand_inds); 
-HB_scatter_z = H_filt_B_filt_z(rand_inds); 
-Wvort_scatter_z = W_filt_ome_filt_z(rand_inds); 
-% var_tau1_z = tau_v_x_B_tau_z(rand_inds); 
-% var_tau2_z = tau_nE_tau_z(rand_inds); 
-% var_tau3_z = tau_J_x_B_tau_z(rand_inds); 
-% var_tau4_z = tau_Div_tau1_z(rand_inds); 
-var_tau_total_z = tau_total_z(rand_inds); 
-%-----------------------------------------------------------------------
-
-
-% Now computing the rms values of the taus
-%-----------------------------------------------------------------------
-% tau_nE_tau = sqrt(tau_nE_tau_x.^2 + tau_nE_tau_y.^2 + tau_nE_tau_z.^2) ;
-% tau_v_x_B_tau = sqrt(tau_v_x_B_tau_x.^2 + tau_v_x_B_tau_y.^2 + tau_v_x_B_tau_z.^2) ;
-% tau_J_x_B_tau = sqrt(tau_J_x_B_tau_x.^2 + tau_J_x_B_tau_y.^2 + tau_J_x_B_tau_z.^2) ;
-% tau_Div_tau1 = sqrt(tau_Div_tau1_x.^2 + tau_Div_tau1_y.^2 + tau_Div_tau1_z.^2) ;
-% var_tau1 = tau_v_x_B_tau(rand_inds); 
-% var_tau2 = tau_nE_tau(rand_inds); 
-% var_tau3 = tau_J_x_B_tau(rand_inds); 
-% var_tau4 = tau_Div_tau1(rand_inds); 
-
-tau_total = sqrt(tau_total_x.^2 + tau_total_y.^2 + tau_total_z.^2) ;
-var_tau_total = tau_total(rand_inds); 
-%-----------------------------------------------------------------------
-
-% Now computing the rms values of the filtered fields
-%-----------------------------------------------------------------------
-J_mag = sqrt(Jx_filt.^2 + Jy_filt.^2 + Jz_filt.^2) ;
-B_mag = sqrt(Bx_filt.^2 + By_filt.^2 + Bz_filt.^2) ;
-vort_mag = sqrt(vort_x_filt.^2 + vort_y_filt.^2 + vort_z_filt.^2) ;
-
-v_mag = sqrt(v_x_filt.^2 + v_y_filt.^2 + v_z_filt.^2) ;
-E_mag = sqrt(Ex_filt.^2 + Ey_filt.^2 + Ez_filt.^2) ;
-
-KJ_mag = sqrt(K_filt_J_filt_x.^2 + K_filt_J_filt_y.^2 + K_filt_J_filt_z.^2);
-HB_mag = sqrt(H_filt_B_filt_x.^2 + H_filt_B_filt_y.^2 + H_filt_B_filt_z.^2);
-Wvort_mag = sqrt(W_filt_ome_filt_x.^2 + W_filt_ome_filt_y.^2 + W_filt_ome_filt_z.^2);
-
-J_mag_scatter = J_mag(rand_inds);
-B_mag_scatter = B_mag(rand_inds);
-vort_mag_scatter = vort_mag(rand_inds);
-
-v_mag_scatter = v_mag(rand_inds);
-E_mag_scatter = E_mag(rand_inds);
-n_scatter = n_filt(rand_inds);
-
-KJ_mag_scatter = KJ_mag(rand_inds);
-HB_mag_scatter = HB_mag(rand_inds);
-Wvort_mag_scatter = Wvort_mag(rand_inds);
-
-n_x_scatter = n_filt_x(rand_inds);
-n_y_scatter = n_filt_y(rand_inds);
-n_z_scatter = n_filt_z(rand_inds);
-
-Div_Pi_x_scatter = Div_Pi_filt_x(rand_inds);
-Div_Pi_y_scatter = Div_Pi_filt_y(rand_inds);
-Div_Pi_z_scatter = Div_Pi_filt_z(rand_inds);
-
-%-----------------------------------------------------------------------
-
+time_in = 1;
 
 %{
-% Make the plots
-%-----------------------------------------------------------------------
-nbins = 80;
-legend('data','linear','mean','median')
-fs=20; x0=45;y0=54;xx1=1200;yy1=1000;
-%-----------------------------------------------------------------------
 
-% This is testing the three different fits 
-%-----------------------------------------------------------------------
-%
-f331=figure(331);
-set(gcf,'position',[x0,y0,xx1,yy1])
-%-----------------------------------------------------------------------
-subplot(2,3,1)
-xx=J_scatter_x;
-yy= var_tau_total_x/max(abs(var_tau_total_x));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$J$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,2)
-xx=B_scatter_x;
-yy= var_tau_total_x/max(abs(var_tau_total_x));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$B$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,3)
-xx=vort_scatter_x;
-yy= var_tau_total_x/max(abs(var_tau_total_x));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$\Omega$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,4)
-xx=v_scatter_x;
-yy= var_tau_total_x/max(abs(var_tau_total_x));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$v$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,5)
-xx=E_scatter_x;
-yy= var_tau_total_x/max(abs(var_tau_total_x));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$E$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,6)
-xx=n_scatter;
-yy= var_tau_total_x/max(abs(var_tau_total_x));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$n$')
-hold off
-%-----------------------------------------------------------------------
+legendsgsmhd = {'$<J \times B>/<u \times B>$','$<\nabla \cdot P>/<u \times B>$','$<\nabla \cdot (uJ+Ju-JJ/ne)>/<u \times B>$',...
+    '$<RHS>/<u \times B>$','$<\tau_{nE}>/<u \times B>$','$<\tau_{u \times B}>/<ux \times B>$','$<\tau_{J \times B}>/<u \times B>$',...
+    '$<\tau_{\nabla\cdot(uJ+Ju-JJ/ne)}>/<u \times B>$','$<\Sigma \tau>/<u \times B>$'};
 
+legendsgsmhd_0 = {'$<|\overline{E}|>$','$<|u \times B|>$','$<|J \times B|/ne>$','$<\nabla \cdot P>$','$<\nabla \cdot (uJ+Ju-JJ/ne)>$','$<RHS>$',...
+    '$<\tau_{nE}>$','$<\tau_{u \times B}>$','$<\tau_{J \times B}>$',...
+    '$<\tau_{\nabla\cdot(uJ+Ju-JJ/ne)}>$','$<\Sigma \tau>$'};
 
+legendsgsmhd_1 = {'$<|\overline{E}|>/<|\overline{u} \times \overline{B}|>$',...
+    '$<|\overline{u} \times \overline{B}|>/<|\overline{u} \times \overline{B}|>$',...
+    '$<|\overline{J} \times \overline{B}|/\overline{n}e>/<|\overline{u} \times \overline{B}|>$'...
+    ,'$<|\nabla \cdot \overline{P}|>/<|\overline{u} \times \overline{B}|>$',...
+    '$<|\nabla \cdot (\overline{u}\overline{J}+\overline{J}\overline{u}-\overline{J}\overline{J}/\overline{n}e)m_{e}/\overline{n}e^2|>/<|\overline{u} \times \overline{B}|>$',...
+    '$<RHS>/<|\overline{u} \times \overline{B}|>$',...
+    '$<\tau_{nE}>/<|\overline{u} \times \overline{B}|>$',...
+    '$<\tau_{u \times B}>/<|\overline{u} \times \overline{B}|>$',...
+    '$<\tau_{J \times B}>/<|\overline{u} \times \overline{B}|>$',...
+    '$<\tau_{\nabla\cdot(uJ+Ju-JJ/ne)}>/<|\overline{u} \times \overline{B}|>$',...
+    '$<\Sigma \tau>/<|\overline{u} \times \overline{B}|>$'};
 
-f332=figure(332);
-set(gcf,'position',[x0,y0,xx1,yy1])
-%-----------------------------------------------------------------------
-subplot(2,3,1)
-xx=J_scatter_y;
-yy= var_tau_total_y/max(abs(var_tau_total_y));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$J$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,2)
-xx=B_scatter_y;
-yy= var_tau_total_y/max(abs(var_tau_total_y));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$B$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,3)
-xx=vort_scatter_y;
-yy= var_tau_total_y/max(abs(var_tau_total_y));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$\Omega$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,4)
-xx=v_scatter_y;
-yy= var_tau_total_y/max(abs(var_tau_total_y));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$v$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,5)
-xx=E_scatter_y;
-yy= var_tau_total_y/max(abs(var_tau_total_y));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$E$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,6)
-xx=n_scatter;
-yy= var_tau_total_y/max(abs(var_tau_total_y));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$n$')
-hold off
-%-----------------------------------------------------------------------
+%time_in = linspace(1,21,Nf);
+fs=18;
+
+fs=16; x0=45;y0=54;xx1=1000;yy1=400;
+if absolute==1
+    f34 = figure(34);
+    set(gcf,'position',[x0,y0,xx1,yy1])
+    plot(time_in,MHD_JxB2vxB_mean,'og',LineWidth=2)
+    hold on
+    plot(time_in,MHD_divP2vxB_mean,'om',LineWidth=2)
+    plot(time_in,MHD_divvJall2vxB_mean,'oc',LineWidth=2)
+    plot(time_in,MHD_RHS2vxB_mean,'-k',LineWidth=2)
+    plot(time_in,SGS_tau_nE_mean2vxB_mean,'+r',LineWidth=2)
+    plot(time_in,SGS_tau_vxB_mean2vxB_mean,'+b',LineWidth=2)
+    plot(time_in,SGS_tau_JxB_mean2vxB_mean,'+g',LineWidth=2)
+    plot(time_in,SGS_tau_Div_mean2vxB_mean,'+c',LineWidth=2)
+    plot(time_in,SGS_tau_total_mean2vxB_mean,'*k',LineWidth=2)
+    legend(legendsgsmhd,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+    xlabel('$t/t_{nl}$','FontSize',fs,Interpreter='latex')
+    hold off
+
+    f35 = figure(35);
+    set(gcf,'position',[x0,y0,xx1,yy1])
+    semilogy(time_in,MHD_JxB2vxB_mean,'og',LineWidth=2)
+    hold on
+    semilogy(time_in,MHD_divP2vxB_mean,'om',LineWidth=2)
+    semilogy(time_in,MHD_divvJall2vxB_mean,'oc',LineWidth=2)
+    semilogy(time_in,MHD_RHS2vxB_mean,'-k',LineWidth=2)
+    semilogy(time_in,SGS_tau_nE_mean2vxB_mean,'+r',LineWidth=2)
+    semilogy(time_in,SGS_tau_vxB_mean2vxB_mean,'+b',LineWidth=2)
+    semilogy(time_in,SGS_tau_JxB_mean2vxB_mean,'+g',LineWidth=2)
+    semilogy(time_in,SGS_tau_Div_mean2vxB_mean,'+c',LineWidth=2)
+    semilogy(time_in,SGS_tau_total_mean2vxB_mean,'*k',LineWidth=2)
+    legend(legendsgsmhd,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+    xlabel('$t/t_{nl}$','FontSize',fs,Interpreter='latex')
+    hold off
+elseif absolute==0
+
+    f34 = figure(34);
+    set(gcf,'position',[x0,y0,xx1,yy1])
+    dummy = (MHD_E2vxB_mean./MHD_vxB2vxB_mean);
+    plot(time_in,dummy,'or',LineWidth=2)
+    hold on
+
+    dummy = (MHD_vxB2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'ob',LineWidth=2)
+
+    dummy = (MHD_JxB2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'og',LineWidth=2)
+
+    dummy = (MHD_divP2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'om',LineWidth=2)
+
+    dummy = (MHD_divvJall2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'oc',LineWidth=2)
+
+    dummy = (MHD_RHS2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'-k',LineWidth=2)
+
+    dummy = (SGS_tau_nE_mean2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'+r',LineWidth=2)
+
+    dummy = (SGS_tau_vxB_mean2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'+b',LineWidth=2)
+
+    dummy = (SGS_tau_JxB_mean2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'+g',LineWidth=2)
+
+    dummy = (SGS_tau_Div_mean2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'+c',LineWidth=2)
+
+    dummy = (SGS_tau_total_mean2vxB_mean)./MHD_vxB2vxB_mean;
+    plot(time_in,dummy,'*k',LineWidth=2)
+
+    legend(legendsgsmhd_1,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+    xlabel('$t/t_{nl}$','FontSize',fs,Interpreter='latex')
+    %ylabel('$log (1 - |<.>|)$','FontSize',fs,Interpreter='latex')
+    %ylim([-5e-6, 5e-6])
+    hold off
+
+    f35 = figure(35);
+    set(gcf,'position',[x0,y0,xx1,yy1])
+    dummy = (MHD_E2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'or',LineWidth=2)
+    hold on
+
+    dummy = (MHD_vxB2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'ob',LineWidth=2)
+
+    dummy = (MHD_JxB2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'og',LineWidth=2)
+
+    dummy = (MHD_divP2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'om',LineWidth=2)
+
+    dummy = (MHD_divvJall2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'oc',LineWidth=2)
+
+    dummy = (MHD_RHS2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'-k',LineWidth=2)
+
+    dummy = (SGS_tau_nE_mean2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'+r',LineWidth=2)
+
+    dummy = (SGS_tau_vxB_mean2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'+b',LineWidth=2)
+
+    dummy = (SGS_tau_JxB_mean2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'+g',LineWidth=2)
+
+    dummy = (SGS_tau_Div_mean2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'+c',LineWidth=2)
+
+    dummy = (SGS_tau_total_mean2vxB_mean);
+    plot(time_in,sign(dummy).*log10(abs(dummy)),'*k',LineWidth=2)
+
+    legend(legendsgsmhd_0,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+    xlabel('$t/t_{nl}$','FontSize',fs,Interpreter='latex')
+    ylabel('$sgn(|<.>|) * log (|<.>|)$','FontSize',fs,Interpreter='latex')
+    %ylim([-10, 10])
+    hold off
+
+    f37 = figure(37);
+    set(gcf,'position',[x0,y0,xx1,yy1])
+    semilogy(time_in,MHD_JxB2vxB_mean./MHD_vxB2vxB_mean,'og',LineWidth=2)
+    hold on
+    semilogy(time_in,MHD_divP2vxB_mean./MHD_vxB2vxB_mean,'om',LineWidth=2)
+    semilogy(time_in,MHD_divvJall2vxB_mean./MHD_vxB2vxB_mean,'oc',LineWidth=2)
+    semilogy(time_in,MHD_RHS2vxB_mean./MHD_vxB2vxB_mean,'-k',LineWidth=2)
+    semilogy(time_in,SGS_tau_nE_mean2vxB_mean./MHD_vxB2vxB_mean,'+r',LineWidth=2)
+    semilogy(time_in,SGS_tau_vxB_mean2vxB_mean./MHD_vxB2vxB_mean,'+b',LineWidth=2)
+    semilogy(time_in,SGS_tau_JxB_mean2vxB_mean./MHD_vxB2vxB_mean,'+g',LineWidth=2)
+    semilogy(time_in,SGS_tau_Div_mean2vxB_mean./MHD_vxB2vxB_mean,'+c',LineWidth=2)
+    semilogy(time_in,SGS_tau_total_mean2vxB_mean./MHD_vxB2vxB_mean,'*k',LineWidth=2)
+    legend(legendsgsmhd,'FontSize',fs,'Interpreter','latex','NumColumns',1,'Location','northeastoutside')
+    xlabel('$t/t_{nl}$','FontSize',fs,Interpreter='latex')
+    hold off
 
 
-f333=figure(333);
-set(gcf,'position',[x0,y0,xx1,yy1])
-%-----------------------------------------------------------------------
-subplot(2,3,1)
-xx=J_scatter_z;
-yy= var_tau_total_z/max(abs(var_tau_total_z));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$J$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,2)
-xx=B_scatter_z;
-yy= var_tau_total_z/max(abs(var_tau_total_z));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$B$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,3)
-xx=vort_scatter_z;
-yy= var_tau_total_z/max(abs(var_tau_total_z));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$\Omega$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,4)
-xx=v_scatter_z;
-yy= var_tau_total_z/max(abs(var_tau_total_z));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$v$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,5)
-xx=E_scatter_z;
-yy= var_tau_total_z/max(abs(var_tau_total_z));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$E$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,6)
-xx=n_scatter;
-yy= var_tau_total_z/max(abs(var_tau_total_z));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$n$')
-hold off
-%-----------------------------------------------------------------------
-
-
-f334=figure(334);
-set(gcf,'position',[x0,y0,xx1,yy1])
-%-----------------------------------------------------------------------
-subplot(2,3,1)
-xx=J_mag_scatter;
-yy= var_tau_total/max(abs(var_tau_total));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$J$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,2)
-xx=B_mag_scatter;
-yy= var_tau_total/max(abs(var_tau_total));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$B$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,3)
-xx=vort_mag_scatter;
-yy= var_tau_total/max(abs(var_tau_total));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$\Omega$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,4)
-xx=v_mag_scatter;
-yy= var_tau_total/max(abs(var_tau_total));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$v$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,5)
-xx=E_mag_scatter;
-yy= var_tau_total/max(abs(var_tau_total));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$E$')
-hold off
-%-----------------------------------------------------------------------
-subplot(2,3,6)
-xx=n_scatter;
-yy= var_tau_total/max(abs(var_tau_total));
-[~,edges,loc] = histcounts(xx,nbins);
-mediany = accumarray(loc(:),yy(:),[],@median);
-xmid = 0.5*(edges(1:end-1)+edges(2:end));
-P2 = polyfit(xmid,mediany,1); yfit_mediany = P2(1)*xx+P2(2);
-scatter(xx,yy,'.')
-hold on;
-plot(xmid,mediany,'r','LineWidth',2);
-plot(xx,yfit_mediany,'k--','LineWidth',2);
-set(gca,'FontSize',fs)
-ax = gca; ax.TickLabelInterpreter = 'latex';ax.XLabel.Interpreter='latex';ax.YLabel.Interpreter='latex';
-%ylabel('$\Sigma \tau$','Interpreter','latex')
-Rc = corrcoef(xx,yy);
-bb = sprintf('b = %.2g, R = %.2g', P2(2), Rc(1,2));
-title(bb,'Interpreter','Latex')
-xlabel('$n$')
-hold off
-%-----------------------------------------------------------------------
-
-
-
-cd(f_path)
-%-----------------------------------------------------------------------
-saveas(f331,strcat(num2str(i),'total_tau_dependence_x.png'));
-saveas(f332,strcat(num2str(i),'total_tau_dependence_y.png'));
-saveas(f333,strcat(num2str(i),'total_tau_dependence_z.png'));
-saveas(f334,strcat(num2str(i),'total_tau_dependence_mag.png'));
-%-----------------------------------------------------------------------
+end
 %}
 
-T = table([1;1],[1;1],[1;1],[1;1],[1;1],[1;1],...
-    'VariableNames',{'E','vxB','JxB','divP','divvJ','RHS'},'RowName',{'Resolved','Unresolved'});
-
-
-disp(T)
-
+%f_path
+%{
 cd(f_path)
-%-----------------------------------------------------------------------
-%filename = "beta4_scatter.mat";
 
-save(filename_beta_comp,...
-    "J_scatter_x","B_scatter_x","vort_scatter_x","v_scatter_x","E_scatter_x","var_tau_total_x",...
-    "J_scatter_y","B_scatter_y","vort_scatter_y","v_scatter_y","E_scatter_y","var_tau_total_y",...
-    "J_scatter_z","B_scatter_z","vort_scatter_z","v_scatter_z","E_scatter_z","var_tau_total_z",...
-    "J_mag_scatter","B_mag_scatter","vort_mag_scatter","v_mag_scatter","E_mag_scatter","var_tau_total","n_scatter",...
-    "KJ_scatter_x","HB_scatter_x","Wvort_scatter_x",...
-    "KJ_scatter_y","HB_scatter_y","Wvort_scatter_y",...
-    "KJ_scatter_z","HB_scatter_z","Wvort_scatter_z",...
-    "KJ_mag_scatter","HB_mag_scatter","Wvort_mag_scatter",...
-    "n_x_scatter","n_y_scatter","n_z_scatter",...
-    "Div_Pi_x_scatter","Div_Pi_y_scatter","Div_Pi_z_scatter",...
-    "-nocompression")
+if absolute==1
+    saveas(f34,strcat(num2str(i),'relatives_terms_time_abs.png'));
+    saveas(f35,strcat(num2str(i),'relatives_terms_time_abs_log.png'));
+elseif absolute==0
+    saveas(f34,strcat(num2str(i),'relatives_terms_time.png'));
+    saveas(f35,strcat(num2str(i),'relatives_terms_time_log.png'));
+    saveas(f36,strcat(num2str(i),'relatives_terms_time_abs.png'));
+end
+%}
 
-%-----------------------------------------------------------------------
+% % %T = table([1;5],[2;6],[3;7],[4;8],[],'VariableNames',{'JxB','divP','C','D'},'RowName',{'MHD','SGS/MHD'});
+% %
+% %
+% %
+
+
 
 %%
 %%%

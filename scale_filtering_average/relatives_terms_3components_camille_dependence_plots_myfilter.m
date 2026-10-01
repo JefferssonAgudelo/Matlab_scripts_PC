@@ -1,23 +1,41 @@
 %% FILE PATH
 %dir = input('Name of the directory? (Like ./low_amplitude/12 or ./large_amplitude/01): ', 's');
-%dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/01';
 
-dir = '/JAAR-DATA/DATA_HVM/betai=4';
+%dir = '/Volumes/PSC_DiRAC_DATA/DATA_HVM/betai=0.25/02';
+
+dir = '/JAAR-DATA/DATA_HVM/betai=0.25/02';
+%dir = '/JAAR-DATA/DATA_HVM/betai=1/01';
+%dir = '/JAAR-DATA/DATA_HVM/betai=4';
+
 xl = 3.0;
 yl = 3.0;
 zl = 3.0;
-outformat = 1;
-ns = 10;
-tt = 10;
-pressure_on = 1;
-l_wind = 8;
+outformat = 0;
+
+ns = 5;
+tt = 4;
+beta_i = 0.25;
+Ti02Te0 =2.5;
+
+%ns = 6;
+%tt = 1;
+%beta_i = 1.0;
+%Ti02Te0 = 10.0;
+
+%ns = 10;
+%tt = 2;
+%beta_i = 4.0;
+%Ti02Te0 = 40.0;
+
+pressure_on = 0;
+l_wind = 4;
 rms_value = 1;
 absolute = 1;
-beta_i = 4.0;
-Ti02Te0 = 40.0;
+
+
 % How many to randomly sample
 AN = 256*256*32;
-filename_beta_comp = "beta4_scatter_KJHBWOgradndivPi_AN32.mat";
+filename_beta_comp = "beta4_scatter_KJHBWOgradn_AN32_028.mat";
 
 f_path = [dir, '/'];
 fprintf('FILE PATH = %s\n', f_path);
@@ -116,7 +134,6 @@ end
 dim1 = a1;
 dim2 = a2;
 dim3 = a3;
-
 
 
 kx = (0:dim1-1) - dim1 / 2 + 1;
@@ -443,9 +460,11 @@ clearvars uxp_t uyp_t uzp_t uxe_t uye_t uze_t
 %beta_i = input('set the beta_i % : ');
 %Ti02Te0 = input('set the Ti0/Te0 % : ');
 
+%%stopp
+
 mu0 = 1;
 
-Te0 = beta_i/(2*mu0*Ti02Te0);
+Te0 = beta_i/(2*mu0*Ti02Te0); %?
 %Te0 = beta_i/(8*pi*Ti02Te0);
 
 Pe_dt = n_0_dt * Te0;
@@ -539,22 +558,30 @@ me = 1/100;
 %L2Ex_dt = me*4*del2(Ex_dt)/(grad_fact.*resx)^2;
 %L2Ey_dt = me*4*del2(Ey_dt)/(grad_fact.*resx)^2;
 %L2Ez_dt = me*4*del2(Ez_dt)/(grad_fact.*resx)^2;
+% 
+% [Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
+% [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y); 
+% [~, Ex_dt_xx, ~] = gradient(Ex_dt_x); 
+% [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
+% L2Ex_dt = me*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+% 
+% [Ey_dt_y, Ey_dt_x, Ey_dt_z] = gradient(Ey_dt);
+% [Ey_dt_yy, ~, ~] = gradient(Ey_dt_y); 
+% [~, Ey_dt_xx, ~] = gradient(Ey_dt_x); 
+% [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
+% L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
+% 
+% [Ez_dt_y, Ez_dt_x, Ez_dt_z] = gradient(Ez_dt);
+% [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y); 
+% [~, Ez_dt_xx, ~] = gradient(Ez_dt_x); 
+% [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
+% L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
 
-[Ex_dt_y, Ex_dt_x, Ex_dt_z] = gradient(Ex_dt);
-[Ex_dt_yy, ~, ~] = gradient(Ex_dt_y); [~, Ex_dt_xx, ~] = gradient(Ex_dt_x); [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
-L2Ex_dt = me*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
-
-[Ey_dt_y, Ey_dt_x, Ey_dt_z] = gradient(Ey_dt);
-[Ey_dt_yy, ~, ~] = gradient(Ey_dt_y); [~, Ey_dt_xx, ~] = gradient(Ey_dt_x); [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
-L2Ey_dt = me*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
-
-[Ez_dt_y, Ez_dt_x, Ez_dt_z] = gradient(Ez_dt);
-[Ez_dt_yy, ~, ~] = gradient(Ez_dt_y); [~, Ez_dt_xx, ~] = gradient(Ez_dt_x); [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
-L2Ez_dt = me*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
-
-Ex_dt = Ex_dt - L2Ex_dt;
-Ey_dt = Ey_dt - L2Ey_dt;
-Ez_dt = Ez_dt - L2Ez_dt;
+%Correction (electron inertia) (I should not substract this )
+%----------------------------------------------------------------------
+%Ex_dt = Ex_dt - L2Ex_dt;
+%Ey_dt = Ey_dt - L2Ey_dt;
+%Ez_dt = Ez_dt - L2Ez_dt;
 %----------------------------------------------------------------------
 
 
@@ -598,11 +625,11 @@ end
 % This is the correction of the div Pe
 %----------------------------------------------------------------------
 %if (component == 1)
-        Div_Pe_dt_x = (mre/me)*Div_Pe_dt_x - (mre/mi)*Div_Pi_dt_x ;
+        %Div_Pe_dt_x = (mre/me)*Div_Pe_dt_x - (mre/mi)*Div_Pi_dt_x ;
 %    elseif (component == 2)
-        Div_Pe_dt_y = (mre/me)*Div_Pe_dt_y - (mre/mi)*Div_Pi_dt_y ;
+        %Div_Pe_dt_y = (mre/me)*Div_Pe_dt_y - (mre/mi)*Div_Pi_dt_y ;
 %    elseif (component == 3)
-        Div_Pe_dt_z = (mre/me)*Div_Pe_dt_z - (mre/mi)*Div_Pi_dt_z ;
+        %Div_Pe_dt_z = (mre/me)*Div_Pe_dt_z - (mre/mi)*Div_Pi_dt_z ;
 %end
 %----------------------------------------------------------------------
 
@@ -752,7 +779,7 @@ end
     [Ex_dt_yy, ~, ~] = gradient(Ex_dt_y);
     [~, Ex_dt_xx, ~] = gradient(Ex_dt_x);
     [~, ~, Ex_dt_zz] = gradient(Ex_dt_z);
-    L2Ex_dt = (Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
+    L2Ex_dt = (me^0)*(Ex_dt_xx + Ex_dt_yy + Ex_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ex_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ex_dt);
     %----------------------------------------------------------------------
@@ -761,7 +788,7 @@ end
     [Ey_dt_yy, ~, ~] = gradient(Ey_dt_y);
     [~, Ey_dt_xx, ~] = gradient(Ey_dt_x);
     [~, ~, Ey_dt_zz] = gradient(Ey_dt_z);
-    L2Ey_dt = (Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
+    L2Ey_dt = (me^0)*(Ey_dt_xx + Ey_dt_yy + Ey_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ey_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ey_dt);
     %----------------------------------------------------------------------
@@ -770,7 +797,7 @@ end
     [Ez_dt_yy, ~, ~] = gradient(Ez_dt_y);
     [~, Ez_dt_xx, ~] = gradient(Ez_dt_x);
     [~, ~, Ez_dt_zz] = gradient(Ez_dt_z);
-    L2Ez_dt = (Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
+    L2Ez_dt = (me^0)*(Ez_dt_xx + Ez_dt_yy + Ez_dt_zz)/(grad_fact.*resx)^2;
     %----------------------------------------------------------------------
     L2Ez_filt = Gauss_filter_3D_xyz(1*Dx,Kx,Ky,Kz,L2Ez_dt);
     %----------------------------------------------------------------------
@@ -861,11 +888,11 @@ end
 % This is the correction of the div Pe
 %----------------------------------------------------------------------
 %if (component == 1)
-        Div_Pe_filt_x = (mre/me)*Div_Pe_filt_x - (mre/mi)*Div_Pi_filt_x ;
-%    elseif (component == 2)
-        Div_Pe_filt_y = (mre/me)*Div_Pe_filt_y - (mre/mi)*Div_Pi_filt_y ;
-%    elseif (component == 3)
-        Div_Pe_filt_z = (mre/me)*Div_Pe_filt_z - (mre/mi)*Div_Pi_filt_z ;
+        %Div_Pe_filt_x = (mre/me)*Div_Pe_filt_x - (mre/mi)*Div_Pi_filt_x ;
+ %  elseif (component == 2)
+        %Div_Pe_filt_y = (mre/me)*Div_Pe_filt_y - (mre/mi)*Div_Pi_filt_y ;
+  % elseif (component == 3)
+        %Div_Pe_filt_z = (mre/me)*Div_Pe_filt_z - (mre/mi)*Div_Pi_filt_z ;
 %end
 %----------------------------------------------------------------------
 
@@ -1022,6 +1049,90 @@ clearvars sub_*
 
 %%% Select the components to plot
 
+%--------------------------------------------------------------------------
+%----------------------------------------------------------------------
+% terms from the owns law with no signs JXB has no correction before here
+%----------------------------------------------------------------------
+%if (component == 1)
+term1_dt_x = B0*v_a*(Ex_dt);
+term2_dt_x = B0*v_a*(v_x_B_x_dt);
+term3_dt_x = (mre/me)*B0*v_a*J_x_B_x_dt./n_0_dt;
+term4_dt_x = v_a*v_a*(Div_Pe_dt_x./n_0_dt);
+term5_dt_x = mre*v_a*v_a*((Div_vJ_dt_x + Div_Jv_dt_x - Div_JJ_dt_x)./n_0_dt);
+term6_dt_x = mre*v_a*v_a*L2Ex_dt./n_0_dt;
+term7_dt_x = - term2_dt_x + term3_dt_x - term4_dt_x + term5_dt_x + term6_dt_x;
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt_x = B0*v_a*(Ex_filt);
+term2_filt_x = B0*v_a*(v_filt_x_B_filt_x);
+term3_filt_x = (mre/me)*B0*v_a*J_filt_x_B_filt_x./n_filt;
+term4_filt_x = v_a*v_a*(Div_Pe_filt_x./n_filt);
+term5_filt_x = mre*v_a*v_a*((Div_vJ_filt_x + Div_Jv_filt_x - Div_JJ_filt_2n_x)./n_filt);
+term6_filt_x = mre*v_a*v_a*L2Ex_filt./n_0_dt;
+term7_filt_x = - term2_filt_x + term3_filt_x - term4_filt_x + term5_filt_x + term6_filt_x;
+%elseif (component == 2)
+term1_dt_y = B0*v_a*(Ey_dt);
+term2_dt_y = B0*v_a*(v_x_B_y_dt);
+term3_dt_y = (mre/me)*B0*v_a*J_x_B_y_dt./n_0_dt;
+term4_dt_y = v_a*v_a*(Div_Pe_dt_y./n_0_dt);
+term5_dt_y = mre*v_a*v_a*((Div_vJ_dt_y + Div_Jv_dt_y - Div_JJ_dt_y)./n_0_dt);
+term6_dt_y = mre*v_a*v_a*L2Ey_dt./n_0_dt;
+term7_dt_y = - term2_dt_y + term3_dt_y - term4_dt_y + term5_dt_y + term6_dt_y;
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt_y = B0*v_a*(Ey_filt);
+term2_filt_y = B0*v_a*(v_filt_x_B_filt_y);
+term3_filt_y = (mre/me)*B0*v_a*J_filt_x_B_filt_y./n_filt;
+term4_filt_y = v_a*v_a*(Div_Pe_filt_y./n_filt);
+term5_filt_y = me*v_a*v_a*((Div_vJ_filt_y + Div_Jv_filt_y - Div_JJ_filt_2n_y)./n_filt);
+term6_filt_y = mre*v_a*v_a*L2Ey_filt./n_0_dt;
+term7_filt_y = - term2_filt_y + term3_filt_y - term4_filt_y + term5_filt_y + term6_filt_y;
+%elseif (component ==3)
+term1_dt_z = B0*v_a*(Ez_dt);
+term2_dt_z = B0*v_a*(v_x_B_z_dt);
+term3_dt_z = (mre/me)*B0*v_a*J_x_B_z_dt./n_0_dt;
+term4_dt_z = v_a*v_a*(Div_Pe_dt_z./n_0_dt);
+term5_dt_z = me*v_a*v_a*((Div_vJ_dt_z + Div_Jv_dt_z - Div_JJ_dt_z)./n_0_dt);
+term6_dt_z = mre*v_a*v_a*L2Ez_dt./n_0_dt;
+term7_dt_z = - term2_dt_z + term3_dt_z - term4_dt_z + term5_dt_z + term6_dt_z;
+%----------------------------------------------------------------------
+% This is for the filtered quantities
+%----------------------------------------------------------------------
+term1_filt_z = B0*v_a*(Ez_filt);
+term2_filt_z = B0*v_a*(v_filt_x_B_filt_z);
+term3_filt_z = (mre/me)*B0*v_a*J_filt_x_B_filt_z./n_filt;
+term4_filt_z = v_a*v_a*(Div_Pe_filt_z./n_filt);
+term5_filt_z = me*v_a*v_a*((Div_vJ_filt_z + Div_Jv_filt_z - Div_JJ_filt_2n_z)./n_filt);
+term6_filt_z = mre*v_a*v_a*L2Ez_filt./n_0_dt;
+term7_filt_z = - term2_filt_z + term3_filt_z - term4_filt_z + term5_filt_z + term6_filt_z;
+%end
+
+%correction
+%--------------------------------------------------------------------------
+term5_dt_x = term5_dt_x + term6_dt_x;
+term5_dt_y = term5_dt_y + term6_dt_y;
+term5_dt_z = term5_dt_z + term6_dt_z;
+
+term5_filt_x = term5_filt_x + term6_filt_x;
+term5_filt_y = term5_filt_y + term6_filt_y;
+term5_filt_z = term5_filt_z + term6_filt_z;
+
+%term6_dt_x = term7_dt_x;
+%term6_dt_y = term7_dt_y;
+%term6_dt_z = term7_dt_z;
+
+%term6_filt_x = term7_filt_x;
+%term6_filt_y = term7_filt_y;
+%term6_filt_z = term7_filt_z;
+
+clearvars term6_dt_x term6_dt_y term6_dt_z term6_filt_x term6_filt_y term6_filt_z
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
+
+
 %%% ----------------------------------------------------------------------
 %ext_fact = sqrt(1/mime);
 %tau_total_x = -tau_nE_tau -tau_v_x_B_tau + tau_J_x_B_tau + tau_Div_tau1;
@@ -1031,7 +1142,7 @@ tau_total_y = -tau_nE_tau_y -tau_v_x_B_tau_y + tau_J_x_B_tau_y + tau_Div_tau1_y;
 tau_total_z = -tau_nE_tau_z -tau_v_x_B_tau_z + tau_J_x_B_tau_z + tau_Div_tau1_z;
 %--------------------------------------------------------------------------
 
-
+stoppp
 
 %%%
 % This is to compute the voritcity 
@@ -1229,9 +1340,31 @@ n_x_scatter = n_filt_x(rand_inds);
 n_y_scatter = n_filt_y(rand_inds);
 n_z_scatter = n_filt_z(rand_inds);
 
-Div_Pi_x_scatter = Div_Pi_filt_x(rand_inds);
-Div_Pi_y_scatter = Div_Pi_filt_y(rand_inds);
-Div_Pi_z_scatter = Div_Pi_filt_z(rand_inds);
+%Div_Pe_x_scatter = Div_Pe_filt_x(rand_inds);
+%Div_Pe_y_scatter = Div_Pe_filt_y(rand_inds);
+%Div_Pe_z_scatter = Div_Pe_filt_z(rand_inds);
+
+tau_total_MHD_x = term2_filt_x - term3_filt_x + term5_filt_x + tau_total_x;
+tau_total_MHD_y = term2_filt_y - term3_filt_y + term5_filt_y + tau_total_y;
+tau_total_MHD_z = term2_filt_z - term3_filt_z + term5_filt_z + tau_total_z;
+
+tau_total_HMHD_x = tau_total_MHD_x - term2_filt_x;
+tau_total_HMHD_y = tau_total_MHD_y - term2_filt_y;
+tau_total_HMHD_z = tau_total_MHD_z - term2_filt_z;
+
+var_tau_total_MHD_x = tau_total_MHD_x(rand_inds);
+var_tau_total_MHD_y = tau_total_MHD_y(rand_inds);
+var_tau_total_MHD_z = tau_total_MHD_z(rand_inds);
+
+var_tau_total_HMHD_x = tau_total_HMHD_x(rand_inds);
+var_tau_total_HMHD_y = tau_total_HMHD_y(rand_inds);
+var_tau_total_HMHD_z = tau_total_HMHD_z(rand_inds);
+
+
+% I need to save these arrays. This is where I go
+
+
+
 
 %-----------------------------------------------------------------------
 
@@ -1769,18 +1902,21 @@ cd(f_path)
 %filename = "beta4_scatter.mat";
 
 save(filename_beta_comp,...
-    "J_scatter_x","B_scatter_x","vort_scatter_x","v_scatter_x","E_scatter_x","var_tau_total_x",...
-    "J_scatter_y","B_scatter_y","vort_scatter_y","v_scatter_y","E_scatter_y","var_tau_total_y",...
-    "J_scatter_z","B_scatter_z","vort_scatter_z","v_scatter_z","E_scatter_z","var_tau_total_z",...
+    "J_scatter_x","B_scatter_x","vort_scatter_x","v_scatter_x","E_scatter_x",...
+    "J_scatter_y","B_scatter_y","vort_scatter_y","v_scatter_y","E_scatter_y",...
+    "J_scatter_z","B_scatter_z","vort_scatter_z","v_scatter_z","E_scatter_z",...
     "J_mag_scatter","B_mag_scatter","vort_mag_scatter","v_mag_scatter","E_mag_scatter","var_tau_total","n_scatter",...
     "KJ_scatter_x","HB_scatter_x","Wvort_scatter_x",...
     "KJ_scatter_y","HB_scatter_y","Wvort_scatter_y",...
     "KJ_scatter_z","HB_scatter_z","Wvort_scatter_z",...
     "KJ_mag_scatter","HB_mag_scatter","Wvort_mag_scatter",...
+    "KJ_mag_scatter","HB_mag_scatter","Wvort_mag_scatter",...
     "n_x_scatter","n_y_scatter","n_z_scatter",...
-    "Div_Pi_x_scatter","Div_Pi_y_scatter","Div_Pi_z_scatter",...
+    "var_tau_total_x","var_tau_total_y","var_tau_total_z",...
+    "var_tau_total_MHD_x", "var_tau_total_MHD_y", "var_tau_total_MHD_z",...
+    "var_tau_total_HMHD_x", "var_tau_total_HMHD_y", "var_tau_total_HMHD_z",...    
     "-nocompression")
-
+    %"Div_Pe_x_scatter","Div_Pe_y_scatter","Div_Pe_z_scatter",...
 %-----------------------------------------------------------------------
 
 %%
