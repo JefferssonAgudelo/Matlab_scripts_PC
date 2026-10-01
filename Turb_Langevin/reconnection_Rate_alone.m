@@ -148,8 +148,13 @@ path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/checking_in
 %-------------------------------------------------------------------------------------------------------------------
 
 % For the scripts
-path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
-path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+%path = '/Volumes/PSC_CORI_DATA/TESTS_2022/New_V_tests/runs_with_L_05/checking_in_laptop_anomalous/psc_harris_yz_Ax_L5di_lange_local_E';
+%path_s  = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here/Scripts_spectra';
+%path_s2 = '/Users/jeffersson_agudelo/Documents/CB104_local_data/Matlab_Scripts_here';
+
+path = '/JAAR-DATA/COSMA_DATA/RUNS_MARCH_JUNE/cases_betae1_betai1/psc_reconnection_harris_2D_yz_sigle_sheet3';
+path_s  = '/home/UNN/pfcy6/codes/processing_scripts/Matlab_Scripts_PC0/Scripts_spectra';
+path_s2 = '/home/UNN/pfcy6/codes/processing_scripts/Matlab_Scripts_PC0';
 
 % To save the plots
 path_rec_r = strcat(path,'/spectra/rec_r');
@@ -249,7 +254,7 @@ mu0 =1.;
 c=1;
 q = 1;
 %mime =1.;
-mi = 1.;
+mi = 100.;
 me = 1. / mime; eps0=1.;
 omega_pi=1;
 Omega_e=Vai*sqrt(mime)*omega_pi;
@@ -304,7 +309,7 @@ J_mag_max=zeros(1,N_jn);
 jn=61;
 %--------------------------------------------------------------------------
 
-for jn=1:N
+for jn=10:12
     %in=2 + floor(N*(jn-1)/10);
     in=jn;
     %----------------------------------------------------------------------
