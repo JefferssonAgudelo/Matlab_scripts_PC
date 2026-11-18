@@ -1,0 +1,6 @@
+*.asv
+*.autosave
+*.mex*
+slprj/
+*.mat      # remove this line if your .mat files are small and essential
+*.fig      # same here, optional
